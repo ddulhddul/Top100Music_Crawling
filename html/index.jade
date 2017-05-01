@@ -8,35 +8,34 @@ html(lang='en')
     script.
       window.onload = function(){
         let trObj = document.getElementsByName('trtr');
-        let url = document.URL.replace(new RegExp('[0-9]$'), '');
+        let url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
         for(let i = 0, len = trObj.length; i < len; i++){
           trObj[i].onclick = function(){
-            window.location.href = url+trObj[i].getAttribute("index");
+            window.location.href = url+'/'+trObj[i].getAttribute("index");
           };
         }
       }
   body
-    div(class="container-fluid")
-      div(class="row")
-        div(class="col-lg-4")
-          if url
-            div(class="page-header")
-              div(class="embed-responsive embed-responsive-4by3")
-                iframe(class="embed-responsive-item", src='#{url}')
-        div(class="col-lg-8")
-          table(class='table table-striped table-hover')
-            tr
-              th #
-              th song
-              th singer
-            each obj in result
-              if obj.class
-                tr(class="#{obj.class}" name='trtr' index='#{obj.num}' autofocus)
-                  td #{obj.num+1}
-                  td #{obj.song} 
-                  td #{obj.singer}
-              else
-                tr(name='trtr' index='#{obj.num}')
-                  td #{obj.num+1}
-                  td #{obj.song} 
-                  td #{obj.singer}
+    div#iframeDiv
+      if url
+        div(class="page-header")
+          div(class="embed-responsive embed-responsive-4by3")
+            iframe(class="embed-responsive-item", src='#{url}')
+    div#content
+      div#listDiv
+        table(class='table table-striped table-hover')
+          tr
+            th #
+            th song
+            th singer
+          each obj in result
+            if obj.class
+              tr(class="#{obj.class}" name='trtr' index='#{obj.num}')
+                td #{obj.num+1}
+                td #{obj.song} 
+                td #{obj.singer}
+            else
+              tr(name='trtr' index='#{obj.num}' focus)
+                td #{obj.num+1}
+                td #{obj.song} 
+                td #{obj.singer}

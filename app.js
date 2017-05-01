@@ -25,8 +25,7 @@ app.get('/song', (req, res)=>{
                 num: index++,
                 song : song,
                 singer : singer,
-                url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
-                temp: res
+                url : 'https://www.youtube.com/results?search_query='+encodedSrchparam
             })
         });
         songList = result;
