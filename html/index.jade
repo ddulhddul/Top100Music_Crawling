@@ -5,57 +5,108 @@ html(lang='en')
     meta(charset='UTF-8')
     link(rel='stylesheet', type='text/css', href='/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/style.css')
+    script(src='/jquery-3.2.1.min.js')
+    script(src='/bootstrap.min.js')
     script.
+      let btnClassNm = 'btn-info';
+      let url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
+      let curIndex = '#{index}', totNum = '#{totNum}'
+      
+      function getParam(){
+        // 1, s, r
+        let param = '';
+        //- let param = `?loop=${loop1}&`;
+        $('#btnGroup button').each((i,obj)=>{
+          if($(obj).hasClass(btnClassNm)) param = `loop=${$(obj).attr('name')}`
+        })
+        return param;
+      }
+      
       window.onload = function(){
+        let loop = '#{loop}'
+        if(loop){
+          $('#btnGroup button').each((i,obj)=>{
+            if($(obj).attr('name') == loop){
+              $(obj).addClass(btnClassNm)
+            }
+          })
+        }
         let trObj = document.getElementsByName('trtr');
-        let url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
         for(let i = 0, len = trObj.length; i < len; i++){
           trObj[i].onclick = function(){
-            window.location.href = url+'/'+trObj[i].getAttribute("index");
-          };
+            location.href = url+'/'+trObj[i].getAttribute("index") +'?'+ getParam();
+          }
         }
       }
   body
     div#iframeDiv
-      if url
-        div(class="embed-responsive embed-responsive-4by3")
-          div#player(class="embed-responsive-item")
-            script(src='http://www.youtube.com/player_api')
-            script.
-              // Create youtube player
-              var player;
-              // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
-              // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
-              function onYouTubePlayerAPIReady() {
-                player = new YT.Player('player', {
-                  //- height: '480',
-                  //- width: '853',
-                  height: '100%',
-                  width: '100%',
-                  videoId: '#{url}',
-                  playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
-                  events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+      div(class="embed-responsive embed-responsive-4by3")
+        div#player(class="embed-responsive-item")
+          script(src='http://www.youtube.com/player_api')
+          script.
+            // Create youtube player
+            var player;
+            // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
+            // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
+            function onYouTubePlayerAPIReady() {
+              player = new YT.Player('player', {
+                //- height: '480',
+                //- width: '853',
+                height: '100%',
+                width: '100%',
+                videoId: '#{url}',
+                playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
+                events: {
+                  'onReady': onPlayerReady,
+                  'onStateChange': onPlayerStateChange
+                }
+              });
+            }
+            // autoplay video
+            function onPlayerReady(event) {
+            //동영상 로드가 끝난 후 이벤트
+              //- alert("동영상 로드");
+            }
+            // when video ends
+            function onPlayerStateChange(event) {
+              if(event.data === 0) {
+              //동영상 끝난 후 이벤트
+                let loop = '';
+                $('#btnGroup button').each((i, each)=>{
+                  if($(each).hasClass(btnClassNm)){
+                    loop = $(each).attr('name');
                   }
-                });
-              }
-              
-              console.log('index...','#{index}')
-
-              // autoplay video
-              function onPlayerReady(event) {
-              //동영상 로드가 끝난 후 이벤트
-                //- alert("동영상 로드");
-              }
-              // when video ends
-              function onPlayerStateChange(event) {
-                if(event.data === 0) {
-                //동영상 끝난 후 이벤트
-                  
+                })
+                
+                switch(loop){
+                  case '1':
+                    location.href = url+'/'+curIndex+'?'+ getParam();
+                    break;
+                  case 's':
+                    location.href = url+'/'+(Number(curIndex)+1)%totNum+'?'+ getParam();
+                    break;
+                  case 'r':
+                    location.href = url+'/'+Math.floor(Math.random()*totNum)+'?'+ getParam();
+                    break;
                 }
               }
-            //- iframe(class="embed-responsive-item", src='#{url}')
+            }
+
+            function btnClick(obj){
+              let $obj = $(obj);
+              if($obj.hasClass(btnClassNm)) $obj.removeClass(btnClassNm);
+              else{
+                $('#btnGroup button').each((i, each)=>{
+                  $(each).removeClass(btnClassNm)
+                })
+                $obj.addClass(btnClassNm)
+              }
+            }
+          //- iframe(class="embed-responsive-item", src='#{url}')
+      div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;")
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Sequential
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Random
     div#content
       div#listDiv
         table(class='table table-striped table-hover')

@@ -29,9 +29,10 @@ app.get('/song', (req, res)=>{
             })
         });
         songList = result;
-        res.render('index', {
-            result: songList
-        });
+        // res.render('index', {
+        //     result: songList
+        // });
+        res.redirect('/song/0')
     }, (error)=>{
         res.send('url request Call Erro :::\n'+error);
     });
@@ -39,13 +40,14 @@ app.get('/song', (req, res)=>{
 
 app.get('/song/:index', (req,res)=>{
     let index = req.params.index;
+    // console.log('params...', req.query)
     if(!index) return;
     if(!songList[index]) res.redirect('/song/')
     for (let i = 0, len = songList.length; i < len; i++) {
         if(i == index) songList[i].class = 'success'
         else songList[i].class = ''
     }
-    console.log('comecomecomecome ::', songList[index], index)
+    // console.log('comecomecomecome ::', songList[index], index)
     urlRequest(songList[index].url)
     .then(($)=>{
         if(!$) res.send('Error')
@@ -54,7 +56,9 @@ app.get('/song/:index', (req,res)=>{
         res.render('index', {
             result: songList, 
             url: href,
-            index: index
+            index: index,
+            totNum: songList.length,
+            loop: req.query.loop
         });
     }, (error)=>{
         res.send('url request Call Erro :::\n'+error);
