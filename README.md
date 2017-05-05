@@ -12,3 +12,10 @@ npm install urlencode --save
 
 ## when youtube ended
 [how to control ?](http://stackoverflow.com/questions/24964232/how-to-fire-function-on-embedded-youtube-iframes-end)
+
+## centos install
+```linux
+sudo yum install epel-release
+sudo yum install nodejs
+sudo yum install npm
+```

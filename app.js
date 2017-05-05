@@ -39,6 +39,7 @@ app.get('/song', (req, res)=>{
 
 app.get('/song/:index', (req,res)=>{
     let index = req.params.index;
+    if(!index) return;
     if(!songList[index]) res.redirect('/song/')
     for (let i = 0, len = songList.length; i < len; i++) {
         if(i == index) songList[i].class = 'success'
@@ -52,7 +53,8 @@ app.get('/song/:index', (req,res)=>{
         href = href.replace('/watch?v=','');
         res.render('index', {
             result: songList, 
-            url: "https://www.youtube.com/embed/"+href+"?autoplay=1"
+            url: href,
+            index: index
         });
     }, (error)=>{
         res.send('url request Call Erro :::\n'+error);
