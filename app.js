@@ -2,13 +2,14 @@ let express = require('express')
 let urlencode = require('urlencode');
 let request = require('request');
 let cheerio = require('cheerio');
+let bodyParser = require('body-parser');
 
 let app = express()
 app.use(express.static(__dirname +'/css'));
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.set('view engine', 'jade');
-app.set('views', 'html')
+app.set('views', 'html');
 
-let songList = [];
 
 app.get('/song', (req, res)=>{
 	urlRequest('http://www.melon.com/chart/')
@@ -22,30 +23,35 @@ app.get('/song', (req, res)=>{
             let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
             let encodedSrchparam = urlencode(song+' '+singer);
             result.push({
-                num: index++,
+                num: ++index,
                 song : song,
                 singer : singer,
                 url : 'https://www.youtube.com/results?search_query='+encodedSrchparam
             })
         });
-        songList = result;
-        // res.render('index', {
-        //     result: songList
-        // });
-        res.redirect('/song/0')
+        res.render('index', {
+            result: result
+        });
+        // res.redirect('/song/0')
     }, (error)=>{
         res.send('url request Call Erro :::\n'+error);
     });
 })
 
-app.get('/song/:index', (req,res)=>{
+app.post('/song/:index', (req,res)=>{
     let index = req.params.index;
-    // console.log('params...', req.query)
-    if(!index) return;
-    if(!songList[index]) res.redirect('/song/')
-    for (let i = 0, len = songList.length; i < len; i++) {
-        if(i == index) songList[i].class = 'success'
-        else songList[i].class = ''
+    let songList = [];
+    let body = req.body;
+    for (let i = 0, len = body.song.length; i < len; i++) {
+        let classNm = ''
+        if(i == index) classNm = 'success'
+        songList.push({
+            song: body.song[i],
+            singer: body.singer[i],
+            url: body.url[i],
+            num: body.num[i],
+            class: classNm
+        })
     }
     // console.log('comecomecomecome ::', songList[index], index)
     urlRequest(songList[index].url)
@@ -58,7 +64,9 @@ app.get('/song/:index', (req,res)=>{
             url: href,
             index: index,
             totNum: songList.length,
-            loop: req.query.loop
+            loop: body.loop,
+            song: songList[index].song,
+            singer: songList[index].singer
         });
     }, (error)=>{
         res.send('url request Call Erro :::\n'+error);

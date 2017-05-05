@@ -5,6 +5,7 @@ npm install express --save
 npm install jade --save
 npm install request cheerio --save
 npm install urlencode --save
+npm install body-parser --save
 ```
 
 ## get melon chart info
