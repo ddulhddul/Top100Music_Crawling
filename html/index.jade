@@ -1,7 +1,10 @@
 doctype html
 html(lang='en')
   head
-    title Music Top 100 Youtube
+    if song
+      title #{song} - #{singer}
+    else 
+      title Music Top 100 Youtube
     meta(charset='UTF-8')
     link(rel='stylesheet', type='text/css', href='/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/style.css')
@@ -32,8 +35,13 @@ html(lang='en')
 
         //- $('html,body,#listDiv').animate({scrollTop : $($('#listDiv tr')[curIndex]).offset().top}, 0);
       }
+      function createYoutube(){
+        
+      }
   body
     div#iframeDiv
+      //- a(href='#cur') aa
+      //- a(onclick='createYoutube(1)') create youtube
       if url
         h4
           strong #{song}
@@ -137,7 +145,7 @@ html(lang='en')
             input(type='hidden' name='num' value='#{obj.num}')
             input(type='hidden' name='url' value='#{obj.url}')
             if obj.class
-              tr(class="#{obj.class}" name='trtr' index='#{obj.num}')
+              tr(class="#{obj.class}" name='trtr' index='#{obj.num}' id='cur')
                 td #{obj.num}
                 td #{obj.song} 
                 td #{obj.singer}
