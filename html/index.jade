@@ -93,11 +93,11 @@ html(lang='en')
               if(event.data === 5) {
                 player.playVideo()
               }else if(event.data === -1) { //err
-                errCnt ++;
-                if(errCnt > 2){
-                  errCnt = 0;
-                  nextSong();
-                }
+                //- errCnt ++;
+                //- if(errCnt > 2){
+                //-   errCnt = 0;
+                //-   nextSong();
+                //- }
               }else if(event.data === 1) { //success
                 errCnt = 0;
               }else if(event.data === 0) {
