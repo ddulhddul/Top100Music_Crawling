@@ -30,7 +30,7 @@ html(lang='en')
       }
       function changeMusic(id, ii){
         $.ajax({ 
-              type: "GET",
+              type: "POST",
               dataType: "json",
               data: {
                 url: id
@@ -76,9 +76,14 @@ html(lang='en')
                 playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
                 events: {
                   'onReady': onPlayerReady,
-                  'onStateChange': onPlayerStateChange
+                  'onStateChange': onPlayerStateChange,
+                  'onError': onPlayerError
                 }
               });
+            }
+            function onPlayerError(event){
+              console.log('onPlayerError', event)
+              nextSong();
             }
             // autoplay video
             function onPlayerReady(event) {
@@ -87,22 +92,12 @@ html(lang='en')
               //- event.target.playVideo()
             }
             // when video ends
-            let errCnt = 0;
             function onPlayerStateChange(event) {
-              //- console.log('onPlayerStateChange', event, player)
+              //- console.log('onPlayerStateChange', event.data)
               if(event.data === 5) {
                 player.playVideo()
-              }else if(event.data === -1) { //err
-                //- errCnt ++;
-                //- if(errCnt > 2){
-                //-   errCnt = 0;
-                //-   nextSong();
-                //- }
-              }else if(event.data === 1) { //success
-                errCnt = 0;
               }else if(event.data === 0) {
               //동영상 끝난 후 이벤트
-                
                 let ii = curIndex;
                 switch($('#loop').val()){
                   case 's':

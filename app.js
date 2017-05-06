@@ -40,11 +40,12 @@ app.get('/song', (req, res)=>{
     });
 })
 
-app.get('/song/change', (req,res)=>{
-    urlRequest(req.query.url)
+app.post('/song/change', (req,res)=>{
+    urlRequest(req.body.url)
     .then(($)=>{
         if(!$) res.send({err:'Error'})
-        let href = $('#results ol li ol li a').first().attr('href');
+        // let href = $('#results ol li ol li a').first().attr('href');
+        let href = $('.yt-lockup-video a').first().attr('href');
         href = href.replace('/watch?v=','');
         res.send({
             url: href
