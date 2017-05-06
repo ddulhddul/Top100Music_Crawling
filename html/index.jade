@@ -87,11 +87,20 @@ html(lang='en')
               //- event.target.playVideo()
             }
             // when video ends
+            let errCnt = 0;
             function onPlayerStateChange(event) {
+              //- console.log('onPlayerStateChange', event, player)
               if(event.data === 5) {
                 player.playVideo()
-              }
-              else if(event.data === 0) {
+              }else if(event.data === -1) { //err
+                errCnt ++;
+                if(errCnt > 2){
+                  errCnt = 0;
+                  nextSong();
+                }
+              }else if(event.data === 1) { //success
+                errCnt = 0;
+              }else if(event.data === 0) {
               //동영상 끝난 후 이벤트
                 
                 let ii = curIndex;
