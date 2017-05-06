@@ -1,10 +1,7 @@
 doctype html
 html(lang='en')
   head
-    if song
-      title #{song} - #{singer}
-    else 
-      title Music Top 100 Youtube
+    title Music Top 100 Youtube
     meta(charset='UTF-8')
     link(rel='stylesheet', type='text/css', href='/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/style.css')
@@ -16,119 +13,126 @@ html(lang='en')
       let curIndex = '#{index}', totNum = '#{totNum}'
       
       window.onload = function(){
-        let loop = '#{loop}'
-        if(loop){
-          $('#btnGroup button').each((i,obj)=>{
-            if($(obj).attr('name') == loop){
-              $(obj).addClass(btnClassNm)
-            }
-          })
+        
+        //height
+        while($(document).height() > $(window).height()){
+          $('#listDiv').height($('#listDiv').height()-30)
         }
+        
         let trObj = document.getElementsByName('trtr');
         for(let i = 0, len = trObj.length; i < len; i++){
           trObj[i].onclick = function(){
-            let form = $('#listDiv');
-            form.attr('action', url+'/'+(Number(trObj[i].getAttribute("index"))-1))
-            form.submit();
+            let ii = Number(trObj[i].getAttribute("index"))-1;
+            changeMusic($('[name="url"]')[ii].value, ii)
           }
         }
-
-        //- $('html,body,#listDiv').animate({scrollTop : $($('#listDiv tr')[curIndex]).offset().top}, 0);
+        changeMusic($('[name="url"]')[0].value, 0)
       }
-      function createYoutube(){
-        
+      function changeMusic(id, ii){
+        $.ajax({ 
+              type: "GET",
+              dataType: "json",
+              data: {
+                url: id
+              },
+              url: url+'/change',
+              success: function(data){        
+                  if(data.err){
+                    console.log(data.err)
+                  }else{
+                    player.cuePlaylist([data.url]);
+                    let song = $('[name="song"]')[ii].value
+                    let singer = $('[name="singer"]')[ii].value
+                    $('title').text(song+' - '+singer)
+                    $('#iframeDiv h4 strong').text(song)
+                    $('#iframeDiv h4 small').html('&nbsp;&nbsp;'+singer)
+                    $('[name="trtr"]').each((i,obj)=>{
+                      $(obj).removeClass('success')
+                    })
+                    $($('[name="trtr"]')[ii]).addClass('success')
+                    curIndex = ii;
+                  }
+              }
+          });
       }
   body
     div#iframeDiv
-      //- a(href='#cur') aa
-      //- a(onclick='createYoutube(1)') create youtube
-      if url
-        h4
-          strong #{song}
-          small &nbsp;&nbsp;#{singer}
-        div(class="embed-responsive embed-responsive-4by3")
-          div#player(class="embed-responsive-item")
-            script(src='http://www.youtube.com/player_api')
-            script.
-              // Create youtube player
-              var player;
-              // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
-              // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
-              function onYouTubePlayerAPIReady() {
-                player = new YT.Player('player', {
-                  //- height: '480',
-                  //- width: '853',
-                  height: '100%',
-                  width: '100%',
-                  videoId: '#{url}',
-                  playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
-                  events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                  }
-                });
-              }
-              // autoplay video
-              function onPlayerReady(event) {
-              //동영상 로드가 끝난 후 이벤트
-                //- alert("동영상 로드");
-              }
-              // when video ends
-              function onPlayerStateChange(event) {
-                let submitUrl = '';
-                if(event.data === -1) {
-                  submitUrl = url+'/'+(Number(curIndex)+1)%totNum
-                  let form = $('#listDiv');
-                  form.attr('action', submitUrl)
-                  form.submit();
-
-                }else if(event.data === 0) {
-                //동영상 끝난 후 이벤트
-                  let loop = '';
-                  $('#btnGroup button').each((i, each)=>{
-                    if($(each).hasClass(btnClassNm)){
-                      loop = $(each).attr('name');
-                    }
-                  })
-                  
-                  switch(loop){
-                    case '1':
-                      submitUrl = url+'/'+curIndex
-                      break;
-                    case 's':
-                      submitUrl = url+'/'+(Number(curIndex)+1)%totNum
-                      break;
-                    case 'r':
-                      submitUrl = url+'/'+Math.floor(Math.random()*totNum)
-                      break;
-                  }
-
-                  let form = $('#listDiv');
-                  form.attr('action', submitUrl)
-                  form.submit();
+      h4
+        strong #{song}
+        small &nbsp;&nbsp;#{singer}
+      div(class="embed-responsive embed-responsive-4by3")
+        div#player(class="embed-responsive-item")
+          script(src='http://www.youtube.com/player_api')
+          script.
+            // Create youtube player
+            var player;
+            // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
+            // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
+            function onYouTubePlayerAPIReady() {
+              player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: '',
+                playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
+                events: {
+                  'onReady': onPlayerReady,
+                  'onStateChange': onPlayerStateChange
                 }
-
-
+              });
+            }
+            // autoplay video
+            function onPlayerReady(event) {
+              //- console.log('onPlayerReady',event)
+              //- player.cuePlaylist(quelist);
+              //- event.target.playVideo()
+            }
+            // when video ends
+            function onPlayerStateChange(event) {
+              if(event.data === 5) {
+                player.playVideo()
               }
-  
-              function btnClick(obj){
-                let $obj = $(obj);
-                if($obj.hasClass(btnClassNm)){
-                  $obj.removeClass(btnClassNm);
-                  $('#loop').val('')
-                }else{
-                  $('#btnGroup button').each((i, each)=>{
-                    $(each).removeClass(btnClassNm)
-                  })
-                  $obj.addClass(btnClassNm)
-                  $('#loop').val($obj.attr('name'))
+              else if(event.data === 0) {
+              //동영상 끝난 후 이벤트
+                
+                let ii = curIndex;
+                switch($('#loop').val()){
+                  case 's':
+                    ii = (Number(curIndex)+1)%totNum;
+                    break;
+                  case 'r':
+                    ii = Math.floor(Math.random()*totNum)
+                    break;
                 }
+                changeMusic($('[name="url"]')[ii].value, ii)
+                if(loop && loop!=1) window.location.href = url+'/#'+(Number(ii)+1)
               }
-            //- iframe(class="embed-responsive-item", src='#{url}')
-        div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;")
-          button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
-          button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Sequential
-          button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Random
+            }
+            function nextSong(){
+              let ii = (Number(curIndex)+1)%totNum;
+              if($('#loop').val() == 'r') ii = Math.floor(Math.random()*totNum)
+              changeMusic($('[name="url"]')[ii].value, ii)
+              window.location.href = url+'/#'+(Number(ii)+1)
+            }
+            function btnClick(obj){
+              let $obj = $(obj);
+              if($obj.hasClass(btnClassNm)){
+                $obj.removeClass(btnClassNm);
+                $('#loop').val('')
+              }else{
+                $('#btnGroup button').each((i, each)=>{
+                  $(each).removeClass(btnClassNm)
+                })
+                $obj.addClass(btnClassNm)
+                $('#loop').val($obj.attr('name'))
+              }
+            }
+      div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;padding-right:0px;")
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Sequential
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Random
+      div.btn-group(role='group', aria-label='...' style="padding: 10px;padding-left:5px;")
+        button.btn.btn-danger(type='button' onclick='nextSong()')
+          strong >
     div#content
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='#{loop}')
@@ -144,13 +148,7 @@ html(lang='en')
             input(type='hidden' name='singer' value='#{obj.singer}')
             input(type='hidden' name='num' value='#{obj.num}')
             input(type='hidden' name='url' value='#{obj.url}')
-            if obj.class
-              tr(class="#{obj.class}" name='trtr' index='#{obj.num}' id='cur')
-                td #{obj.num}
-                td #{obj.song} 
-                td #{obj.singer}
-            else
-              tr(name='trtr' index='#{obj.num}' focus)
-                td #{obj.num}
-                td #{obj.song} 
-                td #{obj.singer}
+            tr(name='trtr' index='#{obj.num}' id='#{obj.num}')
+              td #{obj.num}
+              td #{obj.song} 
+              td #{obj.singer}

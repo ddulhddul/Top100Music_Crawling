@@ -30,7 +30,9 @@ app.get('/song', (req, res)=>{
             })
         });
         res.render('index', {
-            result: result
+            result: result,
+            index: 0,
+            totNum: result.length
         });
         // res.redirect('/song/0')
     }, (error)=>{
@@ -38,38 +40,17 @@ app.get('/song', (req, res)=>{
     });
 })
 
-app.post('/song/:index', (req,res)=>{
-    let index = req.params.index;
-    let songList = [];
-    let body = req.body;
-    for (let i = 0, len = body.song.length; i < len; i++) {
-        let classNm = ''
-        if(i == index) classNm = 'success'
-        songList.push({
-            song: body.song[i],
-            singer: body.singer[i],
-            url: body.url[i],
-            num: body.num[i],
-            class: classNm
-        })
-    }
-    // console.log('comecomecomecome ::', songList[index], index)
-    urlRequest(songList[index].url)
+app.get('/song/change', (req,res)=>{
+    urlRequest(req.query.url)
     .then(($)=>{
-        if(!$) res.send('Error')
+        if(!$) res.send({err:'Error'})
         let href = $('#results ol li ol li a').first().attr('href');
         href = href.replace('/watch?v=','');
-        res.render('index', {
-            result: songList, 
-            url: href,
-            index: index,
-            totNum: songList.length,
-            loop: body.loop,
-            song: songList[index].song,
-            singer: songList[index].singer
+        res.send({
+            url: href
         });
     }, (error)=>{
-        res.send('url request Call Erro :::\n'+error);
+        res.send({err:'url request Call Erro :::\n'+error});
     });
 })
 
