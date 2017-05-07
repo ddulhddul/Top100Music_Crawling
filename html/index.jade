@@ -12,12 +12,16 @@ html(lang='en')
       let url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
       let curIndex = '#{index}', totNum = '#{totNum}'
       
-      window.onload = function(){
-        
-        //height
-        while($(document).height() > $(window).height()){
-          $('#listDiv').height($('#listDiv').height()-30)
+      function resize(){
+        if($('#listDiv').position().top == 0){
+          $('#listDiv').height(480)
+        }else{
+          $('#listDiv').height(window.innerHeight-$('#iframeDiv').height()-50)
         }
+      }
+
+      window.onload = function(){
+        resize();
         
         let trObj = document.getElementsByName('trtr');
         for(let i = 0, len = trObj.length; i < len; i++){
@@ -55,7 +59,7 @@ html(lang='en')
               }
           });
       }
-  body
+  body(onresize="resize()")
     div#iframeDiv
       h4
         strong #{song}
