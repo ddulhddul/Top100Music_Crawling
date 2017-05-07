@@ -33,6 +33,11 @@ html(lang='en')
         changeMusic($('[name="url"]')[0].value, 0)
       }
       function changeMusic(id, ii){
+        let videoId = $('[name="videoId"]')[ii].value;
+        if(videoId){
+          player.cuePlaylist([videoId]);
+          return;
+        }
         $.ajax({ 
               type: "POST",
               dataType: "json",
@@ -44,6 +49,7 @@ html(lang='en')
                   if(data.err){
                     console.log(data.err)
                   }else{
+                    $('[name="videoId"]')[ii].value = data.url;
                     player.cuePlaylist([data.url]);
                     let song = $('[name="song"]')[ii].value
                     let singer = $('[name="singer"]')[ii].value
@@ -156,6 +162,7 @@ html(lang='en')
             input(type='hidden' name='singer' value='#{obj.singer}')
             input(type='hidden' name='num' value='#{obj.num}')
             input(type='hidden' name='url' value='#{obj.url}')
+            input(type='hidden' name='videoId' id='videoId')
             tr(name='trtr' index='#{obj.num}' id='#{obj.num}')
               td #{obj.num}
               td #{obj.song} 
