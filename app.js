@@ -59,14 +59,14 @@ function getChartByUrlRequest(res){
     Chart.remove({},(err)=>{
         if(err) console.log('chart remove error...',err)
 
-        console.log(new Date(), 'chart url request.. ')
+        let yymmddhh = getYymmddhh()
+        console.log(yymmddhh, 'chart url request.. ')
         urlRequest('http://www.melon.com/chart/')
         .then(($)=>{
             if(!$) res.send('Error')
             let postElements = $('form table .wrap_song_info');
             let result = [];
             let index = 0;
-            let yymmddhh = getYymmddhh()
 
             postElements.each(function(i, obj) {
                 let $obj = $(obj);
@@ -106,12 +106,13 @@ function getChartByUrlRequest(res){
 app.post('/song/change', (req,res)=>{
     let body = req.body;
     
+    let yymmddhh = getYymmddhh()
     Chart.findOne({yymmddhh:body.yymmddhh, num:body.num},(err,chart)=>{
         if(!err && chart && chart.videoId){
-            console.log(new Date(), ' ', body.num, ' videoId exists', chart.videoId)
+            console.log(yymmddhh, ' ', body.num, ' videoId exists', chart.videoId)
             res.send({url: chart.videoId});
         }else{
-            console.log(new Date(), ' ', body.num, ' videoId not exists')
+            console.log(yymmddhh, ' ', body.num, ' videoId not exists')
             urlRequest(body.url)
             .then(($)=>{
                 if(!$) res.send({err:'Error'})
