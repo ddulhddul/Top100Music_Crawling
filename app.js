@@ -36,7 +36,7 @@ function getYymmddhh(param){
 
 app.get('/song', (req, res)=>{
 	let yymmddhh= getYymmddhh();
-    Chart.find({yymmddhh: yymmddhh},(err,result)=>{
+    Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
         if(err || !result || result.length === 0){
