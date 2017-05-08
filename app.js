@@ -73,6 +73,7 @@ function getChartByUrlRequest(res){
                 let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
                 let encodedSrchparam = urlencode(song+' '+singer);
                 let param = {
+                    yymmddhh: yymmddhh,
                     num: ++index,
                     song : song,
                     singer : singer,
