@@ -4,6 +4,7 @@ let request = require('request');
 let cheerio = require('cheerio');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 let Chart = require('./Chart');
 
 let app = express()
@@ -58,7 +59,7 @@ function getChartByUrlRequest(res){
     Chart.remove({},(err)=>{
         if(err) console.log('chart remove error...',err)
 
-        console.log('date : ', new Date(), 'chart url request.. ')
+        console.log(new Date(), 'chart url request.. ')
         urlRequest('http://www.melon.com/chart/')
         .then(($)=>{
             if(!$) res.send('Error')
@@ -107,10 +108,10 @@ app.post('/song/change', (req,res)=>{
     
     Chart.findOne({yymmddhh:body.yymmddhh, num:body.num},(err,chart)=>{
         if(!err && chart && chart.videoId){
-            console.log('date : ', new Date(), 'videoId exists', chart.videoId)
+            console.log(new Date(), ' ', body.num, ' videoId exists', chart.videoId)
             res.send({url: chart.videoId});
         }else{
-            console.log('date : ', new Date(), 'videoId not exists')
+            console.log(new Date(), ' ', body.num, ' videoId not exists')
             urlRequest(body.url)
             .then(($)=>{
                 if(!$) res.send({err:'Error'})
