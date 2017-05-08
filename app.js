@@ -118,10 +118,12 @@ app.post('/song/change', (req,res)=>{
                 let href = $('.yt-lockup-video a').first().attr('href');
                 href = href.replace('/watch?v=','');
 
-                chart.videoId = href;
-                chart.save((err)=>{
-                    if(err) console.log('chart videoId update error...',err)
-                })
+                if(chart){
+                    chart.videoId = href;
+                    chart.save((err)=>{
+                        if(err) console.log('chart videoId update error...',err)
+                    })
+                }
 
                 res.send({
                     url: href
