@@ -106,13 +106,12 @@ function getChartByUrlRequest(res){
 app.post('/song/change', (req,res)=>{
     let body = req.body;
     
-    let yymmddhh = getYymmddhh()
     Chart.findOne({yymmddhh:body.yymmddhh, num:body.num},(err,chart)=>{
         if(!err && chart && chart.videoId){
-            console.log(yymmddhh, ' ', body.num, ' videoId exists', chart.videoId)
+            console.log(body.yymmddhh, ' ', body.num, ' videoId exists', chart.videoId)
             res.send({url: chart.videoId});
         }else{
-            console.log(yymmddhh, ' ', body.num, ' videoId not exists')
+            console.log(body.yymmddhh, ' ', body.num, ' videoId not exists')
             urlRequest(body.url)
             .then(($)=>{
                 if(!$) res.send({err:'Error'})
