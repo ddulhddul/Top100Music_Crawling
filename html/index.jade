@@ -54,7 +54,9 @@ html(lang='en')
               type: "POST",
               dataType: "json",
               data: {
-                url: id
+                url: id,
+                yymmddhh: $('[name="yymmddhh"]')[ii].value,
+                num: $('[name="num"]')[ii].value
               },
               url: url+'/change',
               success: function(data){        
@@ -160,6 +162,7 @@ html(lang='en')
             th song
             th singer
           each obj in result
+            input(type='hidden' name='yymmddhh' value='#{obj.yymmddhh}')
             input(type='hidden' name='song' value='#{obj.song}')
             input(type='hidden' name='singer' value='#{obj.singer}')
             input(type='hidden' name='num' value='#{obj.num}')
