@@ -33,7 +33,19 @@ html(lang='en')
         changeMusic($('[name="url"]')[0].value, 0)
       }
       function changeMusic(id, ii){
+        
         let videoId = $('[name="videoId"]')[ii].value;
+        let song = $('[name="song"]')[ii].value
+        let singer = $('[name="singer"]')[ii].value
+        $('title').text(song+' - '+singer)
+        $('#iframeDiv h4 strong').text(song)
+        $('#iframeDiv h4 small').html('&nbsp;&nbsp;'+singer)
+        $('[name="trtr"]').each((i,obj)=>{
+          $(obj).removeClass('success')
+        })
+        $($('[name="trtr"]')[ii]).addClass('success')
+        curIndex = ii;
+
         if(videoId){
           player.cuePlaylist([videoId]);
           return;
@@ -51,16 +63,6 @@ html(lang='en')
                   }else{
                     $('[name="videoId"]')[ii].value = data.url;
                     player.cuePlaylist([data.url]);
-                    let song = $('[name="song"]')[ii].value
-                    let singer = $('[name="singer"]')[ii].value
-                    $('title').text(song+' - '+singer)
-                    $('#iframeDiv h4 strong').text(song)
-                    $('#iframeDiv h4 small').html('&nbsp;&nbsp;'+singer)
-                    $('[name="trtr"]').each((i,obj)=>{
-                      $(obj).removeClass('success')
-                    })
-                    $($('[name="trtr"]')[ii]).addClass('success')
-                    curIndex = ii;
                   }
               }
           });
