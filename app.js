@@ -43,7 +43,7 @@ function getYymmdd(param){
 
 app.post('/song/count', (req, res)=>{
     try {
-        var ip = req.headers['x-forwarded-for'] ||
+        let ip = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress;
         if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
@@ -79,6 +79,7 @@ app.post('/song/count', (req, res)=>{
                                 let countSch = new Count();
                                 countSch.yymmdd = yymmdd;
                                 countSch.cnt = 1;
+                                countSch.ip = [ip];
                                 countSch.save((err,result)=>{
                                     if(err) console.log('new today count save error...'.err)
                                 })
