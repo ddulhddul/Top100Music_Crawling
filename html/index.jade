@@ -13,7 +13,7 @@ html(lang='en')
       let curIndex = '#{index}', totNum = '#{totNum}'
       
       function resize(){
-        if($('#listDiv').position().top == 0){
+        if($('#listDiv').position().top < 50){
           $('#listDiv').height(480)
         }else{
           $('#listDiv').height(window.innerHeight-$('#iframeDiv').height()-50)
