@@ -36,22 +36,22 @@ function getYymmddhh(param){
 }
 
 app.post('/song/count', (req, res)=>{
-    console.log('count in')
-    // console.log('X-Forwarded-For : ',req.headers['X-Forwarded-For'])
-    // console.log('req.header : ',req.header)
-    // console.log('req.headers : ',req.headers)
-
-    var ip = req.headers['x-forwarded-for'] ||
-    req.connection.remoteAddress ||
-    req.socket.remoteAddress;
-    if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
-    if(ip){
-        if(typeof ip == 'Array') ip = ip[0];
-        ip = ip.split(',')[0];
-        ip = ip.split(':').slice(-1); //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
+    try {
+        var ip = req.headers['x-forwarded-for'] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress;
+        if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
+        if(ip){
+            if(typeof ip == 'Array') ip = ip[0];
+            ip = ip.split(',')[0];
+            ip = ip.split(':').slice(-1); //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
+            if(typeof ip == 'Array') ip = ip[0];
+        }
+        console.log('ip',ip);
+        
+    } catch (error) {
+        res.send({err:'Call Count Error'})
     }
-    console.log('ip',ip);
-    res.send({err:'Call Count Error'})
 })
 
 app.get('/song', (req, res)=>{
