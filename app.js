@@ -92,7 +92,7 @@ app.post('/song/count', (req, res)=>{
                             let iplist = count? count.ip: [];
                             if(iplist.includes(ip)){
                                 totalCnt = total.cnt;
-                                todayCnt = count.cnt;
+                                todayCnt = count.ip.length;
                             }else{
                                 if(total){
                                     total.cnt +=1
