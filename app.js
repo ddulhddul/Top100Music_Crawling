@@ -41,6 +41,16 @@ function getYymmdd(param){
         lpadNum(date.getDate())
 }
 
+function newCountSave(yymmdd, ip){
+    let countSch = new Count();
+    countSch.yymmdd = yymmdd;
+    countSch.cnt = 1;
+    if(ip) countSch.ip = [ip];
+    countSch.save((err,result)=>{
+        if(err) console.log(`new ${yymmdd} save error...`,err)
+    })
+}
+
 app.post('/song/count', (req, res)=>{
     try {
         let ip = req.headers['x-forwarded-for'] ||
@@ -66,26 +76,14 @@ app.post('/song/count', (req, res)=>{
                             let todayCnt = 0;
 
                             if(!total){
-                                let countSch = new Count();
-                                countSch.yymmdd = 'Total';
-                                countSch.cnt = 1;
-                                countSch.save((err,result)=>{
-                                    if(err) console.log('new total save error...'.err)
-                                })
+                                newCountSave('Total');
                                 totalCnt = 1;
                             }
 
                             if(!count){
-                                let countSch = new Count();
-                                countSch.yymmdd = yymmdd;
-                                countSch.cnt = 1;
-                                countSch.ip = [ip];
-                                
                                 Count.remove({'yymmdd': { $ne: 'Total' }}, (err)=>{
                                     if(err) console.log('remove before count error...'.err)
-                                    countSch.save((err,result)=>{
-                                        if(err) console.log('new today count save error...'.err)
-                                    })
+                                    newCountSave(yymmdd);
                                 })
                                 todayCnt = 1;
                             }
@@ -104,8 +102,9 @@ app.post('/song/count', (req, res)=>{
                                 }
 
                                 if(count){
-                                    todayCnt = count.cnt +1;
                                     count.ip.push(ip);
+                                    todayCnt = count.ip.length;
+                                    count.cnt = todayCnt;
                                     count.save((err,result)=>{
                                         if(err) console.log('iplist save error...'.err)
                                     })
