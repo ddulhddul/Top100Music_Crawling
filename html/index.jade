@@ -42,8 +42,10 @@ html(lang='en')
             if(data.err){
               console.log(data.err)
             }else{
-              //- $('[name="videoId"]')[ii].value = data.url;
-              //- player.cuePlaylist([data.url]);
+              let total = data.total
+              let today = data.today
+              //- console.log('data',data)
+              if(total && today) $('.btn-group i').text(`visit ${today} / ${total}`)
             }
           }
         });
@@ -160,14 +162,17 @@ html(lang='en')
                 $('#loop').val($obj.attr('name'))
               }
             }
-      div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;padding-right:0px;")
+      div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;padding-right:0px;padding-bottom:0px;")
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
-        button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Sequential
-        button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Random
-      div.btn-group(role='group', aria-label='...' style="padding: 10px;padding-left:5px;")
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Seq
+        button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Rand
+      div.btn-group(role='group', aria-label='...' style="padding: 10px;padding-left:10px;padding-bottom:0px;")
         button.btn.btn-danger(type='button' onclick='nextSong()')
           strong >
     div#content
+      div.btn-group(style='float:right;')
+        small
+          i visit
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='#{loop}')
         input(type='hidden' name='index' id='index' value='#{index}')
@@ -189,6 +194,6 @@ html(lang='en')
               td #{obj.song} 
               td #{obj.singer}
     footer
-      p
-        strong ddulh&nbsp;
+      p 
+        strong &nbsp;&nbsp;&nbsp; ddulh&nbsp;
         small ddulhddul@gmail.com 

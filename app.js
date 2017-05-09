@@ -34,6 +34,12 @@ function getYymmddhh(param){
         lpadNum(date.getDate())+
         lpadNum(date.getHours())
 }
+function getYymmdd(param){
+    let date = param || new Date();
+    return date.getFullYear()+
+        lpadNum(date.getMonth()+1)+
+        lpadNum(date.getDate())
+}
 
 app.post('/song/count', (req, res)=>{
     try {
@@ -42,12 +48,73 @@ app.post('/song/count', (req, res)=>{
         req.socket.remoteAddress;
         if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
         if(ip){
-            if(typeof ip == 'Array') ip = ip[0];
             ip = ip.split(',')[0];
-            ip = ip.split(':').slice(-1); //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
-            if(typeof ip == 'Array') ip = ip[0];
+            ip = ip.split(':').slice(-1)[0]; //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
         }
-        console.log('ip',ip);
+        if(!ip){
+            res.send({err:'Undefined Ip'})
+
+        }else{
+            let yymmdd = getYymmdd();
+            Count.findOne({yymmdd:yymmdd}, (err, count)=>{
+                if(err) res.send({err:'Ip Find Error'})
+                else{
+                    Count.findOne({yymmdd:'Total'}, (err, total)=>{
+                        if(err) res.send({err:'Total Find Error'})
+                        else{
+                            let totalCnt = 0;
+                            let todayCnt = 0;
+
+                            if(!total){
+                                let countSch = new Count();
+                                countSch.yymmdd = 'Total';
+                                countSch.cnt = 1;
+                                countSch.save((err,result)=>{
+                                    if(err) console.log('new total save error...'.err)
+                                })
+                                totalCnt = 1;
+                            }
+
+                            if(!count){
+                                let countSch = new Count();
+                                countSch.yymmdd = yymmdd;
+                                countSch.cnt = 1;
+                                countSch.save((err,result)=>{
+                                    if(err) console.log('new today count save error...'.err)
+                                })
+                                todayCnt = 1;
+                            }
+                            
+                            let iplist = count? count.ip: [];
+                            if(iplist.includes(ip)){
+                                totalCnt = total.cnt;
+                                todayCnt = count.cnt;
+                            }else{
+                                if(total){
+                                    total.cnt +=1
+                                    total.save((err,result)=>{
+                                        if(err) console.log('total save error...'.err)
+                                    })
+                                    totalCnt = total.cnt;
+                                }
+
+                                if(count){
+                                    todayCnt = count.cnt +1;
+                                    count.ip.push(ip);
+                                    count.save((err,result)=>{
+                                        if(err) console.log('iplist save error...'.err)
+                                    })
+                                }
+                            }
+                            res.send({
+                                total: totalCnt,
+                                today: todayCnt
+                            })
+                        }
+                    })
+                }
+            })
+        }
         
     } catch (error) {
         res.send({err:'Call Count Error'})
