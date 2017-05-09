@@ -91,7 +91,8 @@ html(lang='en')
     div#iframeDiv
       h4
         strong #{song}
-        small &nbsp;&nbsp;#{singer}
+        span(style='white-space: nowrap')
+          small &nbsp;&nbsp;#{singer}
       div(class="embed-responsive embed-responsive-4by3")
         div#player(class="embed-responsive-item")
           script(src='http://www.youtube.com/player_api')
