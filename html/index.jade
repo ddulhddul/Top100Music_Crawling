@@ -23,7 +23,8 @@ html(lang='en')
       window.onload = function(){
         resize();
         callCount();
-
+        
+        $('#iframeDiv h4').on('click',()=>{window.location.href = url+'/#'+(Number(curIndex)+1)})
         let trObj = document.getElementsByName('trtr');
         for(let i = 0, len = trObj.length; i < len; i++){
           trObj[i].onclick = function(){
