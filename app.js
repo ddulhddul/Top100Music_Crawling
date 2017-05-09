@@ -65,6 +65,7 @@ app.post('/song/count', (req, res)=>{
             res.send({err:'Undefined Ip'})
 
         }else{
+            console.log('ip connected... ', ip)
             let yymmdd = getYymmdd();
             Count.findOne({yymmdd:yymmdd}, (err, count)=>{
                 if(err) res.send({err:'Ip Find Error'})
