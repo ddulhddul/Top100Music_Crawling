@@ -22,7 +22,8 @@ html(lang='en')
 
       window.onload = function(){
         resize();
-        
+        callCount();
+
         let trObj = document.getElementsByName('trtr');
         for(let i = 0, len = trObj.length; i < len; i++){
           trObj[i].onclick = function(){
@@ -31,6 +32,21 @@ html(lang='en')
           }
         }
         changeMusic($('[name="url"]')[0].value, 0)
+      }
+      function callCount(){
+        $.ajax({ 
+          type: "POST",
+          dataType: "json",
+          url: url+'/count',
+          success: function(data){        
+            if(data.err){
+              console.log(data.err)
+            }else{
+              //- $('[name="videoId"]')[ii].value = data.url;
+              //- player.cuePlaylist([data.url]);
+            }
+          }
+        });
       }
       function changeMusic(id, ii){
         
@@ -64,7 +80,7 @@ html(lang='en')
                     console.log(data.err)
                   }else{
                     $('[name="videoId"]')[ii].value = data.url;
-                    player.cuePlaylist([data.url]);
+                    if(player && player.cuePlaylist) player.cuePlaylist([data.url]);
                   }
               }
           });

@@ -6,6 +6,7 @@ let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 let Chart = require('./Chart');
+let Count = require('./Count');
 
 let app = express()
 app.use(express.static(__dirname +'/css'));
@@ -33,6 +34,15 @@ function getYymmddhh(param){
         lpadNum(date.getDate())+
         lpadNum(date.getHours())
 }
+
+app.post('/song/count', (req, res)=>{
+    console.log('count in')
+    console.log('X-Forwarded-For : ',req.headers['X-Forwarded-For'])
+    console.log('req.header : ',req.header)
+    console.log('req.headers : ',req.headers)
+
+    res.send({err:'Call Count Error'})
+})
 
 app.get('/song', (req, res)=>{
 	let yymmddhh= getYymmddhh();
