@@ -80,8 +80,12 @@ app.post('/song/count', (req, res)=>{
                                 countSch.yymmdd = yymmdd;
                                 countSch.cnt = 1;
                                 countSch.ip = [ip];
-                                countSch.save((err,result)=>{
-                                    if(err) console.log('new today count save error...'.err)
+                                
+                                Count.remove({'yymmdd': { $ne: 'Total' }}, (err)=>{
+                                    if(err) console.log('remove before count error...'.err)
+                                    countSch.save((err,result)=>{
+                                        if(err) console.log('new today count save error...'.err)
+                                    })
                                 })
                                 todayCnt = 1;
                             }
