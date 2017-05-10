@@ -35,7 +35,7 @@ html(lang='en')
         
         $('#iframeDiv h4').on('click',function(){window.location.href = url+'/#'+(Number(curIndex)+1)})
         $('[name="trtr"]').each(function(i,obj){
-          $(obj).on('click',function(e){changeMusic(i)})
+          $(obj).on('click',changeMusic(i))
         })
         changeMusic(0)
       }
@@ -194,7 +194,7 @@ html(lang='en')
             th song
             th singer
           each obj in result
-            tr(name='trtr' index='#{obj.num}' id='#{obj.num}')
+            tr(name='trtr' id='#{obj.num}')
               input(type='hidden' name='videoId' id='videoId' value='#{obj.videoId}')
               input(type='hidden' name='srch' id='srch' value='#{obj.srch}')
               td(name='num') #{obj.num}
