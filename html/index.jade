@@ -195,7 +195,8 @@ html(lang='en')
             th singer
           each obj in result
             tr(name='trtr' index='#{obj.num}' id='#{obj.num}')
-              input(type='hidden' name='videoId' id='videoId')
+              input(type='hidden' name='videoId' id='videoId' value='#{obj.videoId}')
+              input(type='hidden' name='srch' id='srch' value='#{obj.srch}')
               td(name='num') #{obj.num}
               td(name='song') #{obj.song} 
               td(name='singer') #{obj.singer}

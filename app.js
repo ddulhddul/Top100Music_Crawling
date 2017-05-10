@@ -135,14 +135,15 @@ app.get('/song', (req, res)=>{
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
         }else{
+            getChartByUrlRequest(res);
             
             console.log(`${yymmddhh} result exists`)
-            res.render('index', {
-                result: result,
-                index: 0,
-                totNum: result.length,
-                yymmddhh: yymmddhh
-            });
+            // res.render('index', {
+            //     result: result,
+            //     index: 0,
+            //     totNum: result.length,
+            //     yymmddhh: yymmddhh
+            // });
         }
 
     })
@@ -160,17 +161,21 @@ function getChartByUrlRequest(res){
             let postElements = $('form table .wrap_song_info');
             let result = [];
             let index = 0;
-
+            
+            let reg = new RegExp('\\(.*?\\)','g')
+            
             postElements.each(function(i, obj) {
                 let $obj = $(obj);
                 let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
-                let encodedSrchparam = urlencode(song+' '+singer);
+                let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
                 let param = {
                     yymmddhh: yymmddhh,
                     num: ++index,
                     song : song,
                     singer : singer,
-                    url : 'https://www.youtube.com/results?search_query='+encodedSrchparam
+                    url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
+                    videoId: '',
+                    srch : song.replace(reg,'')+' '+singer.replace(reg,'')
                 }
                 result.push(param)
 
