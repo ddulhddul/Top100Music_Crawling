@@ -149,57 +149,68 @@ app.get('/song', (req, res)=>{
 })
 
 function getChartByUrlRequest(res){
-    Chart.remove({},(err)=>{
-        if(err) console.log('chart remove error...',err)
 
-        let yymmddhh = getYymmddhh()
-        console.log(yymmddhh, 'chart url request.. ')
-        urlRequest('http://www.melon.com/chart/')
-        .then(($)=>{
-            if(!$) res.send('Error')
-            let postElements = $('form table .wrap_song_info');
-            let result = [];
-            let index = 0;
-            
-            let reg = new RegExp('\\(.*?\\)','g')
-            
-            postElements.each(function(i, obj) {
-                let $obj = $(obj);
-                let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
-                let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
-                let param = {
-                    yymmddhh: yymmddhh,
-                    num: ++index,
-                    song : song,
-                    singer : singer,
-                    url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
-                    videoId: '',
-                    srch : song.replace(reg,'')+' '+singer.replace(reg,'')
-                }
-                result.push(param)
+    let yymmddhh = getYymmddhh()
+    console.log(yymmddhh, 'chart url request.. ')
+    urlRequest('http://www.melon.com/chart/')
+    .then(($)=>{
+        if(!$) res.send('Error')
+        let postElements = $('form table .wrap_song_info');
+        let result = [];
+        let index = 0;
+        let reg = new RegExp('\\(.*?\\)','g')
+        if(postElements.length > 0){
+            Chart.remove({},(err)=>{
+                if(err) console.log('chart remove error...',err)
+                postElements.each(function(i, obj) {
+                    let $obj = $(obj);
+                    let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
+                    let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
+                    let param = {
+                        yymmddhh: yymmddhh,
+                        num: ++index,
+                        song : song,
+                        singer : singer,
+                        url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
+                        videoId: '',
+                        srch : song.replace(reg,'')+' '+singer.replace(reg,'')
+                    }
+                    result.push(param)
 
-                let chart = new Chart();
-                chart.yymmddhh = yymmddhh;
-                chart.num = param.num;
-                chart.song = song;
-                chart.singer = singer;
-                chart.url = param.url;
-                chart.videoId = '';
-                chart.save((err,result)=>{
-                    if(err) console.log('chart insert error...'.err)
-                })
-            });
-            res.render('index', {
-                result: result,
-                index: 0,
-                totNum: result.length,
-                yymmddhh: yymmddhh
-            });
-            // res.redirect('/song/0')
-        }, (error)=>{
-            res.send('url request Call Erro :::\n'+error);
-        });
-    })
+                    let chart = new Chart();
+                    chart.yymmddhh = yymmddhh;
+                    chart.num = param.num;
+                    chart.song = song;
+                    chart.singer = singer;
+                    chart.url = param.url;
+                    chart.videoId = '';
+                    chart.save((err,result)=>{
+                        if(err) console.log('chart insert error...'.err)
+                    })
+                });
+                res.render('index', {
+                    result: result,
+                    index: 0,
+                    totNum: result.length,
+                    yymmddhh: yymmddhh
+                });
+            })
+        }else{
+            Chart.find({},null,{sort: {num: 1}},(err,chart)=>{
+                result = chart;
+                yymmddhh = chart[0].yymmddhh;
+                res.render('index', {
+                    result: result,
+                    index: 0,
+                    totNum: result.length,
+                    yymmddhh: yymmddhh
+                });
+            })
+        }
+
+    }, (error)=>{
+        res.send('url request Call Erro :::\n'+error);
+    });
 }
 
 app.get('/song/change', (req,res)=>{
