@@ -8,61 +8,68 @@ html(lang='en')
     script(src='/jquery-3.2.1.min.js')
     script(src='/bootstrap.min.js')
     script.
-      let btnClassNm = 'btn-info';
-      let url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
-      let curIndex = '#{index}', totNum = '#{totNum}'
+      var btnClassNm = 'btn-info';
+      var url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
+      var curIndex = '#{index}', totNum = '#{totNum}'
       
       function resize(){
-        if($('#listDiv').position().top < 50){
-          $('#listDiv').height(480)
-        }else{
-          $('#listDiv').height(window.innerHeight-$('#iframeDiv').height()-50)
+        var $listDiv = $('#listDiv');
+        if($listDiv.position().top < 50) $listDiv.height(480)
+        else $listDiv.height(window.innerHeight-$('#iframeDiv').height()-50)
+      }
+
+      function displayTime(){
+        var yymmddhh = '#{yymmddhh}'
+        if(yymmddhh){
+          $('.btn-group e').text(
+            [yymmddhh.substr(2,2),yymmddhh.substr(4,2),yymmddhh.substr(6,2)].join('.')+
+            ' '+yymmddhh.substr(8,2)+':00'
+          )
         }
       }
 
       window.onload = function(){
+        displayTime();
         resize();
         callCount();
         
-        $('#iframeDiv h4').on('click',()=>{window.location.href = url+'/#'+(Number(curIndex)+1)})
-        let trObj = document.getElementsByName('trtr');
-        for(let i = 0, len = trObj.length; i < len; i++){
-          trObj[i].onclick = function(){
-            let ii = Number(trObj[i].getAttribute("index"))-1;
-            changeMusic($('[name="url"]')[ii].value, ii)
-          }
-        }
-        changeMusic($('[name="url"]')[0].value, 0)
+        $('#iframeDiv h4').on('click',function(){window.location.href = url+'/#'+(Number(curIndex)+1)})
+        $('[name="trtr"]').each(function(i,obj){
+          $(obj).on('click',function(e){changeMusic(i)})
+        })
+        changeMusic(0)
       }
       function callCount(){
         $.ajax({ 
-          type: "POST",
+          type: "get",
           dataType: "json",
           url: url+'/count',
           success: function(data){        
             if(data.err){
               console.log(data.err)
             }else{
-              let total = data.total
-              let today = data.today
+              var total = data.total
+              var today = data.today
               //- console.log('data',data)
-              if(total && today) $('.btn-group i').text(`today ${today}  total ${total}`)
+              if(total && today) $('.btn-group i').text('today '+today+'  total '+total)
             }
           }
         });
       }
-      function changeMusic(id, ii){
+      function changeMusic(ii){
         
-        let videoId = $('[name="videoId"]')[ii].value;
-        let song = $('[name="song"]')[ii].value
-        let singer = $('[name="singer"]')[ii].value
+        var $tr = $($('[name="trtr"]')[ii])
+          ,$videoIdInput = $tr.find('[name="videoId"]')
+          ,videoId = $videoIdInput.val()
+          ,song = $tr.find('[name="song"]').text()
+          ,singer = $tr.find('[name="singer"]').text()
+
         $('title').text(song+' - '+singer)
         $('#iframeDiv h4 strong').text(song)
         $('#iframeDiv h4 small').html('&nbsp;&nbsp;'+singer)
-        $('[name="trtr"]').each((i,obj)=>{
-          $(obj).removeClass('success')
-        })
-        $($('[name="trtr"]')[ii]).addClass('success')
+        
+        $($('[name="trtr"]')[curIndex]).removeClass('success')
+        $tr.addClass('success')
         curIndex = ii;
 
         if(videoId){
@@ -70,19 +77,18 @@ html(lang='en')
           return;
         }
         $.ajax({ 
-              type: "POST",
+              type: "get",
               dataType: "json",
               data: {
-                url: id,
-                yymmddhh: $('[name="yymmddhh"]')[ii].value,
-                num: $('[name="num"]')[ii].value
+                yymmddhh: $('#yymmddhh').val(),
+                num: $tr.find('[name="num"]').text()
               },
               url: url+'/change',
               success: function(data){        
                   if(data.err){
                     console.log(data.err)
                   }else{
-                    $('[name="videoId"]')[ii].value = data.url;
+                    $videoIdInput.val(data.url)
                     if(player && player.cuePlaylist) player.cuePlaylist([data.url]);
                   }
               }
@@ -132,7 +138,7 @@ html(lang='en')
                 player.playVideo()
               }else if(event.data === 0) {
               //동영상 끝난 후 이벤트
-                let ii = curIndex;
+                var ii = curIndex;
                 switch($('#loop').val()){
                   case 's':
                     ii = (Number(curIndex)+1)%totNum;
@@ -141,23 +147,23 @@ html(lang='en')
                     ii = Math.floor(Math.random()*totNum)
                     break;
                 }
-                changeMusic($('[name="url"]')[ii].value, ii)
+                changeMusic(ii)
                 if(loop && loop!=1) window.location.href = url+'/#'+(Number(ii)+1)
               }
             }
             function nextSong(){
-              let ii = (Number(curIndex)+1)%totNum;
+              var ii = (Number(curIndex)+1)%totNum;
               if($('#loop').val() == 'r') ii = Math.floor(Math.random()*totNum)
-              changeMusic($('[name="url"]')[ii].value, ii)
+              changeMusic(ii)
               window.location.href = url+'/#'+(Number(ii)+1)
             }
             function btnClick(obj){
-              let $obj = $(obj);
+              var $obj = $(obj);
               if($obj.hasClass(btnClassNm)){
                 $obj.removeClass(btnClassNm);
                 $('#loop').val('')
               }else{
-                $('#btnGroup button').each((i, each)=>{
+                $('#btnGroup button').each(function(i, each){
                   $(each).removeClass(btnClassNm)
                 })
                 $obj.addClass(btnClassNm)
@@ -172,29 +178,27 @@ html(lang='en')
         button.btn.btn-danger(type='button' onclick='nextSong()')
           strong >
     div#content
-      div.btn-group(style='float:right;')
-        small
-          i visit
+      div.btn-group(style='width:100%')
+        div(style='float:right;')
+          small
+            i
+        div(style='float:left;')
+          small
+            e
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='#{loop}')
-        input(type='hidden' name='index' id='index' value='#{index}')
-        input(type='hidden' name='totNum' id='totNum' value='#{totNum}')
+        input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
         table(class='table table-striped table-hover')
           tr
             th #
             th song
             th singer
           each obj in result
-            input(type='hidden' name='yymmddhh' value='#{obj.yymmddhh}')
-            input(type='hidden' name='song' value='#{obj.song}')
-            input(type='hidden' name='singer' value='#{obj.singer}')
-            input(type='hidden' name='num' value='#{obj.num}')
-            input(type='hidden' name='url' value='#{obj.url}')
-            input(type='hidden' name='videoId' id='videoId')
             tr(name='trtr' index='#{obj.num}' id='#{obj.num}')
-              td #{obj.num}
-              td #{obj.song} 
-              td #{obj.singer}
+              input(type='hidden' name='videoId' id='videoId')
+              td(name='num') #{obj.num}
+              td(name='song') #{obj.song} 
+              td(name='singer') #{obj.singer}
     footer
       p 
         strong &nbsp;&nbsp;&nbsp; ddulh&nbsp;

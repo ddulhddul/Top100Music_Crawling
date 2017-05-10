@@ -51,7 +51,7 @@ function newCountSave(yymmdd, ip){
     })
 }
 
-app.post('/song/count', (req, res)=>{
+app.get('/song/count', (req, res)=>{
     try {
         let ip = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
@@ -140,7 +140,8 @@ app.get('/song', (req, res)=>{
             res.render('index', {
                 result: result,
                 index: 0,
-                totNum: result.length
+                totNum: result.length,
+                yymmddhh: yymmddhh
             });
         }
 
@@ -187,7 +188,8 @@ function getChartByUrlRequest(res){
             res.render('index', {
                 result: result,
                 index: 0,
-                totNum: result.length
+                totNum: result.length,
+                yymmddhh: yymmddhh
             });
             // res.redirect('/song/0')
         }, (error)=>{
@@ -196,35 +198,30 @@ function getChartByUrlRequest(res){
     })
 }
 
-app.post('/song/change', (req,res)=>{
-    let body = req.body;
+app.get('/song/change', (req,res)=>{
+    let param = req.query
+    ,paramYymmddhh = param.yymmddhh
+    ,paramNum = param.num
     
-    Chart.findOne({yymmddhh:body.yymmddhh, num:body.num},(err,chart)=>{
+    Chart.findOne({yymmddhh:paramYymmddhh, num:paramNum},(err,chart)=>{
         if(!err && chart && chart.videoId){
-            console.log(body.yymmddhh, ' ', body.num, ' videoId exists', chart.videoId)
+            console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
             res.send({url: chart.videoId});
         }else{
-            console.log(body.yymmddhh, ' ', body.num, ' videoId not exists')
-            urlRequest(body.url)
-            .then(($)=>{
-                if(!$) res.send({err:'Error'})
-                // let href = $('#results ol li ol li a').first().attr('href');
-                let href = $('.yt-lockup-video a').first().attr('href');
-                href = href.replace('/watch?v=','');
-
-                if(chart){
+            console.log(paramYymmddhh, ' ', paramNum, ' videoId not exists')
+            if(chart){
+                urlRequest(chart.url)
+                .then(($)=>{
+                    if(!$) res.send({err:'Error'})
+                    // let href = $('#results ol li ol li a').first().attr('href');
+                    let href = $('.yt-lockup-video a').first().attr('href');
+                    href = href.replace('/watch?v=','');
                     chart.videoId = href;
-                    chart.save((err)=>{
-                        if(err) console.log('chart videoId update error...',err)
-                    })
-                }
+                    chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
+                    res.send({url: href});
 
-                res.send({
-                    url: href
-                });
-            }, (error)=>{
-                res.send({err:'url request Call Erro :::\n'+error});
-            });
+                }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
+            }else res.send({err:'change error ... chart is not ready \n'+error});
         }
     })
 
