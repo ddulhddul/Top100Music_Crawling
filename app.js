@@ -135,14 +135,15 @@ app.get('/song', (req, res)=>{
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
         }else{
+            getChartByUrlRequest(res);
             
             console.log(`${yymmddhh} result exists`)
-            res.render('index', {
-                result: result,
-                index: 0,
-                totNum: result.length,
-                yymmddhh: yymmddhh
-            });
+            // res.render('index', {
+            //     result: result,
+            //     index: 0,
+            //     totNum: result.length,
+            //     yymmddhh: yymmddhh
+            // });
         }
 
     })
