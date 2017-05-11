@@ -37,7 +37,7 @@ html(lang='en')
         $('[name="trtr"]').each(function(i,obj){
           $(obj).on('click',function(){changeMusic(i)})
         })
-        changeMusic(0)
+        
       }
       function callCount(){
         $.ajax({ 
@@ -127,6 +127,7 @@ html(lang='en')
             }
             // autoplay video
             function onPlayerReady(event) {
+              changeMusic(0)
               //- console.log('onPlayerReady',event)
               //- player.cuePlaylist(quelist);
               //- event.target.playVideo()
