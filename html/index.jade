@@ -38,6 +38,9 @@ html(lang='en')
           $(obj).on('click',function(){changeMusic(i)})
         })
         changeMusic(0)
+
+        // initialize message component
+        loadMessage()
       }
       function callCount(){
         $.ajax({ 
@@ -94,6 +97,27 @@ html(lang='en')
               }
           });
       }
+
+      function sendMessage (event) {
+        let message = { writer: 'Anonymous', content: $('#messageForm').find('input[name=content]').val() }
+        $.post(`${url}/message`, message, (result) => {
+          // require error handling
+          loadMessage()
+        })
+      }
+
+      function loadMessage (pageIndex = $('#messageList').data('page-index')) {
+        $.getJSON(`${url}/message/${pageIndex}`, (result) => {
+          console.debug(result)
+          $('#messageList').empty().html(result.map((message) => {
+            return `<div class='list-group-item'>
+                      <p><strong>${message.writer}</strong></p>
+                      <p>${message.content}</p>
+                    </div>`
+          }))
+        })
+      }
+
   body(onresize="resize()")
     div#iframeDiv
       h4
@@ -200,6 +224,20 @@ html(lang='en')
               td(name='num') #{obj.num}
               td(name='song') #{obj.song} 
               td(name='singer') #{obj.singer}
+    
+    div#messageComponent.list-group
+      div.row
+        div.col-sm-offset-2.col-sm-8.col-md-offset-1.col-md-10
+          form#messageForm(onsubmit='return false')
+            div.list-group
+              div.list-group-item
+                div#messageForm.input-group
+                  input.form-control(type='text' name='content')
+                  span.input-group-btn
+                    button.btn.btn-default(type='button' onclick='sendMessage()') Send
+              div.list-group-item
+                div#messageList.list-group(data-page-index='0' style='text-align: left')
+
     footer
       p 
         strong &nbsp;&nbsp;&nbsp; ddulh&nbsp;

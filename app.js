@@ -273,7 +273,7 @@ app.post('/song/message', (req, res) => {
 
 // get Message list
 app.get('/song/message/:value', (req, res) => {
-    const FETCH_SIZE = 3
+    const FETCH_SIZE = 5
 
     // extract query start index
     let value = req.params.value
@@ -283,7 +283,7 @@ app.get('/song/message/:value', (req, res) => {
     // 이 경우 value는 pageIndex가 됩니다.
     Message
     .find({ state: 1 })
-    .skip(startIndex)
+    .skip(value)
     .limit(FETCH_SIZE)
     .sort({ date: -1 })
     .then((result) => {
