@@ -7,6 +7,7 @@ let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 let Chart = require('./Chart');
 let Count = require('./Count');
+let Message = require('./Message');
 
 let app = express()
 app.use(express.static(__dirname +'/css'));
@@ -240,6 +241,75 @@ app.get('/song/change', (req,res)=>{
         }
     })
 
+})
+
+// save Message
+app.post('/song/message', (req, res) => {
+    let message = new Message(req.body)
+    
+    Message
+    .findOne()
+    .sort({ date: -1 })
+    .select('seq')
+    .then((result) => {
+        // pre-process
+        message.seq = result ? result.seq + 1 : 1
+        message.date = new Date()
+        message.state = 1
+
+        // save
+        message
+        .save()
+        .then((saved) => {
+            console.log('saved', saved)
+            res.send(saved)
+        })
+    })
+    .catch((error) => {
+        console.error(error)
+        res.setStatus(500).send(error)
+    })
+})
+
+// get Message list
+app.get('/song/message/:value', (req, res) => {
+    const FETCH_SIZE = 3
+
+    // extract query start index
+    let value = req.params.value
+        value = Number.isNaN(value) ? 0 : Number(value)
+
+    // find message list for paging
+    // 이 경우 value는 pageIndex가 됩니다.
+    Message
+    .find({ state: 1 })
+    .skip(startIndex)
+    .limit(FETCH_SIZE)
+    .sort({ date: -1 })
+    .then((result) => {
+        console.log(result)
+        res.send(result)
+    })
+    .catch((error) => {
+        console.error(error)
+        res.setStatus(500).send(error)
+    })
+
+    // find message list for scroll paging
+    // 이 경우 index는 lastMessageSeq가 됩니다. - 작업중
+    // Message
+    // .find({ state: 1, seq: { $gt: index - (FETCH_SIZE + 1) } })
+    // .select('seq') // temp
+    // .sort({ date: -1 })
+    // .limit({})
+    // .then((result) => {
+    //     console.log(result)
+    //     res.send(result)
+    // })
+    // .catch((error) => {
+    //     console.error(error)
+    //     res.setStatus(500).send(error)
+    // })
 })
 
 let urlRequest = function (param) {
