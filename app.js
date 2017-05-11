@@ -236,7 +236,7 @@ app.get('/song/change', (req,res)=>{
                     res.send({url: href});
 
                 }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
-            }else res.send({err:'change error ... chart is not ready \n'+error});
+            }else res.send({err:'change error ... chart is not ready'});
         }
     })
 
