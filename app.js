@@ -184,6 +184,7 @@ function getChartByUrlRequest(res){
                     chart.singer = singer;
                     chart.url = param.url;
                     chart.videoId = '';
+                    chart.srch = param.srch;
                     chart.save((err,result)=>{
                         if(err) console.log('chart insert error...',err)
                     })
