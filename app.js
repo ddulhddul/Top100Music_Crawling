@@ -84,7 +84,7 @@ app.get('/song/count', (req, res)=>{
 
                             if(!count){
                                 Count.remove({'yymmdd': { $ne: 'Total' }}, (err)=>{
-                                    if(err) console.log('remove before count error...'.err)
+                                    if(err) console.log('remove before count error...',err)
                                     newCountSave(yymmdd);
                                 })
                                 todayCnt = 1;
@@ -98,7 +98,7 @@ app.get('/song/count', (req, res)=>{
                                 if(total){
                                     total.cnt +=1
                                     total.save((err,result)=>{
-                                        if(err) console.log('total save error...'.err)
+                                        if(err) console.log('total save error...',err)
                                     })
                                     totalCnt = total.cnt;
                                 }
@@ -108,7 +108,7 @@ app.get('/song/count', (req, res)=>{
                                     todayCnt = count.ip.length;
                                     count.cnt = todayCnt;
                                     count.save((err,result)=>{
-                                        if(err) console.log('iplist save error...'.err)
+                                        if(err) console.log('iplist save error...',err)
                                     })
                                 }
                             }
@@ -123,7 +123,7 @@ app.get('/song/count', (req, res)=>{
         }
         
     } catch (error) {
-        res.send({err:'Call Count Error'})
+        res.send({err:'Call Count Error'+error})
     }
 })
 
@@ -185,8 +185,9 @@ function getChartByUrlRequest(res){
                     chart.singer = singer;
                     chart.url = param.url;
                     chart.videoId = '';
+                    chart.srch = param.srch;
                     chart.save((err,result)=>{
-                        if(err) console.log('chart insert error...'.err)
+                        if(err) console.log('chart insert error...',err)
                     })
                 });
                 res.render('index', {
@@ -237,7 +238,7 @@ app.get('/song/change', (req,res)=>{
                     res.send({url: href});
 
                 }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
-            }else res.send({err:'change error ... chart is not ready \n'+error});
+            }else res.send({err:'change error ... chart is not ready'});
         }
     })
 
