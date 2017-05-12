@@ -11,10 +11,14 @@ let Count = require('./Count');
 let Message = require('./Message');
 
 let app = express()
-app.use(express.static(__dirname +'/css'));
+app.use(express.static(__dirname +'/static'));
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.set('view engine', 'jade');
 app.set('views', 'html');
+
+//routing
+let message = require('./router/message')(app);
+app.use('/song/message',message);
 
 let db = mongoose.connection;
 db.on('error', console.error);
