@@ -6,6 +6,7 @@ var messageSchema = new Schema({
     writer: String,
     content: String,
     date: Date,
+    formattedDate: String,
     state: Number
 });
 

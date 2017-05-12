@@ -1,0 +1,67 @@
+div#messageSidebar(data-open='false', data-message-count='0')
+  div.messageSidebar
+    form#messageForm(onsubmit='return false')
+      div.input-group
+        input.form-control(type='text' name='content' onkeydown='if ( event.which === 13 ) { sendMessage() }')
+        span.input-group-btn
+          button.btn.btn-default(type='button' onclick='sendMessage()') Send
+    ul#messageList
+  div.messageSidebarCurtain(onclick='toggleNav()')
+            
+  script.
+
+    var messageSidebarStyle = {
+      open: { 'width': '80%', 'max-width': '640px' },
+      close: { 'width': '0' }
+    }
+
+    $(function () {
+      // global toggle event binding
+      $('body').find('*[data-role="toggle-message-sidebar"]').on('click', toggleNav)
+
+      // initialization
+      resize()
+      loadMessage()
+    })
+
+    function toggleNav () {
+      var isOpen = Boolean($('#messageSidebar').data('open'))
+      $('#messageSidebar')
+        .data('open', !isOpen)
+        .find('.messageSidebar')
+        .css(isOpen ? messageSidebarStyle.close : messageSidebarStyle.open)
+        .end()
+        .find('.messageSidebarCurtain')
+        .css(isOpen ? { width: '0' } : { width: '100%' })
+    }
+
+    function sendMessage () {
+      var writer = 'Anonymous'
+      var content = $('#messageForm').find('input[name=content]').val().trim()
+
+      // validate
+      if ( content.length <= 0 ) { return }
+    
+      $.post(url + '/message', { writer: writer, content: content }, function (messageList) {
+        $('#messageForm').find('input[name=content]').val('')
+        _renderMessage(messageList)
+      })
+    }
+
+    function loadMessage () {
+      var messageCount = $('#messageSidebar').data('message-count')
+      $.getJSON(url + '/message/' + messageCount, _renderMessage)
+    }
+
+    function _renderMessage(messageList) {
+      console.log('before %s, after %s', $('#messageSidebar').data('message-count'), messageList.length)
+      $('#messageSidebar').data('message-count', messageList.length)
+      $('#messageList').empty().html(messageList.map(function (message) {
+          var html = ''
+          html += '<li>'
+          html += '<h6>' + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
+          html += '<small class="content">' + message.content + '</small>'
+          html += '<li>'
+          return html
+        }))
+    }

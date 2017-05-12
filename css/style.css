@@ -27,3 +27,67 @@ tr{
     display:inline-block;
     max-width: 500px;
 }
+
+/* The side navigation menu */
+button#messageSidebarBtn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+}
+
+.messageSidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 8081;
+    top: 0;
+    right: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 25px;
+    transition: 0.5s;
+}
+
+.messageSidebarCurtain {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 8080;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.4);
+    overflow-x: hidden;
+}
+
+.messageSidebar form {
+    padding: 16px;
+    position: absolute;
+    top: 0px;
+}
+
+.messageSidebar ul {
+    padding-top: 32px;
+    overflow-y: auto;
+}
+
+.messageSidebar ul li {
+    padding: 3px 6px;
+    list-style: none;
+    color: #f1f1f1;
+    display: block;
+    text-align: left;
+}
+
+.messageSidebar ul li .content {
+    padding-left: 8px;
+}
+
+/* Position and style the close button (top right corner) */
+.messageSidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    z-index: 8082;
+}

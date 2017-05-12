@@ -5,6 +5,7 @@ let cheerio = require('cheerio');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+let moment = require('moment');
 let Chart = require('./Chart');
 let Count = require('./Count');
 let Message = require('./Message');
@@ -262,7 +263,6 @@ app.post('/song/message', (req, res) => {
         message
         .save()
         .then((saved) => {
-            console.log('saved', saved)
             res.send(saved)
         })
     })
@@ -273,44 +273,33 @@ app.post('/song/message', (req, res) => {
 })
 
 // get Message list
-app.get('/song/message/:value', (req, res) => {
-    const FETCH_SIZE = 5
+app.get('/song/message/:messageCount', (req, res) => {
+    const INITIAL_FETCH_SIZE = 10
+    const ADDITIONAL_FETCH_SIZE = 5
 
-    // extract query start index
-    let value = req.params.value
-        value = Number.isNaN(value) ? 0 : Number(value)
+    // extract existing message count
+    let messageCount = Number.isNaN(req.params.messageCount) ? 0 : Number(req.params.messageCount)
+    // determine message count for querying
+    let fetchCount = messageCount === 0 ? INITIAL_FETCH_SIZE : messageCount + ADDITIONAL_FETCH_SIZE
 
     // find message list for paging
     // 이 경우 value는 pageIndex가 됩니다.
     Message
     .find({ state: 1 })
-    .skip(value)
-    .limit(FETCH_SIZE)
+    .limit(fetchCount)
     .sort({ date: -1 })
     .then((result) => {
-        console.log(result)
+        // post-process
+        result.forEach((message) => {
+            message.formattedDate = moment(message.date).locale('ko').format('LLL')
+        })
+
         res.send(result)
     })
     .catch((error) => {
         console.error(error)
         res.setStatus(500).send(error)
     })
-
-    // find message list for scroll paging
-    // 이 경우 index는 lastMessageSeq가 됩니다. - 작업중
-    // Message
-    // .find({ state: 1, seq: { $gt: index - (FETCH_SIZE + 1) } })
-    // .select('seq') // temp
-    // .sort({ date: -1 })
-    // .limit({})
-    // .then((result) => {
-    //     console.log(result)
-    //     res.send(result)
-    // })
-    // .catch((error) => {
-    //     console.error(error)
-    //     res.setStatus(500).send(error)
-    // })
 })
 
 let urlRequest = function (param) {
