@@ -33,12 +33,6 @@ tr{
 }
 
 /* The side navigation menu */
-button#messageSidebarBtn {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-}
-
 .messageSidebar {
     height: 100%;
     width: 0;
@@ -70,7 +64,7 @@ button#messageSidebarBtn {
 }
 
 .messageSidebar ul {
-    padding-top: 32px;
+    padding: 32px 16px 0px 16px;
     overflow-y: auto;
 }
 

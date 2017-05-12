@@ -5,10 +5,8 @@ let cheerio = require('cheerio');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-let moment = require('moment');
 let Chart = require('./Chart');
 let Count = require('./Count');
-let Message = require('./Message');
 
 let app = express()
 app.use(express.static(__dirname +'/static'));
@@ -247,63 +245,6 @@ app.get('/song/change', (req,res)=>{
         }
     })
 
-})
-
-// save Message
-app.post('/song/message', (req, res) => {
-    let message = new Message(req.body)
-    
-    Message
-    .findOne()
-    .sort({ date: -1 })
-    .select('seq')
-    .then((result) => {
-        // pre-process
-        message.seq = result ? result.seq + 1 : 1
-        message.date = new Date()
-        message.state = 1
-
-        // save
-        message
-        .save()
-        .then((saved) => {
-            res.send(saved)
-        })
-    })
-    .catch((error) => {
-        console.error(error)
-        res.setStatus(500).send(error)
-    })
-})
-
-// get Message list
-app.get('/song/message/:messageCount', (req, res) => {
-    const INITIAL_FETCH_SIZE = 10
-    const ADDITIONAL_FETCH_SIZE = 5
-
-    // extract existing message count
-    let messageCount = Number.isNaN(req.params.messageCount) ? 0 : Number(req.params.messageCount)
-    // determine message count for querying
-    let fetchCount = messageCount === 0 ? INITIAL_FETCH_SIZE : messageCount + ADDITIONAL_FETCH_SIZE
-
-    // find message list for paging
-    // 이 경우 value는 pageIndex가 됩니다.
-    Message
-    .find({ state: 1 })
-    .limit(fetchCount)
-    .sort({ date: -1 })
-    .then((result) => {
-        // post-process
-        result.forEach((message) => {
-            message.formattedDate = moment(message.date).locale('ko').format('LLL')
-        })
-
-        res.send(result)
-    })
-    .catch((error) => {
-        console.error(error)
-        res.setStatus(500).send(error)
-    })
 })
 
 let urlRequest = function (param) {

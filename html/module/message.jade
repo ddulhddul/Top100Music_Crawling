@@ -1,29 +1,42 @@
 div#messageSidebar(data-open='false', data-message-count='0')
   div.messageSidebar
     form#messageForm(onsubmit='return false')
-      div.input-group
-        input.form-control(type='text' name='content' onkeydown='if ( event.which === 13 ) { sendMessage() }')
-        span.input-group-btn
-          button.btn.btn-default(type='button' onclick='sendMessage()') Send
+      div.row
+        div.col-xs-4
+          input.form-control.input-sm(type='text' name='writer' placeholder='Anonymous')
+        div.col-xs-8
+          div.input-group
+            input.form-control.input-sm(type='text' name='content' onkeydown='if ( event.which === 13 ) { sendMessage() }')
+            span.input-group-btn
+              button.btn.btn-default.btn-sm(type='button' onclick='sendMessage()') Send
+      // div.input-group
+      //   input.form-control(type='text' name='content' onkeydown='if ( event.which === 13 ) { sendMessage() }')
+      //   span.input-group-btn
+      //     button.btn.btn-default(type='button' onclick='sendMessage()') Send
     ul#messageList
   div.messageSidebarCurtain(onclick='toggleNav()')
             
   script.
 
+    // 메시지 목록 토글 스타일
     var messageSidebarStyle = {
       open: { 'width': '80%', 'max-width': '640px' },
       close: { 'width': '0' }
     }
 
+    // puclic function
+    //  - 모듈 최초 로드시 호출된다.
     $(function () {
-      // global toggle event binding
+      // 부모 문서에서 특정 속성을 가진 요소에 이벤트를 바인딩한다.
       $('body').find('*[data-role="toggle-message-sidebar"]').on('click', toggleNav)
 
-      // initialization
+      // Initialization
       resize()
       loadMessage()
     })
 
+    // puclic function
+    //  - 메시지 목록을 열거나 닫는다.
     function toggleNav () {
       var isOpen = Boolean($('#messageSidebar').data('open'))
       $('#messageSidebar')
@@ -35,33 +48,49 @@ div#messageSidebar(data-open='false', data-message-count='0')
         .css(isOpen ? { width: '0' } : { width: '100%' })
     }
 
+    // service function
+    //  - 메시지를 전송한다.
     function sendMessage () {
-      var writer = 'Anonymous'
+      var writer = $('#messageForm').find('input[name=writer]').val().trim() || 'Anonymous'
       var content = $('#messageForm').find('input[name=content]').val().trim()
 
       // validate
       if ( content.length <= 0 ) { return }
     
-      $.post(url + '/message', { writer: writer, content: content }, function (messageList) {
-        $('#messageForm').find('input[name=content]').val('')
-        _renderMessage(messageList)
-      })
+      $('#messageForm').find('input[name=content]').val('')
+      var messageCount = $('#messageSidebar').data('message-count')
+      $.post(url + '/message', { writer: writer, content: content, messageCount: messageCount }, _renderResult)
     }
 
+    // service function
+    //  - 메시지를 조회한다.
     function loadMessage () {
       var messageCount = $('#messageSidebar').data('message-count')
-      $.getJSON(url + '/message/' + messageCount, _renderMessage)
+      $.getJSON(url + '/message/' + messageCount, _renderResult)
     }
 
-    function _renderMessage(messageList) {
-      console.log('before %s, after %s', $('#messageSidebar').data('message-count'), messageList.length)
-      $('#messageSidebar').data('message-count', messageList.length)
-      $('#messageList').empty().html(messageList.map(function (message) {
-          var html = ''
-          html += '<li>'
-          html += '<h6>' + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
-          html += '<small class="content">' + message.content + '</small>'
-          html += '<li>'
-          return html
-        }))
+    // private function
+    //  - 조회된 메시지를 출력한다.
+    function _renderResult (result) {
+      // 재조회를 위해 현재 메시지 개수를 저장한다.
+      $('#messageSidebar').data('message-count', result.messageList.length)
+
+      // 조회된 메시지를 메시지 목록에 출력한다.
+      $('#messageList').empty().html(result.messageList.map(function (message) {
+        // XXX temporal code
+        var showSeq = false
+        var seqStr = showSeq ? '[' + message.seq + '] ' : ''
+
+        var html = ''
+        html += '<li>'
+        html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
+        html += '<small class="content">' + message.content + '</small>'
+        html += '<li>'
+        return html
+      }))
+
+      // 조회된 메시지보다 많은 숫자의 메시지가 존재할 경우, 추가 조회를 위한 버튼을 출력한다.
+      if ( result.messageList.length < result.totalCount ) {
+        $('#messageList').append($('<li style="text-align: center; cursor: pointer;"><h4>More</h4></li>').click(loadMessage))
+      }
     }

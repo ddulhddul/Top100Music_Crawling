@@ -172,7 +172,7 @@ html(lang='en')
               }
             }
       div.btn-group(role='group')
-        button.btn.btn-success(type='button' data-role='toggle-message-sidebar' onclick='alert("message button")')
+        button.btn.btn-success(type='button' data-role='toggle-message-sidebar')
           span(class='glyphicon glyphicon-comment' aria-hidden="true")
       div.btn-group#btnGroup(role='group')
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
@@ -204,8 +204,6 @@ html(lang='en')
               td(name='num') #{obj.num}
               td(name='song') #{obj.song} 
               td(name='singer') #{obj.singer}
-
-    button.btn.btn-defualt(data-role='toggle-message-sidebar') Open message sidebar
 
     footer
       p 
