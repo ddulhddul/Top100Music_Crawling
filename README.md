@@ -21,6 +21,46 @@ npm install body-parser --save
 sudo yum install epel-release
 sudo yum install nodejs
 sudo yum install npm
+
+
+
+git clone https://github.com/ddulhddul/Top100Music_Crawling.git youtube
+```
+
+## centos mongodb setup
+[http://yakolla.tistory.com/55](http://yakolla.tistory.com/55)
+
+```linux
+$ vi /etc/yum.repos.d/mongodb.repo
+    [mongodb]
+    name=MongoDB Repository
+    baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+    gpgcheck=0
+    enabled=1
+
+$ yum -y install mongodb-org
+
+$ vi /etc/yum.conf
+exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools
+
+# execute
+$ service mongod start
+$ service mongod restart
+$ service mongod stop
+ 
+# auto excute on boot
+$ chkconfig mongod on
+
+# open firewall
+$ iptables -I INPUT 1 -p tcp --dport 27017 -j ACCEPT
+$ service iptables save
+$ service iptables restart
+```
+
+## pm2
+```linux
+npm install pm2 -g
+pm2 start app.js
 ```
 
 ## youtube end event
