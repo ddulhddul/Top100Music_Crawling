@@ -27,3 +27,7 @@ tr{
     display:inline-block;
     max-width: 500px;
 }
+
+.btn-group{
+    padding: 10px 5px 0px 5px;
+}

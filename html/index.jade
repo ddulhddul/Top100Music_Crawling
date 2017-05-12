@@ -3,10 +3,10 @@ html(lang='en')
   head
     title Music Top 100 Youtube
     meta(charset='UTF-8' name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', type='text/css', href='/bootstrap.min.css')
-    link(rel='stylesheet', type='text/css', href='/style.css')
-    script(src='/jquery-3.2.1.min.js')
-    script(src='/bootstrap.min.js')
+    link(rel='stylesheet', type='text/css', href='/css/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='/css/style.css')
+    script(src='/css/jquery-3.2.1.min.js')
+    script(src='/css/bootstrap.min.js')
     script.
       var btnClassNm = 'btn-info';
       var url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
@@ -171,11 +171,14 @@ html(lang='en')
                 $('#loop').val($obj.attr('name'))
               }
             }
-      div.btn-group#btnGroup(role='group', aria-label='...' style="padding: 10px;padding-right:0px;padding-bottom:0px;")
+      div.btn-group(role='group')
+        button.btn.btn-success(type='button' data-role='toggle-message-sidebar' onclick='alert("message button")')
+          span(class='glyphicon glyphicon-comment' aria-hidden="true")
+      div.btn-group#btnGroup(role='group')
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='1') 1
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='s') Seq
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='r') Rand
-      div.btn-group(role='group', aria-label='...' style="padding: 10px;padding-left:10px;padding-bottom:0px;")
+      div.btn-group(role='group')
         button.btn.btn-danger(type='button' onclick='nextSong()')
           strong >
     div#content
@@ -203,5 +206,8 @@ html(lang='en')
               td(name='singer') #{obj.singer}
     footer
       p 
-        strong &nbsp;&nbsp;&nbsp; ddulh&nbsp;
-        small ddulhddul@gmail.com 
+        strong(style='cursor:pointer;margin-right:5px;' onclick='window.open("https://github.com/ddulhddul")') ddulh
+        small ddulhddul@gmail.com
+        span(style='margin-left:10px;font-size:11px;' ) contributed by 
+          b(style='cursor:pointer;' onclick='window.open("https://github.com/Kitchu0401")') kitchu
+  include message
