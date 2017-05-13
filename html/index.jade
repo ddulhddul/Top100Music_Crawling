@@ -32,11 +32,10 @@ html(lang='en')
         displayTime();
         resize();
         callCount();
-        
-        $('#iframeDiv h4').on('click',function(){window.location.href = url+'/#'+(Number(curIndex)+1)})
-        $('[name="trtr"]').each(function(i,obj){
-          $(obj).on('click',function(){changeMusic(i)})
-        })
+      }
+
+      function titleClick(){
+        window.location.href = url+'/#'+(Number(curIndex)+1)
       }
       function callCount(){
         $.ajax({ 
@@ -55,10 +54,26 @@ html(lang='en')
           }
         });
       }
-      function changeMusic(ii){
+      function changeMusic(ii, loopR, clicked){
         
         var $tr = $($('[name="trtr"]')[ii])
-          ,$videoIdInput = $tr.find('[name="videoId"]')
+        let $tdInputChk = $('td input:checked');
+        // select song condition
+        if(!clicked &&
+            !$('th[name="select"]').attr('hidden') && 
+            !$tr.find('input:checked').length && 
+            $tdInputChk.length > 0){
+           if(loopR){
+            var nextObj = $tdInputChk[Math.floor($tdInputChk.length * Math.random())]
+            ii = $(nextObj).parent().parent().attr('id')-1
+            $tr = $($('[name="trtr"]')[ii])
+           }else{
+            nextSong(ii); 
+            return;
+           }
+        }
+        
+        var $videoIdInput = $tr.find('[name="videoId"]')
           ,videoId = $videoIdInput.val()
           ,song = $tr.find('[name="song"]').text()
           ,singer = $tr.find('[name="singer"]').text()
@@ -70,6 +85,7 @@ html(lang='en')
         $($('[name="trtr"]')[curIndex]).removeClass('success')
         $tr.addClass('success')
         curIndex = ii;
+        if(!clicked) window.location.href = url+'/#'+(Number(ii)+1);
 
         if(videoId){
           player.cuePlaylist([videoId]);
@@ -93,10 +109,29 @@ html(lang='en')
               }
           });
       }
+      function selectSongChk(target){
+        var $thselect = $('th[name="select"]');
+        var toHidden = !$thselect.attr('hidden');
+        $thselect.attr('hidden', toHidden);
+        $('td[name="select"]').each(function(i,obj){
+          $(obj).attr('hidden', toHidden);
+        })
+
+        var $target = $(target);
+        if(!toHidden){$target.removeClass('btn-default'); $target.addClass('btn-warning')}
+        else{$target.removeClass('btn-warning'); $target.addClass('btn-default')}
+      }
+
+      function toggleChange(args){
+        var checked = args.checked;
+        $('td[name="select"] input').each(function(i,obj){
+          $(obj).attr('checked',checked);
+        })
+      }
 
   body(onresize="resize()")
     div#iframeDiv
-      h4
+      h4(onclick='titleClick()')
         strong #{song}
         span(style='white-space: nowrap')
           small &nbsp;&nbsp;#{singer}
@@ -149,14 +184,14 @@ html(lang='en')
                     break;
                 }
                 changeMusic(ii)
-                if(loop && loop!=1) window.location.href = url+'/#'+(Number(ii)+1)
               }
             }
-            function nextSong(){
-              var ii = (Number(curIndex)+1)%totNum;
-              if($('#loop').val() == 'r') ii = Math.floor(Math.random()*totNum)
-              changeMusic(ii)
-              window.location.href = url+'/#'+(Number(ii)+1)
+            function nextSong(arg){
+              args = arg === undefined ? curIndex : arg;
+              var ii = (Number(args)+1)%totNum;
+              var loopR  = $('#loop').val() == 'r';
+              if(loopR) ii = Math.floor(Math.random()*totNum)
+              changeMusic(ii, loopR)
             }
             function btnClick(obj){
               var $obj = $(obj);
@@ -166,6 +201,8 @@ html(lang='en')
               $obj.addClass(btnClassNm)
               $('#loop').val($obj.attr('name'))
             }
+      div.btn-group(role='group')
+        button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='border-color:white; padding:0px') Select
       div.btn-group(role='group')
         button.btn.btn-success(type='button' data-role='toggle-message-sidebar')
           span(class='glyphicon glyphicon-comment' aria-hidden="true")
@@ -189,6 +226,8 @@ html(lang='en')
         input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
         table(class='table table-striped table-hover')
           tr
+            th(name='select' hidden=true)
+              input(type='checkbox' onchange='toggleChange(this)')
             th #
             th song
             th singer
@@ -196,9 +235,11 @@ html(lang='en')
             tr(name='trtr' id='#{obj.num}')
               input(type='hidden' name='videoId' id='videoId' value='#{obj.videoId}')
               input(type='hidden' name='srch' id='srch' value='#{obj.srch}')
-              td(name='num') #{obj.num}
-              td(name='song') #{obj.song} 
-              td(name='singer') #{obj.singer}
+              td(name='select' hidden=true)
+                input(type='checkbox')
+              td(name='num' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.num}
+              td(name='song' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.song} 
+              td(name='singer' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.singer}
 
     footer
       p 
