@@ -141,8 +141,19 @@ app.get('/song', (req, res)=>{
         }else{
             
             console.log(`${yymmddhh} result exists`)
+            
+            //prevent dup data(temp)
+            let filteredResult = [];
+            let tempIndex = -1;
+            for (let i = 0; i < result.length; i++) {
+                let element = result[i];
+                if(element.num == tempIndex) continue;
+                tempIndex = element.num;
+                filteredResult.push(element);
+            }
+            
             res.render('index', {
-                result: result,
+                result: filteredResult,
                 index: 0,
                 totNum: result.length,
                 yymmddhh: yymmddhh
