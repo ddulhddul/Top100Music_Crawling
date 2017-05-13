@@ -1,5 +1,4 @@
-module.exports = (app) => {
-    let express = require('express')
+module.exports = (express) => {
     let moment = require('moment')
     let Message = require('../model/Message')
 
@@ -24,6 +23,10 @@ module.exports = (app) => {
                 totalCount: results[0],
                 messageList: results[1]
             })
+        })
+        .catch((error) => {
+            console.error(error)
+            res.setStatus(500).send(error)
         })
     })
 
