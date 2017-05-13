@@ -15,7 +15,8 @@ div#messageSidebar(data-open='false', data-message-count='0')
       //     button.btn.btn-default(type='button' onclick='sendMessage()') Send
     ul#messageList
   div.messageSidebarCurtain(onclick='toggleNav()')
-            
+
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js')
   script.
 
     // 메시지 목록 토글 스타일
@@ -24,16 +25,52 @@ div#messageSidebar(data-open='false', data-message-count='0')
       close: { 'width': '0' }
     }
 
+    var __service = {
+      
+      http: function () {
+        return {
+
+          sendMessage: function (message, callback) {
+            // validate
+            if ( !message ) { return }
+            if ( message.content.length <= 0 ) { return }
+          
+            $('#messageForm').find('input[name=content]').val('')
+            var messageCount = $('#messageSidebar').data('message-count')
+            $.post(url + '/message', message, callback)
+          },
+
+          loadMessage: function (messageCount, callback) {
+            var messageCount = $('#messageSidebar').data('message-count')
+            $.getJSON(url + '/message/' + messageCount, callback)
+          }
+
+        }
+      }
+
+    }
+
     // puclic function
     //  - 모듈 최초 로드시 호출된다.
     $(function () {
       // 부모 문서에서 특정 속성을 가진 요소에 이벤트를 바인딩한다.
       $('body').find('*[data-role="toggle-message-sidebar"]').on('click', toggleNav)
 
+      __service = __service.http
+
       // Initialization
       resize()
       loadMessage()
     })
+    
+    function initConnection () {
+      var socket = io('http://localhost')
+
+      socket.on('welcome', function(data) {
+        console.log(data)
+        socket.emit('sendMessage', { message: 'How are you?' })
+      })
+    }
 
     // puclic function
     //  - 메시지 목록을 열거나 닫는다.
@@ -50,7 +87,7 @@ div#messageSidebar(data-open='false', data-message-count='0')
 
     // service function
     //  - 메시지를 전송한다.
-    function sendMessage () {
+    function sendMessage (message) {
       var writer = $('#messageForm').find('input[name=writer]').val().trim() || 'Anonymous'
       var content = $('#messageForm').find('input[name=content]').val().trim()
 

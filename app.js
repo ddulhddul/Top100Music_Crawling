@@ -1,4 +1,4 @@
-let express = require('express')
+let express = require('express');
 let urlencode = require('urlencode');
 let request = require('request');
 let cheerio = require('cheerio');
@@ -17,6 +17,10 @@ app.set('views', 'html');
 //routing
 let message = require('./router/message')(app);
 app.use('/song/message',message);
+
+// socket.io
+let io = require('socket.io').listen(80)
+require('./socket.io/message')(io.sockets)
 
 let db = mongoose.connection;
 db.on('error', console.error);
