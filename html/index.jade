@@ -106,6 +106,10 @@ html(lang='en')
                     $videoIdInput.val(data.url)
                     if(player && player.cuePlaylist) player.cuePlaylist([data.url]);
                   }
+              },
+              error: function (error) {
+                  console.log('change ajax call error :', $('#yymmddhh').val(),' ',$tr.find('[name="num"]').text(), error);
+                  nextSong();
               }
           });
       }
