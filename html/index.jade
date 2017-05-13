@@ -202,8 +202,6 @@ html(lang='en')
               $('#loop').val($obj.attr('name'))
             }
       div.btn-group(role='group')
-        button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='border-color:white; padding:0px') Select
-      div.btn-group(role='group')
         button.btn.btn-success(type='button' data-role='toggle-message-sidebar')
           span(class='glyphicon glyphicon-comment' aria-hidden="true")
       div.btn-group#btnGroup(role='group')
@@ -215,12 +213,13 @@ html(lang='en')
           strong >
     div#content
       div.btn-group(style='width:100%')
+        small
+          e
         div(style='float:right;')
           small
             i
         div(style='float:left;')
-          small
-            e
+          button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') Select
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='s')
         input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
