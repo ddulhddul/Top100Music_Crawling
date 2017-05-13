@@ -123,6 +123,6 @@ div#messageSidebar(data-open='false', data-last-seq='0')
           html += '<li class="message" data-seq="' + message.seq + '">'
           html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
           html += '<small class="content">' + message.content + '</small>'
-          html += '<li>'
+          html += '</li>'
       $('#messageList').prepend(html)
     }
