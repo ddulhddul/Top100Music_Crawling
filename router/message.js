@@ -42,6 +42,7 @@ module.exports = (express) => {
             // pre-process
             message.seq = result ? result.seq + 1 : 1
             message.date = new Date()
+            message.formattedDate = moment(message.date).locale('ko').format('LLL')
             message.state = 1
 
             // save
@@ -72,14 +73,7 @@ module.exports = (express) => {
             .find({ state: 1 })
             .limit(loadCount)
             .sort({ date: -1 })
-            .then((result) => {
-                // post-process
-                result.forEach((message) => {
-                    message.formattedDate = moment(message.date).locale('ko').format('LLL')
-                })
-
-                onFurfilled(result)
-            })
+            .then(onFurfilled)
         })
     }
 
