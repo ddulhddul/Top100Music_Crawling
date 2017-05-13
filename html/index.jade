@@ -57,7 +57,7 @@ html(lang='en')
       function changeMusic(ii, loopR, clicked){
         
         var $tr = $($('[name="trtr"]')[ii])
-        let $tdInputChk = $('td input:checked');
+        var $tdInputChk = $('td input:checked');
         // select song condition
         if(!clicked &&
             !$('th[name="select"]').attr('hidden') && 
