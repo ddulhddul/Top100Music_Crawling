@@ -111,7 +111,6 @@ div#messageSidebar(data-open='false', data-last-seq='0')
 
       // 조회된 메시지보다 많은 숫자의 메시지가 존재할 경우, 추가 조회를 위한 버튼을 출력한다.
       var currentCount = $('#messageList').find('li.message').length
-      console.log(currentCount, result.totalCount)
       $('#moreBtn').css(currentCount < result.totalCount ? moreBtnStyle.show : moreBtnStyle.hide)
     }
 
