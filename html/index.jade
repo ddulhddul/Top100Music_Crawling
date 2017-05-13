@@ -123,9 +123,9 @@ html(lang='en')
       }
 
       function toggleChange(args){
-        var checked = args.checked;
+        var checked = !!args.checked;
         $('td[name="select"] input').each(function(i,obj){
-          $(obj).attr('checked',checked);
+          obj.checked = checked;
         })
       }
 
