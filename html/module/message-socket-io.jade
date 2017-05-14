@@ -79,6 +79,7 @@ div#messageSidebar(data-open='false', data-last-seq='0')
       // validate
       if ( content.length <= 0 ) { return }
 
+      $('#messageForm').find('input[name=content]').val('')
       socket.emit('sendMessage', { writer: writer, content: content })
     }
 
