@@ -1,5 +1,4 @@
-module.exports = (app) => {
-    let express = require('express')
+module.exports = (express) => {
     let moment = require('moment')
     let Message = require('../model/Message')
 
@@ -25,6 +24,10 @@ module.exports = (app) => {
                 messageList: results[1]
             })
         })
+        .catch((error) => {
+            console.error(error)
+            res.setStatus(500).send(error)
+        })
     })
 
     // save Message
@@ -39,6 +42,7 @@ module.exports = (app) => {
             // pre-process
             message.seq = result ? result.seq + 1 : 1
             message.date = new Date()
+            message.formattedDate = moment(message.date).locale('ko').format('LLL')
             message.state = 1
 
             // save
@@ -69,14 +73,7 @@ module.exports = (app) => {
             .find({ state: 1 })
             .limit(loadCount)
             .sort({ date: -1 })
-            .then((result) => {
-                // post-process
-                result.forEach((message) => {
-                    message.formattedDate = moment(message.date).locale('ko').format('LLL')
-                })
-
-                onFurfilled(result)
-            })
+            .then(onFurfilled)
         })
     }
 

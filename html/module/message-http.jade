@@ -15,7 +15,7 @@ div#messageSidebar(data-open='false', data-message-count='0')
       //     button.btn.btn-default(type='button' onclick='sendMessage()') Send
     ul#messageList
   div.messageSidebarCurtain(onclick='toggleNav()')
-            
+
   script.
 
     // 메시지 목록 토글 스타일
@@ -50,7 +50,7 @@ div#messageSidebar(data-open='false', data-message-count='0')
 
     // service function
     //  - 메시지를 전송한다.
-    function sendMessage () {
+    function sendMessage (message) {
       var writer = $('#messageForm').find('input[name=writer]').val().trim() || 'Anonymous'
       var content = $('#messageForm').find('input[name=content]').val().trim()
 
@@ -85,7 +85,7 @@ div#messageSidebar(data-open='false', data-message-count='0')
         html += '<li>'
         html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
         html += '<small class="content">' + message.content + '</small>'
-        html += '<li>'
+        html += '</li>'
         return html
       }))
 
