@@ -62,7 +62,7 @@ div#messageSidebar(data-open='false', data-last-seq='0')
     //  - socket 커넥션을 생성하고 전역 이벤트를 할당한다.
     function initConnection () {
       // root socket object
-      socket = io('http://127.0.0.1:3001')
+      socket = io.connect(url.replace(new RegExp(':([0-9]+)/song(.*)$'), '')+':3001')
       
       // recieve initialization data
       socket.on('fetchMessage', _renderResult)
