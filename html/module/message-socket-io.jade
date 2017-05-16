@@ -98,15 +98,9 @@ div#messageSidebar(data-open='false', data-last-seq='0')
       var lastSeq = listLength > 0 ? result.messageList[listLength - 1].seq : -1
       $('#messageSidebar').data('last-seq', lastSeq)
 
-      // 조회된 메시지를 메시지 목록 하단에 출력한다.
       result.messageList.forEach(function (message) {
-        var seqStr = showSeq ? '[' + message.seq + '] ' : ''
-        var html = ''
-            html += '<li class="message" data-seq="' + message.seq + '">'
-            html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
-            html += '<small class="content">' + message.content + '</small>'
-            html += '<li>'
-        $('#messageList').append(html)
+        // 조회된 메시지를 메시지 목록 하단에 출력한다.
+        $('#messageList').append(_generateMessageRow(message))
       })
 
       // 조회된 메시지보다 많은 숫자의 메시지가 존재할 경우, 추가 조회를 위한 버튼을 출력한다.
@@ -118,11 +112,19 @@ div#messageSidebar(data-open='false', data-last-seq='0')
     //  - 새롭게 등록된 메시지를 출력한다.
     function _renderNewMessage (message) {
       // 등록된 메시지를 메시지 목록 상단에 출력한다.
-      var seqStr = showSeq ? '[' + message.seq + '] ' : ''
-      var html = ''
-          html += '<li class="message" data-seq="' + message.seq + '">'
-          html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
-          html += '<small class="content">' + message.content + '</small>'
-          html += '</li>'
-      $('#messageList').prepend(html)
+      $('#messageList').prepend(_generateMessageRow(message))
     }
+
+    // private function
+    //  - 주어진 객체를 html DOM li element로 조립하여 반환한다.
+    function _generateMessageRow (message) {
+      // var html = ''
+      //     html += '<li class="message" data-seq="' + message.seq + '">'
+      //     html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
+      //     html += '<small class="content">' + message.content + '</small>'
+      //     html += '<li>'
+      var seqStr = showSeq ? '[' + message.seq + '] ' : ''
+      return $('<li/>').addClass('message').data('seq', message.seq)
+                .append($('<h6/>').text(seqStr + message.writer + '&npsp;').append($('<small/>').text(message.formattedDate)))
+                .append($('<small/>').addClass('content').text(message.content))
+    } 

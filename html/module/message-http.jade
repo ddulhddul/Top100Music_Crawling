@@ -75,18 +75,17 @@ div#messageSidebar(data-open='false', data-message-count='0')
       $('#messageSidebar').data('message-count', result.messageList.length)
 
       // 조회된 메시지를 메시지 목록에 출력한다.
-      $('#messageList').empty().html(result.messageList.map(function (message) {
+      $('#messageList').empty()
+      result.messageList.forEach(function (message) {
         // XXX temporal code
-        var showSeq = false
+        var showSeq = true
         var seqStr = showSeq ? '[' + message.seq + '] ' : ''
 
-        var html = ''
-        html += '<li>'
-        html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
-        html += '<small class="content">' + message.content + '</small>'
-        html += '</li>'
-        return html
-      }))
+        var $li = $('<li/>').addClass('message').data('seq', message.seq)
+            $li.append($('<h6/>').text(seqStr + message.writer + '&npsp;').append($('<small/>').text(message.formattedDate)))
+            $li.append($('<small/>').addClass('content').text(message.content))
+        $('#messageList').append($li)
+      })
 
       // 조회된 메시지보다 많은 숫자의 메시지가 존재할 경우, 추가 조회를 위한 버튼을 출력한다.
       if ( result.messageList.length < result.totalCount ) {
