@@ -181,8 +181,8 @@ function getChartByUrlRequest(res){
         let index = 0;
         let reg = new RegExp('\\(.*?\\)','g')
         if(postElements.length > 0){
-            Chart.remove({},(err)=>{
-                if(err) console.log('chart remove error...',err)
+            // Chart.remove({},(err)=>{
+            //     if(err) console.log('chart remove error...',err)
                 postElements.each(function(i, obj) {
                     let $obj = $(obj);
                     let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
@@ -216,7 +216,7 @@ function getChartByUrlRequest(res){
                     totNum: result.length,
                     yymmddhh: yymmddhh
                 });
-            })
+            // })
         }else{
             Chart.find({},null,{sort: {num: 1}},(err,chart)=>{
                 result = chart;
@@ -227,7 +227,7 @@ function getChartByUrlRequest(res){
                     totNum: result.length,
                     yymmddhh: yymmddhh
                 });
-            })
+            })  
         }
 
     }, (error)=>{
