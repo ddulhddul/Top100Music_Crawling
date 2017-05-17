@@ -125,6 +125,6 @@ div#messageSidebar(data-open='false', data-last-seq='0')
       //     html += '<li>'
       var seqStr = showSeq ? '[' + message.seq + '] ' : ''
       return $('<li/>').addClass('message').data('seq', message.seq)
-                .append($('<h6/>').text(seqStr + message.writer + '&npsp;').append($('<small/>').text(message.formattedDate)))
+                .append($('<h6/>').text(seqStr + message.writer + ' ').append($('<small/>').text(message.formattedDate)))
                 .append($('<small/>').addClass('content').text(message.content))
     } 
