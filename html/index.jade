@@ -35,8 +35,8 @@ html(lang='en')
       window.onload = function(){
 
         //temp hidden
-        if(url.indexOf('mlchart') != -1){
-          hiddenTempFooter();
+        if(url.indexOf('mlchart') == -1){
+          $('#tempfooter').attr('style', 'display:inline-block;position:fixed;bottom:0;left:0;right:0;height:30px;background-color:rgba(247, 247, 20, 0.68);')
         }
         displayTime();
         resize();
@@ -261,7 +261,8 @@ html(lang='en')
         small ddulhddul@gmail.com
         span(style='margin-left:10px;font-size:11px;' ) contributed by 
           b(style='cursor:pointer;' onclick='window.open("https://github.com/Kitchu0401")') kitchu
-    div(style='position:fixed;bottom:0;left:0;right:0;height:30px;background-color:yellow;' id='tempfooter' onclick='hiddenTempFooter()') URL changed  
+    div(style='display:none;' id='tempfooter' onclick='hiddenTempFooter()') 
+      b URL changed  
       a(href="http://mlchart.ml/song") http://mlchart.ml/song
   // - include message module
   // include module/message-http
