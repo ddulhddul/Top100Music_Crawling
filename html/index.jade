@@ -223,7 +223,9 @@ html(lang='en')
           small
             i
         div(style='float:left;')
-          button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') Select
+          button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') 
+            b Select
+            small  (Play only selected Songs)
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='s')
         input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
