@@ -1,4 +1,5 @@
-# [Music Top 100](http://220.230.117.71:3000/song/)
+# [Music Top 100](http://mlchart.ml/song/)
+URL : [http://mlchart.ml/song/](http://mlchart.ml/song/)
 
 ## Command
 ```linux
