@@ -65,6 +65,16 @@ html(lang='en')
       }
       function changeMusic(ii, loopR, clicked){
         
+        //Video id input
+        var $div = $('#playIdDiv');
+        if(!$div.attr('hidden')){
+          var playIdVal = $div.find('input').val()
+          if(playIdVal){
+            player.cuePlaylist([playIdVal]);
+            return;
+          }
+        }
+
         var $tr = $($('[name="trtr"]')[ii])
         var $tdInputChk = $('td input:checked');
         // select song condition
@@ -122,6 +132,10 @@ html(lang='en')
               }
           });
       }
+      function playIdChk(){
+        var $div = $('#playIdDiv');
+        $div.attr('hidden', !$div.attr('hidden'))
+      }
       function selectSongChk(target){
         var $thselect = $('th[name="select"]');
         var toHidden = !$thselect.attr('hidden');
@@ -171,7 +185,7 @@ html(lang='en')
             }
             function onPlayerError(event){
               console.log('onPlayerError', event)
-              nextSong();
+              if(!!$('#playIdDiv').attr('hidden')) nextSong();
             }
             // autoplay video
             function onPlayerReady(event) {
@@ -224,6 +238,8 @@ html(lang='en')
       div.btn-group(role='group')
         button.btn.btn-danger(type='button' onclick='nextSong()')
           span(class='glyphicon glyphicon-play' aria-hidden="true")
+      div(id='playIdDiv' hidden=true)
+        input(style='margin-top:10px;' placeholder='Input Video Id')
     div#content
       div.btn-group(style='width:100%')
         small
@@ -234,6 +250,8 @@ html(lang='en')
         div(style='float:left;')
           button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') 
             b Select
+          button.btn.btn-default(type='button' onclick='playIdChk()' style='padding:0px;border-color:white;margin-left:5px;') 
+            b Id
             //- small  (Play only selected Songs)
       form#listDiv(method='post')
         input(type='hidden' name='loop' id='loop' value='s')
