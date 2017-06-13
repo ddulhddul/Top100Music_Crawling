@@ -136,6 +136,10 @@ app.get('/song/count', (req, res)=>{
     }
 })
 
+app.get('/', (req, res)=>{
+    return res.redirect('/song');
+})
+
 app.get('/song', (req, res)=>{
 	let yymmddhh= getYymmddhh();
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
