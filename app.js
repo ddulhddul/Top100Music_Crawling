@@ -63,14 +63,15 @@ function newCountSave(yymmdd, ip){
 
 app.get('/song/count', (req, res)=>{
     try {
-        let ip = req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress;
-        if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
-        if(ip){
-            ip = ip.split(',')[0];
-            ip = ip.split(':').slice(-1)[0]; //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
-        }
+        // let ip = req.headers['x-forwarded-for'] ||
+        // req.connection.remoteAddress ||
+        // req.socket.remoteAddress;
+        // if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
+        // if(ip){
+        //     ip = ip.split(',')[0];
+        //     ip = ip.split(':').slice(-1)[0]; //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
+        // }
+        let ip = 'tempIp'
         if(!ip){
             res.send({err:'Undefined Ip'})
 
@@ -99,11 +100,11 @@ app.get('/song/count', (req, res)=>{
                                 todayCnt = 1;
                             }
                             
-                            let iplist = count? count.ip: [];
-                            if(iplist.includes(ip)){
-                                totalCnt = total.cnt;
-                                todayCnt = count.ip.length;
-                            }else{
+                            // let iplist = count? count.ip: [];
+                            // if(iplist.includes(ip)){
+                            //     totalCnt = total.cnt;
+                            //     todayCnt = count.ip.length;
+                            // }else{
                                 if(total){
                                     total.cnt +=1
                                     total.save((err,result)=>{
@@ -120,7 +121,7 @@ app.get('/song/count', (req, res)=>{
                                         if(err) console.log('iplist save error...',err)
                                     })
                                 }
-                            }
+                            // }
                             res.send({
                                 total: totalCnt,
                                 today: todayCnt
