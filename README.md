@@ -32,3 +32,5 @@ URL : [http://mlchart.ml/song/](http://mlchart.ml/song/)
 ## 5. Developer
 뚫뚤 (ddulhddul@gmail.com)
 > 의견, Request, Contribution 언제나 환영합니다.
+
+[Dev README](./DEV_README.md)
