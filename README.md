@@ -15,7 +15,7 @@ URL : [http://mlchart.ml/song/](http://mlchart.ml/song/)
     IE, CHROME, 안드로이드 모바일 브라우저를 지원합니다.
 
 ## 2. 화면 Overview
-![screenshot](./screenshot.png)
+![screenshot](./screenshot.PNG)
 
 ## 3. Tech
 - [Node.js](https://nodejs.org/)
