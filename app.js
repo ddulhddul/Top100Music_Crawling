@@ -192,7 +192,7 @@ function getChartByUrlRequest(res){
             //     if(err) console.log('chart remove error...',err)
                 postElements.each(function(i, obj) {
                     let $obj = $(obj);
-                    let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a span').first().text();
+                    let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text();
 
                     let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
                     let param = {
