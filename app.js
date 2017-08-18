@@ -151,24 +151,25 @@ app.get('/song', (req, res)=>{
             getChartByUrlRequest(res);
         }else{
             
+            getChartByUrlRequest(res);
             console.log(`${yymmddhh} result exists`)
             
             //prevent dup data(temp)
-            let filteredResult = [];
-            let tempIndex = -1;
-            for (let i = 0; i < result.length; i++) {
-                let element = result[i];
-                if(element.num == tempIndex) continue;
-                tempIndex = element.num;
-                filteredResult.push(element);
-            }
+            // let filteredResult = [];
+            // let tempIndex = -1;
+            // for (let i = 0; i < result.length; i++) {
+            //     let element = result[i];
+            //     if(element.num == tempIndex) continue;
+            //     tempIndex = element.num;
+            //     filteredResult.push(element);
+            // }
             
-            res.render('index', {
-                result: filteredResult,
-                index: 0,
-                totNum: result.length,
-                yymmddhh: yymmddhh
-            });
+            // res.render('index', {
+            //     result: filteredResult,
+            //     index: 0,
+            //     totNum: result.length,
+            //     yymmddhh: yymmddhh
+            // });
         }
 
     })
