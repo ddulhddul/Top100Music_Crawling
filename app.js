@@ -191,7 +191,7 @@ function getChartByUrlRequest(res){
                 postElements.each(function(i, obj) {
                     let $obj = $(obj);
                     let song = String($obj.find('.rank01 a').text()), singer = String($obj.find('.rank02 a span').first().text());
-                    if(song.trim() && singer.trim()){
+                    if(song && singer){
 
                         let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
                         let param = {
