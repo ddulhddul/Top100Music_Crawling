@@ -64,5 +64,13 @@ npm install pm2 -g
 pm2 start app.js
 ```
 
+## URL 포트번호 없애기 (포트포워딩) - CentOS 7
+```linux
+iptables --insert INPUT --protocol tcp --dport 80 --jump ACCEPT
+iptables --insert INPUT --protocol tcp --dport 3000 --jump ACCEPT
+iptables --table nat --append PREROUTING --in-interface eth0 --protocol tcp --dport 80 --jump REDIRECT --to-port 3000
+service iptables save
+```
+
 ## youtube end event
 [http://1004lucifer.blogspot.kr/2015/04/youtube-player-api.html](http://1004lucifer.blogspot.kr/2015/04/youtube-player-api.html)
