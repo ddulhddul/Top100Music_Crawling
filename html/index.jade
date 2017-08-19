@@ -7,7 +7,12 @@ html(lang='en')
     link(rel='stylesheet', type='text/css', href='/css/style.css')
     script(src='/script/jquery-3.2.1.min.js')
     script(src='/script/bootstrap.min.js')
+    script(async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
     script.
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-6335521540809347",
+        enable_page_level_ads: true
+      });
       var btnClassNm = 'btn-info';
       var url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
       var curIndex = '#{index}', totNum = '#{totNum}'
