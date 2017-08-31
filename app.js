@@ -146,8 +146,6 @@ app.get('/song', (req, res)=>{
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
-	    getChartByUrlRequest(res);
-	    return
         if(err || !result || result.length === 0){
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
@@ -261,7 +259,7 @@ app.get('/song/change', (req,res)=>{
                 .then(($)=>{
                     if(!$) res.send({err:'Error'})
                     // let href = $('#results ol li ol li a').first().attr('href');
-                    let href = $('#video-title').href
+                    let href = $('.yt-lockup-video a').first().attr('href')
                     href = href.replace('/watch?v=','');
                     chart.videoId = href;
                     chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
