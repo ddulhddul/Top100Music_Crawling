@@ -146,6 +146,8 @@ app.get('/song', (req, res)=>{
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
+	    getChartByUrlRequest(res);
+	    return
         if(err || !result || result.length === 0){
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
