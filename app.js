@@ -260,7 +260,12 @@ app.get('/song/change', (req,res)=>{
                     if(!$) res.send({err:'Error'})
                     // let href = $('#results ol li ol li a').first().attr('href');
                     let href = $('.yt-lockup-video a').first().attr('href')
-                    href = href.replace('/watch?v=','');
+                    if (href && href.length >30){
+ href = $('.yt-lockup-video a').eq(1).attr('href')
+}
+
+		    href = href.replace('/watch?v=','');
+			
                     chart.videoId = href;
                     chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
                     res.send({url: href});
