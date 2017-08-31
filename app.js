@@ -260,7 +260,7 @@ app.get('/song/change', (req,res)=>{
                     if(!$) res.send({err:'Error'})
                     // let href = $('#results ol li ol li a').first().attr('href');
                     let href = $('.yt-lockup-video a').first().attr('href')
-                    if (href && href.length >30){
+                    if (!href || href.length >30){
  href = $('.yt-lockup-video a').eq(1).attr('href')
 }
 
