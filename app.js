@@ -261,7 +261,7 @@ app.get('/song/change', (req,res)=>{
                 .then(($)=>{
                     if(!$) res.send({err:'Error'})
                     // let href = $('#results ol li ol li a').first().attr('href');
-                    let href = $('#video-title').first().attr('href');
+                    let href = $('#video-title').href
                     href = href.replace('/watch?v=','');
                     chart.videoId = href;
                     chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
