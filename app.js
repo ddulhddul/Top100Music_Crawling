@@ -249,10 +249,10 @@ app.get('/song/change', (req,res)=>{
     ,paramNum = param.num
     
     Chart.findOne({yymmddhh:paramYymmddhh, num:paramNum},(err,chart)=>{
-        if(!err && chart && chart.videoId){
-            console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
-            res.send({url: chart.videoId});
-        }else{
+        // if(!err && chart && chart.videoId){
+        //     console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
+        //     res.send({url: chart.videoId});
+        // }else{
             console.log(paramYymmddhh, ' ', paramNum, ' videoId not exists')
             if(chart){
                 urlRequest(chart.url)
@@ -274,7 +274,7 @@ app.get('/song/change', (req,res)=>{
 
                 }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
             }else res.send({err:'change error ... chart is not ready'});
-        }
+        // }
     })
 
 })
