@@ -146,31 +146,31 @@ app.get('/song', (req, res)=>{
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
-        // if(err || !result || result.length === 0){
+        if(err || !result || result.length === 0){
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
-        // }else{
+        }else{
             
-        //     // getChartByUrlRequest(res);
-        //     console.log(`${yymmddhh} result exists`)
+            // getChartByUrlRequest(res);
+            console.log(`${yymmddhh} result exists`)
             
-        //     //prevent dup data(temp)
-        //     let filteredResult = [];
-        //     let tempIndex = -1;
-        //     for (let i = 0; i < result.length; i++) {
-        //         let element = result[i];
-        //         if(element.num == tempIndex) continue;
-        //         tempIndex = element.num;
-        //         filteredResult.push(element);
-        //     }
+            //prevent dup data(temp)
+            let filteredResult = [];
+            let tempIndex = -1;
+            for (let i = 0; i < result.length; i++) {
+                let element = result[i];
+                if(element.num == tempIndex) continue;
+                tempIndex = element.num;
+                filteredResult.push(element);
+            }
             
-        //     res.render('index', {
-        //         result: filteredResult,
-        //         index: 0,
-        //         totNum: result.length,
-        //         yymmddhh: yymmddhh
-        //     });
-        // }
+            res.render('index', {
+                result: filteredResult,
+                index: 0,
+                totNum: result.length,
+                yymmddhh: yymmddhh
+            });
+        }
 
     })
 })
@@ -249,10 +249,10 @@ app.get('/song/change', (req,res)=>{
     ,paramNum = param.num
     
     Chart.findOne({yymmddhh:paramYymmddhh, num:paramNum},(err,chart)=>{
-        // if(!err && chart && chart.videoId){
-        //     console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
-        //     res.send({url: chart.videoId});
-        // }else{
+        if(!err && chart && chart.videoId){
+            console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
+            res.send({url: chart.videoId});
+        }else{
             console.log(paramYymmddhh, ' ', paramNum, ' videoId not exists')
             if(chart){
                 urlRequest(chart.url)
@@ -274,7 +274,7 @@ app.get('/song/change', (req,res)=>{
 
                 }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
             }else res.send({err:'change error ... chart is not ready'});
-        // }
+        }
     })
 
 })
