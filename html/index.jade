@@ -199,7 +199,10 @@ html(lang='en')
             }
             // autoplay video
             function onPlayerReady(event) {
-              changeMusic(0)
+              setTimeout(function(){ 
+                changeMusic(0)
+              }, 1000);  
+
               //- console.log('onPlayerReady',event)
               //- player.cuePlaylist(quelist);
               //- event.target.playVideo()
