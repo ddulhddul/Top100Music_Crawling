@@ -146,31 +146,31 @@ app.get('/song', (req, res)=>{
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
-        if(err || !result || result.length === 0){
+        // if(err || !result || result.length === 0){
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
-        }else{
+        // }else{
             
-            // getChartByUrlRequest(res);
-            console.log(`${yymmddhh} result exists`)
+        //     // getChartByUrlRequest(res);
+        //     console.log(`${yymmddhh} result exists`)
             
-            //prevent dup data(temp)
-            let filteredResult = [];
-            let tempIndex = -1;
-            for (let i = 0; i < result.length; i++) {
-                let element = result[i];
-                if(element.num == tempIndex) continue;
-                tempIndex = element.num;
-                filteredResult.push(element);
-            }
+        //     //prevent dup data(temp)
+        //     let filteredResult = [];
+        //     let tempIndex = -1;
+        //     for (let i = 0; i < result.length; i++) {
+        //         let element = result[i];
+        //         if(element.num == tempIndex) continue;
+        //         tempIndex = element.num;
+        //         filteredResult.push(element);
+        //     }
             
-            res.render('index', {
-                result: filteredResult,
-                index: 0,
-                totNum: result.length,
-                yymmddhh: yymmddhh
-            });
-        }
+        //     res.render('index', {
+        //         result: filteredResult,
+        //         index: 0,
+        //         totNum: result.length,
+        //         yymmddhh: yymmddhh
+        //     });
+        // }
 
     })
 })
@@ -259,12 +259,14 @@ app.get('/song/change', (req,res)=>{
                 .then(($)=>{
                     if(!$) res.send({err:'Error'})
                     // let href = $('#results ol li ol li a').first().attr('href');
-                    let href = $('.yt-lockup-video a').first().attr('href')
-                    if (!href || href.length >30){
- href = $('.yt-lockup-video a').eq(1).attr('href')
-}
+                    let $tag = $('.yt-lockup-video a')
+                    let tagLoop = 0, href='';
+                    while(tagLoop < 5){
+                        href = $tag.eq(tagLoop++).attr('href')
+                        if (href && href.length < 30) break;
+                    }
 
-		    href = href.replace('/watch?v=','');
+		            href = href.replace('/watch?v=','');
 			
                     chart.videoId = href;
                     chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
