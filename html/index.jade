@@ -76,7 +76,7 @@ html(lang='en')
           var playIdVal = $div.find('input').val()
           if(playIdVal){
             player.cuePlaylist([playIdVal]);
-            player.playVideo()
+            //- player.playVideo()
             return;
           }
         }
@@ -114,7 +114,7 @@ html(lang='en')
 
         if(videoId){
           player.cuePlaylist([videoId]);
-          player.playVideo()
+          //- player.playVideo()
           return;
         }
         $.ajax({ 
@@ -132,7 +132,7 @@ html(lang='en')
                     $videoIdInput.val(data.url)
                     if(player && player.cuePlaylist){
                       player.cuePlaylist([data.url]);
-                      player.playVideo()
+                      //- player.playVideo()
                     }
                   }
               },
@@ -199,9 +199,9 @@ html(lang='en')
             }
             // autoplay video
             function onPlayerReady(event) {
-              setTimeout(function(){ 
+              //- setTimeout(function(){ 
                 changeMusic(0)
-              }, 1000);  
+              //- }, 1000);  
 
               //- console.log('onPlayerReady',event)
               //- player.cuePlaylist(quelist);
