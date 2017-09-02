@@ -225,6 +225,7 @@ html(lang='en')
                 }
                 changeMusic(ii)
               }else{
+                if(event.data === -1) player.playVideo()
                 console.log('player state exception !', event, player)
               }
               //else if(player) player.playVideo()
