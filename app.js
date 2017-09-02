@@ -263,7 +263,7 @@ app.get('/song/change', (req,res)=>{
                     let tagLoop = 0, href='';
                     while(tagLoop < 5){
                         href = $tag.eq(tagLoop++).attr('href')
-                        if (href && href.length < 30) break;
+                        if (href && href.length < 30 && href.indexOf('/watch?v=') != -1) break;
                     }
 
 		            href = href.replace('/watch?v=','');
