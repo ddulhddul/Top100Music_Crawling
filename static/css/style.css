@@ -2,7 +2,7 @@ body{
     text-align: center;
 }
 
-#listDiv{
+#listDiv,#listSinger{
     width: 100%;
     overflow-y:scroll;
     height:480px;

@@ -19,8 +19,14 @@ html(lang='en')
       
       function resize(){
         var $listDiv = $('#listDiv');
-        if($listDiv.position().top < 50) $listDiv.height(480)
-        else $listDiv.height(window.innerHeight-$('#iframeDiv').height()-70)
+        var $listSinger = $('#listSinger');
+        if($listDiv.position().top < 50){
+          $listDiv.height(480)
+          $listSinger.height(480)
+        }else {
+          $listDiv.height(window.innerHeight-$('#iframeDiv').height()-70)
+          $listSinger.height(window.innerHeight-$('#iframeDiv').height()-70)
+        }
       }
 
       function displayTime(){
@@ -142,6 +148,38 @@ html(lang='en')
               }
           });
       }
+      function onSingerCheck(singer, args){
+        var checked = !!args.checked;
+        $('#listDiv tbody tr').each(function(i, obj){
+          var $obj = $(obj)
+          if ($obj.find('[name="singer"]').text() == singer){
+            $obj.find('input:checkbox').prop('checked', checked)
+          }
+        })
+      }
+
+      function makeSingerList($listSinger){
+        var uniqueSingerList = [];
+        var $tbody = $listSinger.find('tbody')
+        $tbody.append(
+          "<tr>\
+            <th><input type='checkbox' onchange='toggleChange2(this)' checked /></td>\
+            <th>singer</td>\
+          </tr>"
+        )
+        $('td[name="singer"]').each(function(i,obj){
+          var tempSinger = obj.innerHTML;
+          if(uniqueSingerList.indexOf(tempSinger) === -1){
+            uniqueSingerList.push(tempSinger)
+            $tbody.append(
+              "<tr>\
+                <td><input type='checkbox' onchange='onSingerCheck(\""+tempSinger+"\", this)' checked /></td>\
+                <td>"+tempSinger+"</td>\
+              </tr>"
+            )
+          }
+        })
+      }
       function playIdChk(){
         var $div = $('#playIdDiv');
         $div.attr('hidden', !$div.attr('hidden'))
@@ -155,14 +193,32 @@ html(lang='en')
         })
 
         var $target = $(target);
-        if(!toHidden){$target.removeClass('btn-default'); $target.addClass('btn-warning')}
-        else{$target.removeClass('btn-warning'); $target.addClass('btn-default')}
+        var $listSinger = $('#listSinger');
+        if(!toHidden){
+          $target.removeClass('btn-default'); $target.addClass('btn-warning')
+          $('#listDiv').css('width', '70%')
+          $listSinger.css('width', '30%')
+          $listSinger.css('display', 'inline-block')
+          if($listSinger.find('tr').length == 0){
+            makeSingerList($listSinger)
+          }
+        }else{
+          $target.removeClass('btn-warning'); $target.addClass('btn-default')
+          $('#listDiv').css('width', '100%')
+          $listSinger.css('display', 'none')
+        }
       }
 
       function toggleChange(args){
         var checked = !!args.checked;
         $('td[name="select"] input').each(function(i,obj){
           obj.checked = checked;
+        })
+      }
+      function toggleChange2(args){
+        var checked = !!args.checked;
+        $('#listSinger input:checkbox').each(function(i,obj){
+          $(obj).prop('checked', checked)
         })
       }
 
@@ -270,13 +326,13 @@ html(lang='en')
           button.btn.btn-default(type='button' onclick='playIdChk()' style='padding:0px;border-color:white;margin-left:5px;') 
             b Id
             //- small  (Play only selected Songs)
-      form#listDiv(method='post')
+      div(method='post')
         input(type='hidden' name='loop' id='loop' value='s')
         input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
-        table(class='table table-striped table-hover')
+        table#listDiv(class='table table-striped table-hover' style='display:inline-block;')
           tr
             th(name='select' hidden=true)
-              input(type='checkbox' onchange='toggleChange(this)')
+              input(type='checkbox' onchange='toggleChange(this)' checked)
             th #
             th song
             th singer
@@ -285,11 +341,12 @@ html(lang='en')
               input(type='hidden' name='videoId' id='videoId' value='#{obj.videoId}')
               input(type='hidden' name='srch' id='srch' value='#{obj.srch}')
               td(name='select' hidden=true)
-                input(type='checkbox')
+                input(type='checkbox' checked)
               td(name='num' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.num}
               td(name='song' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.song} 
               td(name='singer' onclick='changeMusic("#{obj.num-1}","",1)') #{obj.singer}
-
+        table#listSinger(class='table table-striped table-hover' style='display:inline-block;display:none;overflow-x:hidden;')
+          tbody
     footer
       p 
         strong(style='cursor:pointer;margin-right:5px;' onclick='window.open("https://github.com/ddulhddul/Top100Music_Crawling")') ddulh
