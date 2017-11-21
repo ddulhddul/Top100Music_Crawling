@@ -1,5 +1,5 @@
 doctype html
-html(lang='en')
+html(lang='en' style='text-align:center;')
   head
     title Music Top 100 Youtube
     meta(charset='UTF-8' name='viewport', content='width=device-width, initial-scale=1.0')
@@ -16,16 +16,18 @@ html(lang='en')
       var btnClassNm = 'btn-info';
       var url = document.URL.replace(new RegExp('(\/song)(.*)'), '$1');
       var curIndex = '#{index}', totNum = '#{totNum}'
+      var hiddenVideo = false;
       
       function resize(){
         var $listDiv = $('#listDiv');
         var $listSinger = $('#listSinger');
+        var targetHeight = window.innerHeight-$('#iframeDiv').height()-70;
         if($listDiv.position().top < 50){
           $listDiv.height(480)
           $listSinger.height(480)
         }else {
-          $listDiv.height(window.innerHeight-$('#iframeDiv').height()-70)
-          $listSinger.height(window.innerHeight-$('#iframeDiv').height()-70)
+          $listDiv.height(targetHeight)
+          $listSinger.height(targetHeight)
         }
       }
 
@@ -228,7 +230,7 @@ html(lang='en')
         strong #{song}
         span(style='white-space: nowrap')
           small &nbsp;&nbsp;#{singer}
-      div(class="embed-responsive embed-responsive-4by3")
+      div#playerEmbedDiv(class="embed-responsive embed-responsive-4by3")
         div#player(class="embed-responsive-item")
           script(src='http://www.youtube.com/player_api')
           script.
@@ -301,6 +303,26 @@ html(lang='en')
               $obj.addClass(btnClassNm)
               $('#loop').val($obj.attr('name'))
             }
+            function playerHiddenBtnClick(){
+              var $playerHiddenBtn = $('#playerHiddenBtn')
+              var $playerEmbedDiv = $('#playerEmbedDiv')
+              if(hiddenVideo){
+                $playerHiddenBtn.removeClass('btn-warning')
+                $playerHiddenBtn.addClass('btn-dark')
+                $playerEmbedDiv.removeAttr('style')
+                
+              }else{
+                $playerHiddenBtn.removeClass('btn-dark')
+                $playerHiddenBtn.addClass('btn-warning')
+                $playerEmbedDiv.css('display', 'none')
+              }
+              hiddenVideo = !hiddenVideo
+              if(hiddenVideo) $('body').css('display', 'inline-block');
+              else $('body').removeAttr('style')
+              resize()
+            }
+      div(style='text-align:right; margin:0px 0px -10px 0px;')
+        button#playerHiddenBtn.btn.btn-dark(style='padding:0px;font-size:9px;font-weight:bold;' onclick='playerHiddenBtnClick()') hidden
       div.btn-group(role='group')
         button.btn.btn-success(type='button' data-role='toggle-message-sidebar')
           span(class='glyphicon glyphicon-comment' aria-hidden="true")
