@@ -88,3 +88,10 @@ tr{
     margin-left: 50px;
     z-index: 8082;
 }
+
+.singerBtn{
+    padding:0px 2px 0px 2px;
+    margin:0px 2px 0px 2px;
+    font-size:9px;
+    font-weight:bold;
+}

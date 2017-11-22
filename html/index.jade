@@ -20,14 +20,15 @@ html(lang='en' style='text-align:center;')
       
       function resize(){
         var $listDiv = $('#listDiv');
-        var $listSinger = $('#listSinger');
+        //- var $listSinger = $('#listSinger');
         var targetHeight = window.innerHeight-$('#iframeDiv').height()-90;
-        if($listDiv.position().top < 50){
-          $listDiv.height(450)
-          $listSinger.height(450)
+        var singerDivHeight = $('#selectBtn').hasClass('btn-default')? 0: $('#singerDiv').height();
+        if(($('#singerDiv').position().top || $listDiv.position().top) < 50){
+          $listDiv.height(450-singerDivHeight)
+          //- $listSinger.height(450)
         }else {
-          $listDiv.height(targetHeight)
-          $listSinger.height(targetHeight)
+          $listDiv.height(targetHeight-singerDivHeight)
+          //- $listSinger.height(targetHeight)
         }
       }
 
@@ -151,7 +152,10 @@ html(lang='en' style='text-align:center;')
           });
       }
       function onSingerCheck(singer, args){
-        var checked = !!args.checked;
+        //- var checked = !!args.checked;
+        var checked = !args.classList.contains('btn-link')
+        if(!checked) $(args).removeClass('btn-link').addClass('btn-dark')
+        else $(args).addClass('btn-link').removeClass('btn-dark')
         $('#listDiv tbody tr').each(function(i, obj){
           var $obj = $(obj)
           if ($obj.find('[name="singer"]').text() == singer){
@@ -182,6 +186,33 @@ html(lang='en' style='text-align:center;')
           }
         })
       }
+      function makeSingerList2(toHidden){
+        if(!toHidden){ //show
+          $('#singerDiv').css('display', 'inline-block')
+          if($('#singerDiv button').length == 0){
+            var uniqueSingerList = [];
+            $('td[name="singer"]').each(function(i,obj){
+              var tempSinger = obj.innerHTML;
+              if(uniqueSingerList.indexOf(tempSinger) === -1){
+                uniqueSingerList.push(tempSinger)
+              }
+            })
+            uniqueSingerList.sort()
+            for(var i = 0; i < uniqueSingerList.length ; i ++){
+              var tempSinger = uniqueSingerList[i]
+              $('#singerDiv').append(
+                "<button class='btn btn-link singerBtn' onclick='onSingerCheck(\""+tempSinger+"\", this)'>"+
+                  tempSinger
+                +"</button>"
+              )
+            }
+          }
+        }else{
+          $('#singerDiv').css('display', 'none')
+        }
+
+      }
+
       function playIdChk(){
         var $div = $('#playIdDiv');
         $div.attr('hidden', !$div.attr('hidden'))
@@ -198,17 +229,19 @@ html(lang='en' style='text-align:center;')
         var $listSinger = $('#listSinger');
         if(!toHidden){
           $target.removeClass('btn-default'); $target.addClass('btn-warning')
-          $('#listDiv').css('width', '70%')
-          $listSinger.css('width', '30%')
-          $listSinger.css('display', 'inline-block')
-          if($listSinger.find('tr').length == 0){
-            makeSingerList($listSinger)
-          }
+          //- $('#listDiv').css('width', '70%')
+          //- $listSinger.css('width', '30%')
+          //- $listSinger.css('display', 'inline-block')
+          //- if($listSinger.find('tr').length == 0){
+          //-   makeSingerList($listSinger)
+          //- }
         }else{
           $target.removeClass('btn-warning'); $target.addClass('btn-default')
-          $('#listDiv').css('width', '100%')
-          $listSinger.css('display', 'none')
+          //- $('#listDiv').css('width', '100%')
+          //- $listSinger.css('display', 'none')
         }
+        makeSingerList2(toHidden)
+        resize()
       }
 
       function toggleChange(args){
@@ -345,11 +378,12 @@ html(lang='en' style='text-align:center;')
           small
             i
         div(style='float:left;')
-          button.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') 
+          button#selectBtn.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') 
             b Select
           button.btn.btn-default(type='button' onclick='playIdChk()' style='padding:0px;border-color:white;margin-left:5px;') 
             b Id
             //- small  (Play only selected Songs)
+      div#singerDiv
       div(method='post')
         input(type='hidden' name='loop' id='loop' value='s')
         input(type='hidden' name='yymmddhh' id='yymmddhh' value='#{yymmddhh}')
