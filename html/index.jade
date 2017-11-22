@@ -21,10 +21,10 @@ html(lang='en' style='text-align:center;')
       function resize(){
         var $listDiv = $('#listDiv');
         var $listSinger = $('#listSinger');
-        var targetHeight = window.innerHeight-$('#iframeDiv').height()-70;
+        var targetHeight = window.innerHeight-$('#iframeDiv').height()-90;
         if($listDiv.position().top < 50){
-          $listDiv.height(480)
-          $listSinger.height(480)
+          $listDiv.height(450)
+          $listSinger.height(450)
         }else {
           $listDiv.height(targetHeight)
           $listSinger.height(targetHeight)
