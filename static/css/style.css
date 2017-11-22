@@ -11,6 +11,9 @@ body{
 tr{
     text-align: left;
 }
+td{
+    cursor:pointer;
+}
 
 #iframeDiv{
     width:50%;
