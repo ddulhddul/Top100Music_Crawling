@@ -23,6 +23,7 @@ html(lang='en' style='text-align:center;')
         //- var $listSinger = $('#listSinger');
         var targetHeight = window.innerHeight-$('#iframeDiv').height()-90;
         var singerDivHeight = $('#selectBtn').hasClass('btn-default')? 0: $('#singerDiv').height();
+        if($('#singerDiv').css('display') == 'none') singerDivHeight = 0;
         if(($('#singerDiv').position().top || $listDiv.position().top) < 50){
           $listDiv.height(450-singerDivHeight)
           //- $listSinger.height(450)
@@ -188,7 +189,7 @@ html(lang='en' style='text-align:center;')
       }
       function makeSingerList2(toHidden){
         if(!toHidden){ //show
-          $('#singerDiv').css('display', 'inline-block')
+          if($('#singerArrCont').hasClass('glyphicon-arrow-up')) $('#singerDiv').css('display', 'inline-block')
           if($('#singerDiv button').length == 0){
             var uniqueSingerList = [];
             $('td[name="singer"]').each(function(i,obj){
@@ -229,6 +230,7 @@ html(lang='en' style='text-align:center;')
         var $listSinger = $('#listSinger');
         if(!toHidden){
           $target.removeClass('btn-default'); $target.addClass('btn-warning')
+          $('#singerArrCont').css('display', 'inline-block');
           //- $('#listDiv').css('width', '70%')
           //- $listSinger.css('width', '30%')
           //- $listSinger.css('display', 'inline-block')
@@ -237,6 +239,7 @@ html(lang='en' style='text-align:center;')
           //- }
         }else{
           $target.removeClass('btn-warning'); $target.addClass('btn-default')
+          $('#singerArrCont').css('display', 'none');
           //- $('#listDiv').css('width', '100%')
           //- $listSinger.css('display', 'none')
         }
@@ -359,6 +362,19 @@ html(lang='en' style='text-align:center;')
               else $('body').removeAttr('style')
               resize()
             }
+            function showSingerArr(){
+              //- span#singerArrCont(class='glyphicon glyphicon-arrow-up' aria-hidden="true" onclick='showSingerArr()' style='cursor:pointer')
+              if($('#singerArrCont').hasClass('glyphicon-arrow-up')){
+                $('#singerArrCont').removeClass('glyphicon-arrow-up')
+                                    .addClass('glyphicon-arrow-down')
+                $('#singerDiv').css('display', 'none')
+              }else{
+                $('#singerArrCont').addClass('glyphicon-arrow-up')
+                                    .removeClass('glyphicon-arrow-down')
+                $('#singerDiv').css('display','inline-block')
+              }
+              resize()
+            }
       div(style='text-align:right; margin:0px 0px -10px 0px;')
         button#playerHiddenBtn.btn.btn-dark(style='padding:0px;font-size:9px;font-weight:bold;' onclick='playerHiddenBtnClick()') hidden
       div.btn-group(role='group')
@@ -389,6 +405,7 @@ html(lang='en' style='text-align:center;')
         div(style='float:left;')
           button#selectBtn.btn.btn-default(type='button' onclick='selectSongChk(this)' style='padding:0px;border-color:white') 
             b Select
+          span#singerArrCont(class='glyphicon glyphicon-arrow-up' aria-hidden="true" onclick='showSingerArr()' style='cursor:pointer; display:none;')
           button.btn.btn-default(type='button' onclick='playIdChk()' style='padding:0px;border-color:white;margin-left:5px;') 
             b Id
             //- small  (Play only selected Songs)
