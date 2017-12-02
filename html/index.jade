@@ -256,7 +256,12 @@ html(lang='en' style='text-align:center;')
           $(obj).prop('checked', checked)
         })
       }
-
+      function playYoutube() {
+        if(player) player.playVideo();
+      }
+      function pauseYoutube() {
+        if(player) player.pauseVideo();
+      }
   body(onresize="resize()")
     div#iframeDiv
       h4(onclick='titleClick()')
@@ -366,6 +371,10 @@ html(lang='en' style='text-align:center;')
         button.btn.btn-default(type='button' onclick='btnClick(this)' name='r')
           span(class='glyphicon glyphicon-random' aria-hidden="true")
       div.btn-group(role='group')
+        button.btn.btn-warning(type='button' onclick='pauseYoutube()')
+          span(class='glyphicon glyphicon-pause' aria-hidden="true")
+        button.btn.btn-primary(type='button' onclick='playYoutube()')
+          span(class='glyphicon glyphicon-play' aria-hidden="true")
         button.btn.btn-danger(type='button' onclick='nextSong()')
           span(class='glyphicon glyphicon-forward' aria-hidden="true")
       div(id='playIdDiv' hidden=true)
