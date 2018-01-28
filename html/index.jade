@@ -78,6 +78,16 @@ html(lang='en' style='text-align:center;')
           }
         });
       }
+      function playVideoCustom(videoId){
+        if(videoId) player.cuePlaylist([videoId]);
+        else player.playVideo()
+
+        // 플레이하지 않는 경우 방지, 5초후 다시 실행
+        setTimeout(function(){ 
+          console.log('prevent error', new Date())
+          player && player.getPlayerState() != 1 && player.playVideo()
+         }, 5000);
+      }
       function changeMusic(ii, loopR, clicked){
         
         //Video id input
@@ -85,7 +95,8 @@ html(lang='en' style='text-align:center;')
         if(!$div.attr('hidden')){
           var playIdVal = $div.find('input').val()
           if(playIdVal){
-            player.cuePlaylist([playIdVal]);
+            //- player.cuePlaylist([playIdVal]);
+            playVideoCustom(playIdVal)
             //- player.playVideo()
             return;
           }
@@ -123,7 +134,8 @@ html(lang='en' style='text-align:center;')
         if(!clicked) window.location.href = url+'/#'+(Number(ii)+1);
 
         if(videoId){
-          player.cuePlaylist([videoId]);
+          //- player.cuePlaylist([videoId]);
+          playVideoCustom(videoId)
           //- player.playVideo()
           return;
         }
@@ -141,7 +153,8 @@ html(lang='en' style='text-align:center;')
                   }else{
                     $videoIdInput.val(data.url)
                     if(player && player.cuePlaylist){
-                      player.cuePlaylist([data.url]);
+                      //- player.cuePlaylist([data.url]);
+                      playVideoCustom(data.url)
                       //- player.playVideo()
                     }
                   }
@@ -310,7 +323,8 @@ html(lang='en' style='text-align:center;')
             function onPlayerStateChange(event) {
               //- console.log('onPlayerStateChange', event.data)
               if(event.data === 5) {
-                player.playVideo()
+                //- player.playVideo()
+                playVideoCustom()
               }else if(event.data === 0) {
               //동영상 끝난 후 이벤트
                 var ii = curIndex;
@@ -324,7 +338,8 @@ html(lang='en' style='text-align:center;')
                 }
                 changeMusic(ii)
               }else{
-                if(event.data === -1) player.playVideo()
+                //- if(event.data === -1) player.playVideo()
+                if(event.data === -1) playVideoCustom()
                 //- console.log('player state exception !', event, player)
               }
               //else if(player) player.playVideo()
