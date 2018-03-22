@@ -41,37 +41,40 @@
       }
       window.onload = function(){
         //temp hidden
-        if(url.indexOf('mlchart') == -1){
+        if(url && url.indexOf('mlchart') == -1){
           $('#tempfooter').attr('style', 'display:inline-block;position:fixed;bottom:0;left:0;right:0;height:30px;background-color:rgba(247, 247, 20, 0.68);')
         }
         
 1
-        fetch('list')
-        .then(res => res.json())
-        .then(data => {
+        if(url && url.indexOf('song') != -1){
           
-          curIndex = data.index; totNum = data.totNum;
-          $('#yymmddhh').val(data.yymmddhh)
-          let html = data.result.map((obj,index,array)=>{
-            return `<tr name=trtr id='${obj.num}'>  
-              <input type="hidden" name=videoId value='${obj.videoId}' />
-              <input type="hidden" name=srch value='${obj.srch}' />
-              <td name=select hidden=true>
-                <input type="checkbox" checked />
-              </td>
-              <td name=num onclick="changeMusic('${obj.num-1}', '', 1)">${obj.num}</td>
-              <td name=song onclick="changeMusic('${obj.num-1}', '', 1)">${obj.song}</td>
-              <td name=singer onclick="changeMusic('${obj.num-1}', '', 1)">${obj.singer}</td>
-            </tr>`
+          fetch(url+'/list')
+          .then(res => res.json())
+          .then(data => {
+            
+            curIndex = data.index; totNum = data.totNum;
+            $('#yymmddhh').val(data.yymmddhh)
+            let html = data.result.map((obj,index,array)=>{
+              return `<tr name=trtr id='${obj.num}'>  
+                <input type="hidden" name=videoId value='${obj.videoId}' />
+                <input type="hidden" name=srch value='${obj.srch}' />
+                <td name=select hidden=true>
+                  <input type="checkbox" checked />
+                </td>
+                <td name=num onclick="changeMusic('${obj.num-1}', '', 1)">${obj.num}</td>
+                <td name=song onclick="changeMusic('${obj.num-1}', '', 1)">${obj.song}</td>
+                <td name=singer onclick="changeMusic('${obj.num-1}', '', 1)">${obj.singer}</td>
+              </tr>`
+            })
+            $('#listDiv').append(html.join(''))
+
+            displayTime();
+            resize();
+            callCount();
+
+            changeMusic(0)
           })
-          $('#listDiv').append(html.join(''))
-
-          displayTime();
-          resize();
-          callCount();
-
-          changeMusic(0)
-        })
+        }
       }
       function titleClick(){
         window.location.href = url+'/#'+(Number(curIndex)+1)
