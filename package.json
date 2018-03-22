@@ -12,10 +12,12 @@
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "cheerio": "^0.22.0",
+    "ejs": "^2.5.7",
     "express": "^4.15.2",
     "jade": "^1.11.0",
     "moment": "^2.18.1",
     "mongoose": "^4.9.8",
+    "pug": "^2.0.3",
     "request": "^2.81.0",
     "socket.io": "^2.0.1",
     "urlencode": "^1.1.0"

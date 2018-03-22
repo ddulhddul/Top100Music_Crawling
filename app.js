@@ -11,7 +11,8 @@ let Count = require('./Count');
 let app = express()
 app.use(express.static(__dirname +'/static'));
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.set('view engine', 'jade');
+// app.set('view engine', 'pug');
+app.set('view engine', 'ejs')
 app.set('views', 'html');
 
 //routing
@@ -141,7 +142,12 @@ app.get('/', (req, res)=>{
     return res.redirect('/song');
 })
 
+
 app.get('/song', (req, res)=>{
+    res.render('index2')
+})
+
+app.get('/song/list', (req, res)=>{
 	let yymmddhh= getYymmddhh();
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
@@ -164,7 +170,7 @@ app.get('/song', (req, res)=>{
                 filteredResult.push(element);
             }
             
-            res.render('index', {
+            res.send({
                 result: filteredResult,
                 index: 0,
                 totNum: result.length,
@@ -218,7 +224,7 @@ function getChartByUrlRequest(res){
                         if(err) console.log('chart insert error...',err)
                     })
                 });
-                res.render('index', {
+                res.send({
                     result: result,
                     index: 0,
                     totNum: result.length,
@@ -229,7 +235,7 @@ function getChartByUrlRequest(res){
             Chart.find({},null,{sort: {num: 1}},(err,chart)=>{
                 result = chart;
                 yymmddhh = chart[0].yymmddhh;
-                res.render('index', {
+                res.send({
                     result: result,
                     index: 0,
                     totNum: result.length,
