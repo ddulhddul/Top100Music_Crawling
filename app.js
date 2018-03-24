@@ -5,8 +5,8 @@ let cheerio = require('cheerio');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-let Chart = require('./Chart');
-let Count = require('./Count');
+let Chart = require('./model/Chart');
+let Count = require('./model/Count');
 
 let app = express()
 app.use(express.static(__dirname +'/static'));
