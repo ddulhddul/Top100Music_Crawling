@@ -9,11 +9,16 @@ let Chart = require('./model/Chart');
 let Count = require('./model/Count');
 
 let app = express()
-app.use(express.static(__dirname +'/static'));
 app.use(bodyParser.urlencoded({ extended: true })); 
-// app.set('view engine', 'jade');
 app.set('view engine', 'ejs')
+
+/* original */
+app.use(express.static(__dirname +'/static'));
 app.set('views', 'html');
+
+/* react */
+// app.use(express.static(__dirname +'/build'));
+// app.set('views', 'build');
 
 //routing
 let message = require('./router/message')(express);
