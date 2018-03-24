@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" style="text-align:center;">
+  <head>
+    <title>Music Top 100 Youtube</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="/script/jquery-3.2.1.min.js"></script>
+    <script src="/script/bootstrap.min.js"></script>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script src="http://www.youtube.com/player_api"></script>
+    <script src="/js/index.js"></script>
+  </head>
+  <body onresize="resize()">
+    <div id="iframeDiv">
+      <h4 onclick="titleClick()" style="cursor:pointer;"><strong></strong><span style="white-space: nowrap"><small>&nbsp;&nbsp;</small></span></h4>
+      <div id="playerEmbedDiv" class="embed-responsive embed-responsive-4by3">
+        <div id="player" class="embed-responsive-item"></div>
+      </div>
+      <div style="text-align:right; margin:0px 0px -10px 0px;">
+        <button id="playerHiddenBtn" style="padding:0px;font-size:9px;font-weight:bold;" onclick="playerHiddenBtnClick()" class="btn btn-dark">hidden</button>
+      </div>
+      <div role="group" class="btn-group">
+        <button type="button" data-role="toggle-message-sidebar" class="btn btn-success"><span aria-hidden="true" class="glyphicon glyphicon-comment"></span></button>
+      </div>
+      <div id="btnGroup" role="group" class="btn-group">
+        <button type="button" onclick="btnClick(this)" name="1" style="font-weight:bold;" class="btn btn-default">1</button>
+        <button type="button" onclick="btnClick(this)" name="s" class="btn btn-default btn-info"><span aria-hidden="true" class="glyphicon glyphicon-retweet"></span></button>
+        <button type="button" onclick="btnClick(this)" name="r" class="btn btn-default"><span aria-hidden="true" class="glyphicon glyphicon-random"></span></button>
+      </div>
+      <div role="group" class="btn-group">
+        <button type="button" onclick="pauseYoutube()" class="btn btn-warning"><span aria-hidden="true" class="glyphicon glyphicon-pause"></span></button>
+        <button type="button" onclick="playYoutube()" class="btn btn-primary"><span aria-hidden="true" class="glyphicon glyphicon-play"></span></button>
+        <button type="button" onclick="nextSong()" class="btn btn-danger"><span aria-hidden="true" class="glyphicon glyphicon-forward"></span></button>
+      </div>
+      <div id="playIdDiv" hidden>
+        <input style="margin-top:10px;" placeholder="Input Video Id">
+      </div>
+    </div>
+    <div id="content">
+      <div style="width:100%" class="btn-group"><small>
+          <e></e></small>
+        <div style="float:right;"><small><i></i></small></div>
+        <div style="float:left;">
+          <button id="selectBtn" type="button" onclick="selectSongChk(this)" style="padding:0px;border-color:white" class="btn btn-default"> <b>Select</b></button><span id="singerArrCont" aria-hidden="true" onclick="showSingerArr()" style="cursor:pointer; display:none;" class="glyphicon glyphicon-arrow-up"></span>
+          <button type="button" onclick="playIdChk()" style="padding:0px;border-color:white;margin-left:5px;" class="btn btn-default"> <b>Id</b>
+          </button>
+        </div>
+      </div>
+      <div id="singerDiv"></div>
+      <div method="post">
+        <input type="hidden" name="loop" id="loop" value="s">
+        <input type="hidden" name="yymmddhh" id="yymmddhh" value="">
+        <table id="listDiv" style="display:inline-block;" class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th name="select" hidden>
+                <input type="checkbox" onchange="toggleChange(this)" checked>
+              </th>
+              <th>#</th>
+              <th>song</th>
+              <th>singer</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <table id="listSinger" style="display:inline-block;display:none;overflow-x:hidden;" class="table table-striped table-hover">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <footer>
+      <p> <strong style="cursor:pointer;margin-right:5px;" onclick="window.open(&quot;https://github.com/ddulhddul/Top100Music_Crawling&quot;)">ddulh</strong><small>ddulhddul@gmail.com</small><span style="margin-left:10px;font-size:11px;">contributed by <b style="cursor:pointer;" onclick="window.open(&quot;https://github.com/Kitchu0401&quot;)">kitchu</b></span></p>
+    </footer>
+    <div style="display:none;" id="tempfooter" onclick="hiddenTempFooter()"> <b>URL changed ! </b><a href="http://mlchart.ml/song">http://mlchart.ml/</a></div>
+  </body>
+  <% include module/message-socket-io2 %>
+</html>
