@@ -59,7 +59,7 @@ window.onload = function(){
 
       displayTime();
       resize();
-      callCount();
+    //   callCount();
 
       changeMusic(0)
     })
