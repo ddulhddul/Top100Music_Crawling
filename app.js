@@ -220,7 +220,7 @@ function getChartByUrlRequest(res){
                 }
                 result.push(param)
             });
-            Chart.insertMany(result)
+            Chart.remove({}).then(()=>Chart.insertMany(result))
             
             res.send({
                 result: result,
