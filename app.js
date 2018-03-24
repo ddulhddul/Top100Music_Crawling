@@ -11,8 +11,8 @@ let Count = require('./Count');
 let app = express()
 app.use(express.static(__dirname +'/static'));
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.set('view engine', 'jade');
-// app.set('view engine', 'ejs')
+// app.set('view engine', 'jade');
+app.set('view engine', 'ejs')
 app.set('views', 'html');
 
 //routing
@@ -144,10 +144,10 @@ app.get('/', (req, res)=>{
 
 
 app.get('/song', (req, res)=>{
-//     res.render('index2')
-// })
+    res.render('index2')
+})
 
-// app.get('/song/list', (req, res)=>{
+app.get('/song/list', (req, res)=>{
 	let yymmddhh= getYymmddhh();
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
@@ -170,7 +170,7 @@ app.get('/song', (req, res)=>{
                 filteredResult.push(element);
             }
             
-            res.render('index', {
+            res.send({
                 result: filteredResult,
                 index: 0,
                 totNum: result.length,
@@ -194,48 +194,35 @@ function getChartByUrlRequest(res){
         let index = 0;
         let reg = new RegExp('\\(.*?\\)','g')
         if(postElements.length > 0){
-            // Chart.remove({},(err)=>{
-            //     if(err) console.log('chart remove error...',err)
-                postElements.each(function(i, obj) {
-                    let $obj = $(obj);
-                    let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text();
+            postElements.each(function(i, obj) {
+                let $obj = $(obj);
+                let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text();
 
-                    let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
-                    let param = {
-                        yymmddhh: yymmddhh,
-                        num: ++index,
-                        song : song,
-                        singer : singer,
-                        url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
-                        videoId: '',
-                        srch : song.replace(reg,'')+' '+singer.replace(reg,'')
-                    }
-                    result.push(param)
-
-                    let chart = new Chart();
-                    chart.yymmddhh = yymmddhh;
-                    chart.num = param.num;
-                    chart.song = song;
-                    chart.singer = singer;
-                    chart.url = param.url;
-                    chart.videoId = '';
-                    chart.srch = param.srch;
-                    chart.save((err,result)=>{
-                        if(err) console.log('chart insert error...',err)
-                    })
-                });
-                res.render('index', {
-                    result: result,
-                    index: 0,
-                    totNum: result.length,
-                    yymmddhh: yymmddhh
-                });
-            // })
+                let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
+                let param = {
+                    yymmddhh: yymmddhh,
+                    num: ++index,
+                    song : song,
+                    singer : singer,
+                    url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
+                    videoId: '',
+                    srch : song.replace(reg,'')+' '+singer.replace(reg,'')
+                }
+                result.push(param)
+            });
+            Chart.insertMany(result)
+            
+            res.send({
+                result: result,
+                index: 0,
+                totNum: result.length,
+                yymmddhh: yymmddhh
+            });
         }else{
             Chart.find({},null,{sort: {num: 1}},(err,chart)=>{
                 result = chart;
                 yymmddhh = chart[0].yymmddhh;
-                res.render('index', {
+                res.send({
                     result: result,
                     index: 0,
                     totNum: result.length,
