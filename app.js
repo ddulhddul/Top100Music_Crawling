@@ -10,14 +10,19 @@ let Count = require('./model/Count');
 
 let app = express()
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.set('view engine', 'ejs')
 
 /* original */
+app.set('view engine', 'ejs')
 app.use(express.static(__dirname +'/static'));
 app.set('views', 'html');
 
-/* react */
+/* react 
+let path = require('path')
+app.set('views', path.join(__dirname, 'build'));
+*/
 // app.use(express.static(__dirname +'/build'));
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html')
 // app.set('views', 'build');
 
 //routing
@@ -149,7 +154,7 @@ app.get('/', (req, res)=>{
 
 
 app.get('/song', (req, res)=>{
-    res.render('index2')
+    res.render('index')
 })
 
 app.get('/song/list', (req, res)=>{
