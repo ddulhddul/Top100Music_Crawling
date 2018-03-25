@@ -11,27 +11,18 @@ class App extends Component {
 
   componentDidMount() {
 
-    fetch('song/list')
-    .then(res => res.json())
-    .then(data => {
-      console.log('data', data)
-      this.setState(data)
-    })
-
-    // this.callApi()
-    //   .then(res => this.setState(res))
-    //   .catch(err => console.log(err));
+    this.callApi()
+      .then(res => {
+        console.log('result', res)
+        this.setState(res)
+      })
+      .catch(err => console.log(err));
   }
 
   callApi = async () => {
-    const response = await fetch('http://220.230.117.71:3000/song/count');
-    console.log('response', response)
+    const response = await fetch('song/list');
     const body = await response.json();
-
-    
-
     if (response.status !== 200) throw Error(body.message);
-
     return body;
   };
 
@@ -41,10 +32,13 @@ class App extends Component {
         <Container>
           <Row className="show-grid">
             <Col xs="12" lg="6">
-              <VideoComponent></VideoComponent>
+              <VideoComponent videoId={this.state.videoId}></VideoComponent>
             </Col>
             <Col xs="12" lg="6">
-              <ListComponent songList={this.state.result}></ListComponent>
+              <ListComponent 
+                songList={this.state.result}
+                {...this.state}
+              ></ListComponent>
             </Col>
           </Row>
         </Container>

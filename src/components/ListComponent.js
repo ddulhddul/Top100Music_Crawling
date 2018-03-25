@@ -14,7 +14,7 @@ export default class ListComponent extends Component {
     render() {
         return (
             <div className='List'>
-                <h5>{new Date().date_str()}</h5>
+                <h5>{String(this.props.yymmddhh).replace(/(.{4})(.{2})(.{2})(.{2})/, '$1-$2-$3 $4:00')}</h5>
                 <ListTableComponent songList={this.props.songList} />
             </div>
         )

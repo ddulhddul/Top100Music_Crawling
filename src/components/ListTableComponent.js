@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { Table } from 'reactstrap';
 
 export default class ListTableComponent extends Component {
+
+    changeSong(obj){
+        console.log('clicked', obj)
+    }
     
     render() {
         return (
@@ -17,7 +21,7 @@ export default class ListTableComponent extends Component {
                     <tbody>
                         {
                             this.props.songList.map((obj, index, array) => {
-                                return <tr key={index}>
+                                return <tr key={index} onClick={()=>this.changeSong(obj)}>
                                     <td>{index+1}</td>
                                     <td>{obj.song}</td>
                                     <td>{obj.singer}</td>

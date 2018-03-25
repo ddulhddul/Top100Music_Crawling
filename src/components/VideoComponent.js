@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import VideoControlComponent from './VideoControlComponent'
-import YoutubePlayer from 'react-youtube-player';
+import ResponsiveEmbed from 'react-responsive-embed'
 
 export default class VideoComponent extends Component {
     
@@ -12,19 +12,8 @@ export default class VideoComponent extends Component {
         return (
             <div className='Video'>
                 <h4>Song Singer</h4>
-                <div style={{height:'400px', width:'550px'}}>
-                    <YoutubePlayer
-                        videoId={this.props.videoId}
-                        playbackState='unstarted'
-                        configuration={
-                            {
-                                showinfo: 0,
-                                controls: 0
-                            }
-                        }
-                    />
-                    <VideoControlComponent />
-                </div>
+                <ResponsiveEmbed src={'https://www.youtube.com/embed/'+this.props.videoId} ratio='4:3' />
+                <VideoControlComponent />
             </div>
         )
     }
