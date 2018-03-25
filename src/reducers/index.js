@@ -18,7 +18,8 @@ const videoInfo = (state = initialState, action) => {
             return Object.assign({}, state, {
                 videoId: action.videoId,
                 singer: action.singer,
-                song: action.song
+                song: action.song,
+                num: action.num
             });
         case SET_VIDEO_INFO:
             return Object.assign({}, state, {

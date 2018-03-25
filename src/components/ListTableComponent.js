@@ -12,7 +12,7 @@ class ListTableComponent extends Component {
             .then(res => res.json())
             .then(result => {
                 console.log('result', result)
-                this.props.setId(result.url, obj.singer, obj.song)
+                this.props.setId(result.url, obj.singer, obj.song, obj.num)
             })
     }
 
@@ -30,7 +30,10 @@ class ListTableComponent extends Component {
                     <tbody>
                         {
                             this.props.songList.map((obj, index, array) => {
-                                return <tr key={index} onClick={() => this.changeSong(obj)}>
+                                let style = {
+                                    backgroundColor : obj.num == this.props.num ? 'rgba(0,0,0,.05)' : ''
+                                }
+                                return <tr key={index} onClick={() => this.changeSong(obj)} style={style}>
                                     <td>{index + 1}</td>
                                     <td>{obj.song}</td>
                                     <td>{obj.singer}</td>
@@ -46,7 +49,7 @@ class ListTableComponent extends Component {
 
 let mapDispatchToProps = (dispatch) => {
     return {
-        setId: (videoId, singer, song) => dispatch(setVideoId(videoId, singer, song))
+        setId: (videoId, singer, song, num) => dispatch(setVideoId(videoId, singer, song, num))
     }
 }
 

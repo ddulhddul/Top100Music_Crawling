@@ -41,6 +41,7 @@ class App extends Component {
               <ListComponent 
                 songList={this.props.result}
                 yymmddhh={this.props.yymmddhh}
+                num={this.props.num}
               ></ListComponent>
             </Col>
           </Row>
@@ -57,7 +58,8 @@ let mapStateToProps = (state) => {
     singer : state.videoInfo.singer,
     song : state.videoInfo.song,
     result : state.videoInfo.result,
-    yymmddhh : state.videoInfo.yymmddhh
+    yymmddhh : state.videoInfo.yymmddhh,
+    num : state.videoInfo.num
   };
 }
 

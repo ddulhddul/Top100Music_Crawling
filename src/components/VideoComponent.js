@@ -13,7 +13,7 @@ class VideoComponent extends Component {
                     videoId={this.props.videoId}                  // defaults -> null
                     opts={{
                         playerVars: { // https://developers.google.com/youtube/player_parameters
-                            autoplay: 1
+                            // autoplay: 1
                         }
                     }}
                     // onReady={func}                    // defaults -> noop
