@@ -2,19 +2,18 @@ import React, { Component } from 'react';
 import './App.css';
 import VideoComponent from './components/VideoComponent'
 import ListComponent from './components/ListComponent'
+import { connect } from 'react-redux';
 import { Container, Row, Col } from 'reactstrap';
+import { setVideoInfo } from './actions';
 
 class App extends Component {
-  state = {
-    response: ''
-  };
 
   componentDidMount() {
 
     this.callApi()
       .then(res => {
         console.log('result', res)
-        this.setState(res)
+        this.props.setInfos(res)
       })
       .catch(err => console.log(err));
   }
@@ -32,12 +31,12 @@ class App extends Component {
         <Container>
           <Row className="show-grid">
             <Col xs="12" lg="6">
-              <VideoComponent videoId={this.state.videoId}></VideoComponent>
+              <VideoComponent videoId={this.props.videoId}></VideoComponent>
             </Col>
             <Col xs="12" lg="6">
               <ListComponent 
-                songList={this.state.result}
-                {...this.state}
+                songList={this.props.result}
+                {...this.props}
               ></ListComponent>
             </Col>
           </Row>
@@ -47,5 +46,20 @@ class App extends Component {
     );
   }
 }
+
+let mapStateToProps = (state) => {
+  return {
+    videoId : state.videoInfo.videoId,
+    ...state.videoInfo
+  };
+}
+
+let mapDispatchToProps = (dispatch) => {
+  return {
+    setInfos: (param) => dispatch(setVideoInfo(param))
+  }
+}
+
+App = connect(mapStateToProps, mapDispatchToProps)(App);
 
 export default App;

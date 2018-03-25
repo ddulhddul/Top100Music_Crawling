@@ -1,10 +1,19 @@
 import React, { Component } from 'react'
 import { Table } from 'reactstrap';
+import { connect } from 'react-redux';
+import { setVideoId } from '../actions'
 
-export default class ListTableComponent extends Component {
+class ListTableComponent extends Component {
 
     changeSong(obj){
-        console.log('clicked', obj)
+        console.log('clicked', obj, obj.yymmddhh, obj.num)
+        
+        fetch(`song/change?yymmddhh=${obj.yymmddhh}&num=${obj.num}`)
+        .then(res => res.json())
+        .then(result => {
+            console.log('result',result)
+            this.props.setVideoId(result.url)
+        })
     }
     
     render() {
@@ -34,3 +43,13 @@ export default class ListTableComponent extends Component {
         )
     }
 }
+
+let mapDispatchToProps = (dispatch) => {
+    return {
+      setVideoId: (videoId) => dispatch(setVideoId(videoId))
+    }
+  }
+  
+ListTableComponent = connect(undefined, mapDispatchToProps)(ListTableComponent);
+
+export default ListTableComponent
