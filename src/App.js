@@ -31,12 +31,16 @@ class App extends Component {
         <Container>
           <Row className="show-grid">
             <Col xs="12" lg="6">
-              <VideoComponent videoId={this.props.videoId}></VideoComponent>
+              <VideoComponent 
+                videoId={this.props.videoId}
+                singer={this.props.singer}
+                song={this.props.song}
+              ></VideoComponent>
             </Col>
             <Col xs="12" lg="6">
               <ListComponent 
                 songList={this.props.result}
-                {...this.props}
+                yymmddhh={this.props.yymmddhh}
               ></ListComponent>
             </Col>
           </Row>
@@ -50,7 +54,10 @@ class App extends Component {
 let mapStateToProps = (state) => {
   return {
     videoId : state.videoInfo.videoId,
-    ...state.videoInfo
+    singer : state.videoInfo.singer,
+    song : state.videoInfo.song,
+    result : state.videoInfo.result,
+    yymmddhh : state.videoInfo.yymmddhh
   };
 }
 

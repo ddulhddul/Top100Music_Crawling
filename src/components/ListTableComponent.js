@@ -5,20 +5,20 @@ import { setVideoId } from '../actions'
 
 class ListTableComponent extends Component {
 
-    changeSong(obj){
+    changeSong(obj) {
         console.log('clicked', obj, obj.yymmddhh, obj.num)
-        
+
         fetch(`song/change?yymmddhh=${obj.yymmddhh}&num=${obj.num}`)
-        .then(res => res.json())
-        .then(result => {
-            console.log('result',result)
-            this.props.setVideoId(result.url)
-        })
+            .then(res => res.json())
+            .then(result => {
+                console.log('result', result)
+                this.props.setId(result.url, obj.singer, obj.song)
+            })
     }
-    
+
     render() {
         return (
-            <div className='ListTable' style={{height:'500px', overflowY:'auto'}}>
+            <div className='ListTable' style={{ height: '500px', overflowY: 'auto' }}>
                 <Table>
                     <thead>
                         <tr>
@@ -30,15 +30,15 @@ class ListTableComponent extends Component {
                     <tbody>
                         {
                             this.props.songList.map((obj, index, array) => {
-                                return <tr key={index} onClick={()=>this.changeSong(obj)}>
-                                    <td>{index+1}</td>
+                                return <tr key={index} onClick={() => this.changeSong(obj)}>
+                                    <td>{index + 1}</td>
                                     <td>{obj.song}</td>
                                     <td>{obj.singer}</td>
                                 </tr>
                             })
                         }
                     </tbody>
-                </Table>                
+                </Table>
             </div>
         )
     }
@@ -46,10 +46,10 @@ class ListTableComponent extends Component {
 
 let mapDispatchToProps = (dispatch) => {
     return {
-      setVideoId: (videoId) => dispatch(setVideoId(videoId))
+        setId: (videoId, singer, song) => dispatch(setVideoId(videoId, singer, song))
     }
-  }
-  
+}
+
 ListTableComponent = connect(undefined, mapDispatchToProps)(ListTableComponent);
 
 export default ListTableComponent

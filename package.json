@@ -30,6 +30,7 @@
     "react-responsive-embed": "^2.1.0",
     "react-scripts": "1.1.1",
     "react-transition-group": "^2.2.1",
+    "react-youtube": "^7.5.0",
     "react-youtube-player": "^2.0.1",
     "reactstrap": "^4.8.0",
     "redux": "^3.7.2",
