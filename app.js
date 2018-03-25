@@ -162,7 +162,7 @@ app.get('/song/list', (req, res)=>{
     Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
-        if(err || !result || result.length === 0 || result.length > 100){
+        if(err || !result || result.length === 0){
             console.log(`${yymmddhh} result not exists`)
             getChartByUrlRequest(res);
         }else{
@@ -173,7 +173,8 @@ app.get('/song/list', (req, res)=>{
             //prevent dup data(temp)
             let filteredResult = [];
             let tempIndex = -1;
-            for (let i = 0; i < result.length; i++) {
+            let totNum = Math.min(result.length, 100)
+            for (let i = 0; i < totNum; i++) {
                 let element = result[i];
                 if(element.num == tempIndex) continue;
                 tempIndex = element.num;
@@ -183,7 +184,7 @@ app.get('/song/list', (req, res)=>{
             res.send({
                 result: filteredResult,
                 index: 0,
-                totNum: result.length,
+                totNum: totNum,
                 yymmddhh: yymmddhh
             });
         }
