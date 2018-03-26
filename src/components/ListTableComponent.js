@@ -5,6 +5,12 @@ import { setVideoId } from '../actions'
 
 class ListTableComponent extends Component {
 
+    componentDidUpdate(){
+        if(!this.props.num && this.props.songList && this.props.songList.length){
+            this.changeSong(this.props.songList[0])
+        }
+    }
+    
     changeSong(obj) {
         console.log('clicked', obj, obj.yymmddhh, obj.num)
 
@@ -31,7 +37,7 @@ class ListTableComponent extends Component {
                         {
                             this.props.songList.map((obj, index, array) => {
                                 let style = {
-                                    backgroundColor : obj.num == this.props.num ? 'rgba(0,0,0,.05)' : ''
+                                    backgroundColor : obj.num === this.props.num ? 'rgba(0,0,0,.05)' : ''
                                 }
                                 return <tr key={index} onClick={() => this.changeSong(obj)} style={style}>
                                     <td>{index + 1}</td>

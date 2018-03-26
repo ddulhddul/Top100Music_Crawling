@@ -1,5 +1,10 @@
 .VideoControl{
   margin: 5px 5px 5px 5px;
+  text-align: center;
+}
+
+.VideoControl .btn-toolbar{
+  display: inline-block;
 }
 
 .VideoControl .btnGrp {

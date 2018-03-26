@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
+import { IoStop, IoIosFastforward, IoIosPlay } from 'react-icons/lib/io'
+import { FaRefresh, FaRandom } from 'react-icons/lib/fa'
 
 export default class VideoControlComponent extends Component {
 
@@ -8,15 +10,15 @@ export default class VideoControlComponent extends Component {
             <div className='VideoControl'>
                 <ButtonToolbar>
                     <ButtonGroup className="btnGrp">
-                        <Button color="default">1</Button>
-                        <Button color="info">Seq</Button>
-                        <Button color="default">Rand</Button>
+                        <Button color="default"><b>1</b></Button>
+                        <Button color="info"><FaRefresh /></Button>
+                        <Button color="default"><FaRandom /></Button>
                     </ButtonGroup>
 
                     <ButtonGroup className="btnGrp">
-                        <Button color="warning">Pause</Button>
-                        <Button color="primary">Start</Button>
-                        <Button color="danger">FF</Button>
+                        <Button color="warning"><IoStop /></Button>
+                        <Button color="primary"><IoIosPlay /></Button>
+                        <Button color="danger"><IoIosFastforward /></Button>
                     </ButtonGroup>
                 </ButtonToolbar>
             </div>

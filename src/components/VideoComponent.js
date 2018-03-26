@@ -7,7 +7,7 @@ class VideoComponent extends Component {
     render() {
         return (
             <div className='Video'>
-                <h4><b>{this.props.song} <small>{this.props.singer}</small></b></h4>
+                <h4 style={{textAlign: 'center'}}><b>{this.props.song} <small>{this.props.singer}</small></b></h4>
                 <YouTube
                     className='embed-responsive embed-responsive-16by9'
                     videoId={this.props.videoId}                  // defaults -> null
