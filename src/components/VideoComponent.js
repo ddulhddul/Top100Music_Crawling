@@ -1,21 +1,79 @@
 import React, { Component } from 'react'
 import VideoControlComponent from './VideoControlComponent'
 import YouTube from 'react-youtube'
+import { connect } from 'react-redux';
+import { setVideoId, setVideoNum } from '../actions'
 
 class VideoComponent extends Component {
 
-    onStateChange(event){
-        console.log('onStateChange',event)
-        if(event.data === 5){ // Player End
-            // switch($('#loop').val()){
-            //     case 's':
-            //     ii = (Number(curIndex)+1)%totNum;
-            //     break;
-            //     case 'r':
-            //     ii = Math.floor(Math.random()*totNum)
-            //     break;
-            // }
+    constructor(props){
+        super(props)
+        this.state = {
+            player :undefined
         }
+        this.onStateChange = this.onStateChange.bind(this)
+        this._onReady = this._onReady.bind(this)
+    }
+    
+    componentDidUpdate(){
+        console.log('num Change', this.props.num)
+        let num = this.props.num
+        fetch(`song/change?yymmddhh=${this.props.yymmddhh}&num=${num}`)
+            .then(res => res.json())
+            .then(result => {
+                
+                let obj = this.props.result.filter((value,index)=>{
+                    return value.num === num ? true: false
+                })[0]
+                obj = obj ? obj : {singer:'', song:''}
+                this.props.setVideoId(result.url, obj.singer, obj.song)
+                document.title = `${obj.singer} - ${obj.song}`
+                // if(this.state.player) this.state.player.cuePlaylist([result.url]);
+                let player = this.state.player
+                setTimeout(function(){
+                    // console.log('prevent error', new Date())
+                    player && player.getPlayerState() != 1 && player.playVideo()
+                 }, 1500);
+            })
+    }
+
+    playVideoCustom(videoId){
+        console.log('videoId', videoId)
+        let player = this.state.player
+        if(player.getPlayerState() === 1) return;
+        if(videoId) player.cuePlaylist([videoId]);
+        else player.playVideo()
+        
+        // 플레이하지 않는 경우 방지, 5초후 다시 실행
+        setTimeout(function(){
+            // console.log('prevent error', new Date())
+            player && player.getPlayerState() != 1 && player.playVideo()
+         }, 3000);
+    }
+
+    playNextNum(num){
+        let songObj = this.props.result.filter((value,index)=>{
+            return value.num === num ? true: false
+        })[0]
+        this.playVideoCustom(songObj.videoId)
+    }
+
+    onStateChange(event){
+        console.log('onStateChange',event, this.state.player)
+        if(event.data === 5) {
+            // this.playNextNum(this.props.num)
+
+        }else if(event.data === 0){ // Player End
+            // playType 에 따라 분기처리 필요
+            // this.playNextNum(this.props.num)
+            this.props.setVideoNum(Math.ceil(Math.random()*100))
+        }
+    }
+
+    _onReady(event){
+        this.setState({
+            player: event.target
+        })
     }
 
     render() {
@@ -30,11 +88,11 @@ class VideoComponent extends Component {
                             // autoplay: 1
                         }
                     }}
-                    // onReady={func}                    // defaults -> noop
+                    onReady={this._onReady}                    // defaults -> noop
                     // onPlay={func}                     // defaults -> noop
                     // onPause={func}                    // defaults -> noop
                     // onEnd={func}                      // defaults -> noop
-                    // onError={func}                    // defaults -> noop
+                    // onError={this.__onError}                    // defaults -> noop
                     onStateChange={this.onStateChange}              // defaults -> noop
                     // onPlaybackRateChange={func}       // defaults -> noop
                     // onPlaybackQualityChange={func}    // defaults -> noop
@@ -45,4 +103,18 @@ class VideoComponent extends Component {
     }
 }
 
+let mapStateToProps = (state) => {
+    return {
+        yymmddhh : state.videoInfo.yymmddhh,
+        result : state.videoInfo.result,
+        num : state.videoInfo.num
+    };
+}
+let mapDispatchToProps = (dispatch) => {
+    return {
+        setVideoId: (videoId, singer, song) => dispatch(setVideoId(videoId, singer, song)),
+        setVideoNum: (num) => dispatch(setVideoNum(num))
+    }
+}
+VideoComponent = connect(mapStateToProps, mapDispatchToProps)(VideoComponent);
 export default VideoComponent;
