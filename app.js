@@ -221,7 +221,7 @@ function getChartByUrlRequest(res){
                 }
                 result.push(param)
             });
-            Chart.remove({}).then(()=>Chart.insertMany(result))
+            Chart.remove({yymmddhh:yymmddhh}).then(()=>Chart.insertMany(result))
             
             res.send({
                 result: result,
