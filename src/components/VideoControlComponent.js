@@ -2,17 +2,23 @@ import React, { Component } from 'react'
 import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
 import { IoStop, IoIosFastforward, IoIosPlay } from 'react-icons/lib/io'
 import { FaRefresh, FaRandom } from 'react-icons/lib/fa'
+import { connect } from 'react-redux';
+import { setPlayType } from '../actions'
 
-export default class VideoControlComponent extends Component {
+class VideoControlComponent extends Component {
+
+    componentDidMount(){
+        if(!this.props.playType) this.props.setPlayType('s')
+    }
 
     render() {
         return (
             <div className='VideoControl'>
                 <ButtonToolbar>
                     <ButtonGroup className="btnGrp">
-                        <Button color="default"><b>1</b></Button>
-                        <Button color="info"><FaRefresh /></Button>
-                        <Button color="default"><FaRandom /></Button>
+                        <Button onClick={()=>this.props.setPlayType('1')} color={this.props.playType==='1'?"info":"default"}><b>1</b></Button>
+                        <Button onClick={()=>this.props.setPlayType('s')} color={this.props.playType==='s'?"info":"default"}><FaRefresh /></Button>
+                        <Button onClick={()=>this.props.setPlayType('r')} color={this.props.playType==='r'?"info":"default"}><FaRandom /></Button>
                     </ButtonGroup>
 
                     <ButtonGroup className="btnGrp">
@@ -25,3 +31,16 @@ export default class VideoControlComponent extends Component {
         )
     }
 }
+
+let mapStateToProps = (state) => {
+    return {
+      playType : state.videoInfo.playType
+    };
+  }
+let mapDispatchToProps = (dispatch) => {
+    return {
+        setPlayType: (playType) => dispatch(setPlayType(playType))
+    }
+}
+VideoControlComponent = connect(mapStateToProps, mapDispatchToProps)(VideoControlComponent);
+export default VideoControlComponent;

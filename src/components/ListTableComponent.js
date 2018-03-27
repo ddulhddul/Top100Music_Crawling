@@ -19,6 +19,7 @@ class ListTableComponent extends Component {
             .then(result => {
                 console.log('result', result)
                 this.props.setId(result.url, obj.singer, obj.song, obj.num)
+                document.title = `${obj.singer} - ${obj.song}`
             })
     }
 

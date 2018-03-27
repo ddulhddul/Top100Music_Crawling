@@ -1,7 +1,7 @@
 /*
  * Reducer
  */
-import { SET_VIDEO_ID, SET_VIDEO_INFO } from '../actions'
+import { SET_VIDEO_ID, SET_VIDEO_INFO, SET_PLAY_TYPE } from '../actions'
 import { combineReducers } from 'redux'
 
 const initialState = {
@@ -24,7 +24,11 @@ const videoInfo = (state = initialState, action) => {
         case SET_VIDEO_INFO:
             return Object.assign({}, state, {
                 result: action.param.result,
-                yymmddhh: action.param.yymmddhh
+                yymmddhh: action.param.yymmddhh                
+            });
+        case SET_PLAY_TYPE:
+            return Object.assign({}, state, {
+                playType: action.playType
             });
         default:
             return state;

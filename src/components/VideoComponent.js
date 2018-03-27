@@ -4,6 +4,20 @@ import YouTube from 'react-youtube'
 
 class VideoComponent extends Component {
 
+    onStateChange(event){
+        console.log('onStateChange',event)
+        if(event.data === 5){ // Player End
+            // switch($('#loop').val()){
+            //     case 's':
+            //     ii = (Number(curIndex)+1)%totNum;
+            //     break;
+            //     case 'r':
+            //     ii = Math.floor(Math.random()*totNum)
+            //     break;
+            // }
+        }
+    }
+
     render() {
         return (
             <div className='Video'>
@@ -21,7 +35,7 @@ class VideoComponent extends Component {
                     // onPause={func}                    // defaults -> noop
                     // onEnd={func}                      // defaults -> noop
                     // onError={func}                    // defaults -> noop
-                    // onStateChange={func}              // defaults -> noop
+                    onStateChange={this.onStateChange}              // defaults -> noop
                     // onPlaybackRateChange={func}       // defaults -> noop
                     // onPlaybackQualityChange={func}    // defaults -> noop
                 />
