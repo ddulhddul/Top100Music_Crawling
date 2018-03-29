@@ -18,6 +18,7 @@ class VideoComponent extends Component {
     
     componentDidUpdate(){
         let num = this.props.num
+        
         fetch(`song/change?yymmddhh=${this.props.yymmddhh}&num=${num}`)
             .then(res => res.json())
             .then(result => {
@@ -28,6 +29,7 @@ class VideoComponent extends Component {
                 obj = obj ? obj : {singer:'', song:''}
                 this.props.setVideoId(result.url, obj.singer, obj.song)
                 document.title = `${obj.singer} - ${obj.song}`
+                if(document.getElementById(num)) document.getElementById('listDiv').scrollTop = document.getElementById(num).offsetTop
                 
                 this.playVideo()
             })

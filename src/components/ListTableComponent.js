@@ -13,7 +13,7 @@ class ListTableComponent extends Component {
     
     render() {
         return (
-            <div className='ListTable' style={{ height: '500px', overflowY: 'auto' }}>
+            <div id='listDiv' className='ListTable' style={{ height: '500px', overflowY: 'auto' }}>
                 <Table>
                     <thead>
                         <tr>
