@@ -23,6 +23,7 @@ const videoInfo = (state = initialState, action) => {
         case SET_VIDEO_INFO:
             return Object.assign({}, state, {
                 result: action.param.result,
+                totNum: action.param.totNum,
                 yymmddhh: action.param.yymmddhh                
             });
         case SET_PLAY_TYPE:

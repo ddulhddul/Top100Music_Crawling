@@ -16,7 +16,6 @@ class VideoComponent extends Component {
     }
     
     componentDidUpdate(){
-        console.log('num Change', this.props.num)
         let num = this.props.num
         fetch(`song/change?yymmddhh=${this.props.yymmddhh}&num=${num}`)
             .then(res => res.json())
@@ -28,45 +27,40 @@ class VideoComponent extends Component {
                 obj = obj ? obj : {singer:'', song:''}
                 this.props.setVideoId(result.url, obj.singer, obj.song)
                 document.title = `${obj.singer} - ${obj.song}`
-                // if(this.state.player) this.state.player.cuePlaylist([result.url]);
-                let player = this.state.player
-                setTimeout(function(){
-                    // console.log('prevent error', new Date())
-                    player && player.getPlayerState() != 1 && player.playVideo()
-                 }, 1500);
+                
+                this.playVideo()
             })
     }
 
-    playVideoCustom(videoId){
-        console.log('videoId', videoId)
+    playVideo(){
         let player = this.state.player
-        if(player.getPlayerState() === 1) return;
-        if(videoId) player.cuePlaylist([videoId]);
-        else player.playVideo()
-        
-        // 플레이하지 않는 경우 방지, 5초후 다시 실행
         setTimeout(function(){
             // console.log('prevent error', new Date())
-            player && player.getPlayerState() != 1 && player.playVideo()
-         }, 3000);
-    }
-
-    playNextNum(num){
-        let songObj = this.props.result.filter((value,index)=>{
-            return value.num === num ? true: false
-        })[0]
-        this.playVideoCustom(songObj.videoId)
+            player && player.getPlayerState() !== 1 && player.playVideo()
+         }, 1500);
     }
 
     onStateChange(event){
-        console.log('onStateChange',event, this.state.player)
         if(event.data === 5) {
             // this.playNextNum(this.props.num)
 
         }else if(event.data === 0){ // Player End
             // playType 에 따라 분기처리 필요
             // this.playNextNum(this.props.num)
-            this.props.setVideoNum(Math.ceil(Math.random()*100))
+            let playType = this.props.playType
+            let totNum = this.props.totNum
+            switch (playType) {
+                case 's':
+                    this.props.setVideoNum((this.props.num+1)%100)
+                    break;
+                case 'r':
+                    this.props.setVideoNum(Math.ceil(Math.random()*totNum))
+                    break;
+                default:
+                    this.playVideo()
+                    break;
+            }
+            
         }
     }
 
@@ -107,6 +101,9 @@ let mapStateToProps = (state) => {
     return {
         yymmddhh : state.videoInfo.yymmddhh,
         result : state.videoInfo.result,
+        playType : state.videoInfo.playType,
+        totNum : state.videoInfo.totNum,
+        videoId : state.videoInfo.videoId,
         num : state.videoInfo.num
     };
 }
