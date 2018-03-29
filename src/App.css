@@ -1,3 +1,7 @@
+.ListTable td{
+  font-weight: 500
+}
+
 .VideoControl{
   margin: 5px 5px 5px 5px;
   text-align: center;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import VideoComponent from './components/VideoComponent'
+import VideoControlComponent from './components/VideoControlComponent'
 import ListComponent from './components/ListComponent'
 import { connect } from 'react-redux';
 import { Container, Row, Col } from 'reactstrap';
@@ -31,11 +31,7 @@ class App extends Component {
         <Container>
           <Row className="show-grid">
             <Col xs="12" lg="6">
-              <VideoComponent 
-                videoId={this.props.videoId}
-                singer={this.props.singer}
-                song={this.props.song}
-              ></VideoComponent>
+              <VideoControlComponent />
             </Col>
             <Col xs="12" lg="6">
               <ListComponent 

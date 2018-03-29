@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import VideoControlComponent from './VideoControlComponent'
+// import VideoControlComponent from './VideoControlComponent'
 import YouTube from 'react-youtube'
 import { connect } from 'react-redux';
 import { setVideoId, setVideoNum, setVideoPlayer } from '../actions'
@@ -44,7 +44,7 @@ class VideoComponent extends Component {
     }
 
     onStateChange(event){
-        console.log('event change', event.data)
+        // console.log('event change', event.data)
         if(event.data === 5) {
             // this.playNextNum(this.props.num)
 
@@ -75,27 +75,23 @@ class VideoComponent extends Component {
 
     render() {
         return (
-            <div className='Video'>
-                <h4 style={{textAlign: 'center'}}><b>{this.props.song} <small>{this.props.singer}</small></b></h4>
-                <YouTube
-                    className='embed-responsive embed-responsive-16by9'
-                    videoId={this.props.videoId}                  // defaults -> null
-                    opts={{
-                        playerVars: { // https://developers.google.com/youtube/player_parameters
-                            // autoplay: 1
-                        }
-                    }}
-                    onReady={this._onReady}                    // defaults -> noop
-                    // onPlay={func}                     // defaults -> noop
-                    // onPause={func}                    // defaults -> noop
-                    // onEnd={func}                      // defaults -> noop
-                    // onError={this.__onError}                    // defaults -> noop
-                    onStateChange={this.onStateChange}              // defaults -> noop
-                    // onPlaybackRateChange={func}       // defaults -> noop
-                    // onPlaybackQualityChange={func}    // defaults -> noop
-                />
-                <VideoControlComponent />
-            </div>
+            <YouTube
+                className='embed-responsive embed-responsive-16by9'
+                videoId={this.props.videoId}                  // defaults -> null
+                opts={{
+                    playerVars: { // https://developers.google.com/youtube/player_parameters
+                        // autoplay: 1
+                    }
+                }}
+                onReady={this._onReady}                    // defaults -> noop
+                // onPlay={func}                     // defaults -> noop
+                // onPause={func}                    // defaults -> noop
+                // onEnd={func}                      // defaults -> noop
+                // onError={this.__onError}                    // defaults -> noop
+                onStateChange={this.onStateChange}              // defaults -> noop
+                // onPlaybackRateChange={func}       // defaults -> noop
+                // onPlaybackQualityChange={func}    // defaults -> noop
+            />
         )
     }
 }
