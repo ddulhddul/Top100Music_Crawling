@@ -28,7 +28,7 @@ class ListTableComponent extends Component {
                                 let style = {
                                     backgroundColor : obj.num === this.props.num ? 'rgba(0,0,0,.05)' : ''
                                 }
-                                return <tr key={index} onClick={() => this.props.setVideoNum(obj.num)} style={style}>
+                                return <tr key={index} onClick={() => this.props.setVideoNum(obj.num)} style={style} id={obj.num}>
                                     <td>{index + 1}</td>
                                     <td>{obj.song}</td>
                                     <td>{obj.singer}</td>

@@ -2,15 +2,16 @@ import React, { Component } from 'react'
 import VideoControlComponent from './VideoControlComponent'
 import YouTube from 'react-youtube'
 import { connect } from 'react-redux';
-import { setVideoId, setVideoNum } from '../actions'
+import { setVideoId, setVideoNum, setVideoPlayer } from '../actions'
 
 class VideoComponent extends Component {
 
     constructor(props){
         super(props)
         this.state = {
-            player :undefined
+            player : undefined
         }
+
         this.onStateChange = this.onStateChange.bind(this)
         this._onReady = this._onReady.bind(this)
     }
@@ -41,6 +42,7 @@ class VideoComponent extends Component {
     }
 
     onStateChange(event){
+        console.log('event change', event.data)
         if(event.data === 5) {
             // this.playNextNum(this.props.num)
 
@@ -51,7 +53,7 @@ class VideoComponent extends Component {
             let totNum = this.props.totNum
             switch (playType) {
                 case 's':
-                    this.props.setVideoNum((this.props.num+1)%100)
+                    this.props.setVideoNum((this.props.num+1)%totNum)
                     break;
                 case 'r':
                     this.props.setVideoNum(Math.ceil(Math.random()*totNum))
@@ -65,9 +67,8 @@ class VideoComponent extends Component {
     }
 
     _onReady(event){
-        this.setState({
-            player: event.target
-        })
+        this.props.setVideoPlayer(event.target)
+        this.setState({player: event.target})
     }
 
     render() {
@@ -110,6 +111,7 @@ let mapStateToProps = (state) => {
 let mapDispatchToProps = (dispatch) => {
     return {
         setVideoId: (videoId, singer, song) => dispatch(setVideoId(videoId, singer, song)),
+        setVideoPlayer: (player) => dispatch(setVideoPlayer(player)),
         setVideoNum: (num) => dispatch(setVideoNum(num))
     }
 }

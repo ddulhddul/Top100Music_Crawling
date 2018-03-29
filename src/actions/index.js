@@ -5,6 +5,7 @@ export const SET_VIDEO_ID = 'SET_VIDEO_ID';
 export const SET_VIDEO_INFO = 'SET_VIDEO_INFO';
 export const SET_PLAY_TYPE = 'SET_PLAY_TYPE';
 export const SET_VIDEO_NUM = 'SET_VIDEO_NUM';
+export const SET_VIDEO_PLAYER = 'SET_VIDEO_PLAYER';
 
 export function setVideoId(videoId, singer, song) {
     return {
@@ -30,5 +31,11 @@ export function setVideoNum(num) {
     return {
         type: SET_VIDEO_NUM,
         num: num
+    };
+}
+export function setVideoPlayer(player) {
+    return {
+        type: SET_VIDEO_PLAYER,
+        player: player
     };
 }

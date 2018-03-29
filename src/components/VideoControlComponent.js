@@ -3,12 +3,35 @@ import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
 import { IoStop, IoIosFastforward, IoIosPlay } from 'react-icons/lib/io'
 import { FaRefresh, FaRandom } from 'react-icons/lib/fa'
 import { connect } from 'react-redux';
-import { setPlayType } from '../actions'
+import { setPlayType, setVideoNum } from '../actions'
 
 class VideoControlComponent extends Component {
 
+    constructor(props){
+        super(props)
+        
+        this.fastforward = this.fastforward.bind(this)
+    }
+
     componentDidMount(){
         if(!this.props.playType) this.props.setPlayType('s')
+    }
+
+    fastforward(){
+        let playType = this.props.playType
+        let totNum = this.props.totNum
+        switch (playType) {
+            case 's':
+                this.props.setVideoNum((this.props.num+1)%totNum)
+                break;
+            case 'r':
+                this.props.setVideoNum(Math.ceil(Math.random()*totNum))
+                break;
+            default:
+                this.playVideo()
+                break;
+        }
+        
     }
 
     render() {
@@ -22,9 +45,9 @@ class VideoControlComponent extends Component {
                     </ButtonGroup>
 
                     <ButtonGroup className="btnGrp">
-                        <Button color="warning"><IoStop /></Button>
-                        <Button color="primary"><IoIosPlay /></Button>
-                        <Button color="danger"><IoIosFastforward /></Button>
+                        <Button onClick={()=>this.props.player && this.props.player.pauseVideo()} color="warning"><IoStop /></Button>
+                        <Button onClick={()=>this.props.player && this.props.player.playVideo()} color="primary"><IoIosPlay /></Button>
+                        <Button onClick={this.fastforward} color="danger"><IoIosFastforward /></Button>
                     </ButtonGroup>
                 </ButtonToolbar>
             </div>
@@ -34,12 +57,16 @@ class VideoControlComponent extends Component {
 
 let mapStateToProps = (state) => {
     return {
-      playType : state.videoInfo.playType
+      totNum : state.videoInfo.totNum,
+      num : state.videoInfo.num,
+      playType : state.videoInfo.playType,
+      player : state.videoInfo.player
     };
   }
 let mapDispatchToProps = (dispatch) => {
     return {
-        setPlayType: (playType) => dispatch(setPlayType(playType))
+        setPlayType: (playType) => dispatch(setPlayType(playType)),
+        setVideoNum: (num) => dispatch(setVideoNum(num))
     }
 }
 VideoControlComponent = connect(mapStateToProps, mapDispatchToProps)(VideoControlComponent);
