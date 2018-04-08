@@ -59,20 +59,7 @@ class VideoComponent extends Component {
         }else if(event.data === 0){ // Player End
             // playType 에 따라 분기처리 필요
             // this.playNextNum(this.props.num)
-            let playType = this.props.playType
-            let totNum = this.props.totNum
-            switch (playType) {
-                case 's':
-                    this.props.setVideoNum((this.props.num+1)%totNum)
-                    break;
-                case 'r':
-                    this.props.setVideoNum(Math.ceil(Math.random()*totNum))
-                    break;
-                default:
-                    this.playVideo()
-                    break;
-            }
-            
+            this.props.fastforward()
         }
     }
 

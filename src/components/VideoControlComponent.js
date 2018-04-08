@@ -42,7 +42,7 @@ class VideoControlComponent extends Component {
             <div className='Video'>
                 <h4 style={{textAlign: 'center'}}><b>{this.props.song} <small>{this.props.singer}</small></b></h4>
                 <div style={{display: this.state.playerHidden ? 'none' : ''}}>
-                    <VideoComponent />
+                    <VideoComponent fastforward={this.fastforward}/>
                 </div>
                 <div className='VideoControl'>
                     <div style={{'textAlign':'right', 'margin':'0px 0px -10px 0px'}}>
