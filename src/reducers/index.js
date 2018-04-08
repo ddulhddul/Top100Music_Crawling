@@ -26,10 +26,26 @@ const videoInfo = (state = initialState, action) => {
                 song: action.song
             });
         case SET_VIDEO_INFO:
+            let result = action.param.result
+            let singerList = []
+            result.map((singInfo)=>{
+                if(!singerList.includes(singInfo.singer)){
+                    singerList.push(singInfo.singer)
+                }
+            })
+            singerList.sort()
+            let singerObjList = []
+            singerList.map((singer)=>{
+                singerObjList.push({
+                    singer: singer,
+                    isPlay: true
+                })
+            })
             return Object.assign({}, state, {
-                result: action.param.result,
+                result: result,
                 totNum: action.param.totNum,
-                yymmddhh: action.param.yymmddhh                
+                yymmddhh: action.param.yymmddhh,
+                singerList: singerObjList
             });
         case SET_PLAY_TYPE:
             return Object.assign({}, state, {

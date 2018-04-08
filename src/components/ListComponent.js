@@ -19,6 +19,7 @@ export default class ListComponent extends Component {
                 </h6>
                 <ListTableComponent 
                     songList={this.props.songList}
+                    singerList={this.props.singerList}
                     num={this.props.num} 
                 />
             </div>

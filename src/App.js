@@ -8,16 +8,12 @@ import { setVideoInfo } from './actions';
 
 class App extends Component {
 
-  defaultProps = {
-    videoHidden: true
-  }
-  
   componentDidMount() {
 
     this.callApi()
       .then(res => {
         console.log('result', res)
-        this.props.setInfos(res)
+        this.props.setVideoInfo(res)
       })
       .catch(err => console.log(err));
   }
@@ -33,7 +29,7 @@ class App extends Component {
     return (
       <div className="App">
         <Container style={{
-          width: this.props.videoHidden === undefined || this.props.videoHidden ? '60%': '100%'
+          maxWidth: this.props.videoHidden === undefined || this.props.videoHidden ? '600px': ''
         }}>
           <Row className="show-grid">
             <Col xs="12" lg={this.props.videoHidden === undefined || this.props.videoHidden ? "12": "6"}>
@@ -42,6 +38,7 @@ class App extends Component {
             <Col xs="12" lg={this.props.videoHidden === undefined || this.props.videoHidden ? "12": "6"}>
               <ListComponent 
                 songList={this.props.result}
+                singerList={this.props.singerList}
                 yymmddhh={this.props.yymmddhh}
                 num={this.props.num}
               ></ListComponent>
@@ -71,6 +68,7 @@ let mapStateToProps = (state) => {
     singer : state.videoInfo.singer,
     song : state.videoInfo.song,
     result : state.videoInfo.result,
+    singerList : state.videoInfo.singerList || [],
     yymmddhh : state.videoInfo.yymmddhh,
     num : state.videoInfo.num
   };
@@ -78,7 +76,7 @@ let mapStateToProps = (state) => {
 
 let mapDispatchToProps = (dispatch) => {
   return {
-    setInfos: (param) => dispatch(setVideoInfo(param))
+    setVideoInfo: (param) => dispatch(setVideoInfo(param))
   }
 }
 
