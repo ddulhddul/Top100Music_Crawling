@@ -38,6 +38,5 @@
     "request": "^2.81.0",
     "socket.io": "^2.0.1",
     "urlencode": "^1.1.0"
-  },
-  "proxy": "http://localhost:4000/"
+  }
 }
