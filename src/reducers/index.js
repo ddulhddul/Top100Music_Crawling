@@ -5,6 +5,7 @@ import { SET_VIDEO_ID,
          SET_VIDEO_INFO,
          SET_PLAY_TYPE,
          SET_VIDEO_PLAYER,
+         SET_VIDEO_HIDDEN,
          SET_VIDEO_NUM } from '../actions'
 import { combineReducers } from 'redux'
 
@@ -41,6 +42,10 @@ const videoInfo = (state = initialState, action) => {
         case SET_VIDEO_PLAYER:
             return Object.assign({}, state, {
                 player: action.player
+            });
+        case SET_VIDEO_HIDDEN:
+            return Object.assign({}, state, {
+                videoHidden: action.videoHidden
             });
         default:
             return state;

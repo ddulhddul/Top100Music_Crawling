@@ -14,7 +14,7 @@ export default class ListComponent extends Component {
                         {String(this.props.yymmddhh).replace(/(.{4})(.{2})(.{2})(.{2})/, '$1-$2-$3 $4:00')}
                     </div>
                     <div style={{float:'right', display: 'inline-block', width: '33%', textAlign: 'right'}}>
-                        Today ##
+                        Today
                     </div>
                 </h6>
                 <ListTableComponent 

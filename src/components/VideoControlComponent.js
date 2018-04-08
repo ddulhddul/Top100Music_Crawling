@@ -3,7 +3,7 @@ import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
 import { IoStop, IoIosFastforward, IoIosPlay } from 'react-icons/lib/io'
 import { FaRefresh, FaRandom } from 'react-icons/lib/fa'
 import { connect } from 'react-redux';
-import { setPlayType, setVideoNum } from '../actions'
+import { setVideoHidden, setPlayType, setVideoNum } from '../actions'
 import VideoComponent from './VideoComponent'
 
 class VideoControlComponent extends Component {
@@ -11,7 +11,7 @@ class VideoControlComponent extends Component {
     constructor(props){
         super(props)
         this.state = {
-            playerHidden: false
+            playerHidden: true
         }
         this.fastforward = this.fastforward.bind(this)
     }
@@ -49,8 +49,11 @@ class VideoControlComponent extends Component {
                         <button 
                             id="playerHiddenBtn" 
                             style={{'padding':'0px','fontSize':'9px','fontWeight':'bold'}} 
-                            onClick={()=>{this.setState({playerHidden: !this.state.playerHidden})}}
-                            className="btn btn-dark">
+                            onClick={()=>{
+                                this.setState({playerHidden: !this.state.playerHidden})
+                                this.props.setVideoHidden(!this.state.playerHidden)
+                            }}
+                            className={this.state.playerHidden ? "btn btn-dark" : 'btn'} >
                             hidden
                         </button>
                     </div>
@@ -87,6 +90,7 @@ let mapStateToProps = (state) => {
   }
 let mapDispatchToProps = (dispatch) => {
     return {
+        setVideoHidden: (videoHidden) => dispatch(setVideoHidden(videoHidden)),
         setPlayType: (playType) => dispatch(setPlayType(playType)),
         setVideoNum: (num) => dispatch(setVideoNum(num))
     }

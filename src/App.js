@@ -8,6 +8,10 @@ import { setVideoInfo } from './actions';
 
 class App extends Component {
 
+  defaultProps = {
+    videoHidden: true
+  }
+  
   componentDidMount() {
 
     this.callApi()
@@ -28,12 +32,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Container>
+        <Container style={{
+          width: this.props.videoHidden === undefined || this.props.videoHidden ? '60%': '100%'
+        }}>
           <Row className="show-grid">
-            <Col xs="12" lg="6">
+            <Col xs="12" lg={this.props.videoHidden === undefined || this.props.videoHidden ? "12": "6"}>
               <VideoControlComponent />
             </Col>
-            <Col xs="12" lg="6">
+            <Col xs="12" lg={this.props.videoHidden === undefined || this.props.videoHidden ? "12": "6"}>
               <ListComponent 
                 songList={this.props.result}
                 yymmddhh={this.props.yymmddhh}
@@ -42,7 +48,17 @@ class App extends Component {
             </Col>
           </Row>
         </Container>
-        <footer><b>ddulh</b> ddulhddul@gmail.com</footer>
+        <footer>
+          <p> 
+            <strong style={{cursor:'pointer',marginRight:'5px'}}
+              onClick={()=>window.open('https://github.com/ddulhddul/Top100Music_Crawling')}>ddulh
+            </strong><small>ddulhddul@gmail.com</small>
+            <span style={{marginLeft:'10px', fontSize:'11px'}}>contributed by &nbsp;
+              <b style={{cursor:'pointer'}} onClick={()=>window.open('https://github.com/Kitchu0401')}>kitchu</b>
+            </span>
+          </p>
+        </footer>
+        
       </div>
     );
   }
@@ -51,6 +67,7 @@ class App extends Component {
 let mapStateToProps = (state) => {
   return {
     videoId : state.videoInfo.videoId,
+    videoHidden : state.videoInfo.videoHidden,
     singer : state.videoInfo.singer,
     song : state.videoInfo.song,
     result : state.videoInfo.result,

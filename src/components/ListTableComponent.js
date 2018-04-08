@@ -25,10 +25,10 @@ class ListTableComponent extends Component {
                     <tbody>
                         {
                             this.props.songList.map((obj, index, array) => {
-                                let style = {
-                                    backgroundColor : obj.num === this.props.num ? 'rgba(0,0,0,.05)' : ''
-                                }
-                                return <tr key={index} onClick={() => this.props.setVideoNum(obj.num)} style={style} id={obj.num}>
+                                return <tr key={index} onClick={() => this.props.setVideoNum(obj.num)} style={{
+                                        backgroundColor : obj.num === this.props.num ? 'rgba(8, 90, 66, 0.14)' : '',
+                                        cursor: 'pointer'
+                                    }} id={obj.num}>
                                     <td>{index + 1}</td>
                                     <td>{obj.song}</td>
                                     <td>{obj.singer}</td>
