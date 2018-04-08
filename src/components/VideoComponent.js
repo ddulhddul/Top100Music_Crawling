@@ -14,25 +14,33 @@ class VideoComponent extends Component {
 
         this.onStateChange = this.onStateChange.bind(this)
         this._onReady = this._onReady.bind(this)
+        this.setVideoTitleAndPlay = this.setVideoTitleAndPlay.bind(this)
     }
     
     componentDidUpdate(){
         let num = this.props.num
+        let obj = this.props.result.filter((value,index)=>{
+            return value.num === num ? true: false
+        })[0]
+        obj = obj ? obj : {singer:'', song:''}
+        if(obj.videoId){
+            this.setVideoTitleAndPlay(obj, num)
+        }else{
+            fetch(`song/change?yymmddhh=${this.props.yymmddhh}&num=${num}`)
+                .then(res => res.json())
+                .then(result => {
+                    obj.videoId = result.url
+                    this.setVideoTitleAndPlay(obj, num)
+                })
+        }
         
-        fetch(`song/change?yymmddhh=${this.props.yymmddhh}&num=${num}`)
-            .then(res => res.json())
-            .then(result => {
-                
-                let obj = this.props.result.filter((value,index)=>{
-                    return value.num === num ? true: false
-                })[0]
-                obj = obj ? obj : {singer:'', song:''}
-                this.props.setVideoId(result.url, obj.singer, obj.song)
-                document.title = `${obj.singer} - ${obj.song}`
-                if(document.getElementById(num)) document.getElementById('listDiv').scrollTop = document.getElementById(num).offsetTop
-                
-                this.playVideo()
-            })
+    }
+
+    setVideoTitleAndPlay(obj, num){
+        this.props.setVideoId(obj.videoId, obj.singer, obj.song)
+        if(obj.singer && obj.song) document.title = `${obj.singer} - ${obj.song}`
+        if(document.getElementById(num)) document.getElementById('listDiv').scrollTop = document.getElementById(num).offsetTop
+        this.playVideo()
     }
 
     playVideo(){
