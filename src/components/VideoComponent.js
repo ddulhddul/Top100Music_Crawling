@@ -45,10 +45,14 @@ class VideoComponent extends Component {
 
     playVideo(){
         let player = this.state.player
-        player && player.getPlayerState() !== 1 && player.playVideo()
         setTimeout(function(){
+            // console.log('1. 3000 timeout , ',player && player.getPlayerState())
             player && player.getPlayerState() !== 1 && player.playVideo()
-         }, 3000);
+            setTimeout(function(){
+                // console.log('2. 3000 timeout , ',player && player.getPlayerState())
+                player && player.getPlayerState() !== 1 && player.playVideo()
+            }, 3000);
+        }, 3000);
     }
 
     onStateChange(event){
