@@ -1,0 +1,119 @@
+<div id="messageSidebar" data-open="false" data-last-seq="0">
+  <div class="messageSidebar">
+    <form id="messageForm" onsubmit="return false">
+      <div class="row">
+        <div class="col-xs-4">
+          <input type="text" name="writer" placeholder="Anonymous" class="form-control input-sm"/>
+        </div>
+        <div class="col-xs-8">
+          <div class="input-group">
+            <input type="text" name="content" onkeydown="if ( event.which === 13 ) { sendMessage() }" class="form-control input-sm"/><span class="input-group-btn">
+              <button type="button" onclick="sendMessage()" class="btn btn-default btn-sm">Send</button></span>
+          </div>
+        </div>
+      </div>
+    </form>
+    <ul id="messageList"></ul>
+    <button id="moreBtn" style="display: none; margin: 6px;" onclick="requestMoreMessage()" class="btn btn-default">More</button>
+  </div>
+  <div onclick="toggleNav()" class="messageSidebarCurtain"></div>
+  <script src="/script/socket.io.min.js"></script>
+  <script>
+    // [DEBUG] 메시지 내 seq 표시 여부
+    var showSeq = true
+    // 전역 socket 객체
+    var socket
+    // 메시지 목록 토글 스타일
+    var messageSidebarStyle = {
+      show: { 'width': '80%', 'max-width': '640px' },
+      hide: { 'width': '0' }
+    }
+    // 메시지 추가 조회 버튼 토글 스타일
+    var moreBtnStyle = {
+      show: { display: 'inline-block' },
+      hide: { display: 'none' }
+    }
+    // puclic function
+    //  - 모듈 최초 로드시 호출된다.
+    $(function () {
+      // 부모 문서에서 특정 속성을 가진 요소에 이벤트를 바인딩한다.
+      // $('body').find('*[data-role="toggle-message-sidebar"]').on('click', toggleNav)
+      $('body').find('*[id="messageBtn"]').on('click', toggleNav)
+      // Initialization
+      initConnection()
+    })
+    // puclic function
+    //  - 메시지 목록을 열거나 닫는다.
+    function toggleNav () {
+      var isOpen = Boolean($('#messageSidebar').data('open'))
+      $('#messageSidebar')
+        .data('open', !isOpen)
+        .find('.messageSidebar')
+        .css(isOpen ? messageSidebarStyle.hide : messageSidebarStyle.show)
+        .end()
+        .find('.messageSidebarCurtain')
+        .css(isOpen ? { width: '0' } : { width: '100%' })
+    }
+    // init function
+    //  - socket 커넥션을 생성하고 전역 이벤트를 할당한다.
+    function initConnection () {
+      // root socket object
+      // socket = io(document.URL.replace(new RegExp('(.{0,})/song.*'), '$1').replace(new RegExp('(:[0-9]+)?$'),'')+':3001')
+      socket = io(document.URL.replace(/[0-9\:\/]+$/,'')+':3001')
+      // recieve initialization data
+      socket.on('fetchMessage', _renderResult)
+      // recieve initialization data
+      socket.on('newMessage', _renderNewMessage)
+    }
+    // service function
+    //  - 메시지를 전송한다.
+    function sendMessage (message) {
+      var writer = $('#messageForm').find('input[name=writer]').val().trim() || 'Anonymous'
+      var content = $('#messageForm').find('input[name=content]').val().trim()
+      // validate
+      if ( content.length <= 0 ) { return }
+      $('#messageForm').find('input[name=content]').val('')
+      socket.emit('sendMessage', { writer: writer, content: content })
+    }
+    // service function
+    //  - 메시지를 조회한다.
+    function requestMoreMessage () {
+      var lastSeq = $('#messageSidebar').data('last-seq')
+      socket.emit('requestMessage', lastSeq)
+    }
+    // private function
+    //  - 조회된 메시지를 출력한다.
+    function _renderResult (result) {
+      // 재조회를 위해 마지막 메시지의 seq를 저장한다.
+      var listLength = result.messageList.length
+      var lastSeq = listLength > 0 ? result.messageList[listLength - 1].seq : -1
+      $('#messageSidebar').data('last-seq', lastSeq)
+      result.messageList.forEach(function (message) {
+        // 조회된 메시지를 메시지 목록 하단에 출력한다.
+        $('#messageList').append(_generateMessageRow(message))
+      })
+      // 조회된 메시지보다 많은 숫자의 메시지가 존재할 경우, 추가 조회를 위한 버튼을 출력한다.
+      var currentCount = $('#messageList').find('li.message').length
+      $('#moreBtn').css(currentCount < result.totalCount ? moreBtnStyle.show : moreBtnStyle.hide)
+    }
+    // private function
+    //  - 새롭게 등록된 메시지를 출력한다.
+    function _renderNewMessage (message) {
+      // 등록된 메시지를 메시지 목록 상단에 출력한다.
+      $('#messageList').prepend(_generateMessageRow(message))
+    }
+    // private function
+    //  - 주어진 객체를 html DOM li element로 조립하여 반환한다.
+    function _generateMessageRow (message) {
+      // var html = ''
+      //     html += '<li class="message" data-seq="' + message.seq + '">'
+      //     html += '<h6>' + seqStr + message.writer + ' ' + '<small>' + message.formattedDate + '</small></h6>'
+      //     html += '<small class="content">' + message.content + '</small>'
+      //     html += '<li>'
+      var seqStr = showSeq ? '[' + message.seq + '] ' : ''
+      return $('<li/>').addClass('message').data('seq', message.seq)
+                .append($('<h6/>').text(seqStr + message.writer + ' ').append($('<small/>').text(message.formattedDate)))
+                .append($('<small/>').addClass('content').text(message.content))
+    }
+  </script>
+</div>

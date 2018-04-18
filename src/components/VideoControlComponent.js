@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
 import { IoStop, IoIosFastforward, IoIosPlay } from 'react-icons/lib/io'
-import { FaRefresh, FaRandom } from 'react-icons/lib/fa'
+import { FaComments, FaRefresh, FaRandom } from 'react-icons/lib/fa'
 import { connect } from 'react-redux';
 import { setVideoHidden, setPlayType, setVideoNum } from '../actions'
 import VideoComponent from './VideoComponent'
@@ -58,6 +58,10 @@ class VideoControlComponent extends Component {
                         </button>
                     </div>
                     <ButtonToolbar>
+                        <ButtonGroup className="btnGrp">
+                            <Button id="messageBtn"><FaComments /></Button>
+                        </ButtonGroup>
+
                         <ButtonGroup className="btnGrp">
                             <Button onClick={()=>this.props.setPlayType('1')} color={this.props.playType==='1'?"info":"default"}><b>1</b></Button>
                             <Button onClick={()=>this.props.setPlayType('s')} color={this.props.playType==='s'?"info":"default"}><FaRefresh /></Button>
