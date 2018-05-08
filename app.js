@@ -265,9 +265,23 @@ app.get('/song/change', (req,res)=>{
                     // let href = $('#results ol li ol li a').first().attr('href');
                     let $tag = $('.yt-lockup-video a')
                     let tagLoop = 0, href='';
-                    while(tagLoop < 5){
-                        href = $tag.eq(tagLoop++).attr('href')
-                        if (href && href.length < 30 && href.indexOf('/watch?v=') != -1) break;
+                    let passedHref = []
+                    loop:
+                    while(tagLoop < 15){
+                        let $targetTag = $tag.eq(tagLoop++)
+                        href = $targetTag.attr('href')
+                        let videoTime = $targetTag.find('.video-time').html()
+                        if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
+                            if(!passedHref.includes(href)) passedHref.push(href)
+                            else continue loop;
+
+                            if(videoTime){
+                                let timeArr = videoTime.split(':')
+                                if(timeArr.length !== 2) continue loop; // over 1hour continue
+                                else if(timeArr[0] >= 10) continue loop; // over 10 minuites continue
+                            }
+                            break loop;
+                        }
                     }
 
 		            href = href.replace('/watch?v=','');
