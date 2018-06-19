@@ -31,6 +31,7 @@ class VideoComponent extends Component {
                 .then(result => {
                     obj.videoId = result.url
                     this.setVideoTitleAndPlay(obj, num)
+                    
                 })
         }
         
@@ -46,7 +47,9 @@ class VideoComponent extends Component {
     playVideo(){
         let player = this.state.player
         setTimeout(function(){
+            
             // console.log('1. 3000 timeout , ',player && player.getPlayerState())
+            
             player && player.getPlayerState() !== 1 && player.playVideo()
             setTimeout(function(){
                 // console.log('2. 3000 timeout , ',player && player.getPlayerState())
@@ -56,7 +59,6 @@ class VideoComponent extends Component {
     }
 
     onStateChange(event){
-        // console.log('event change', event.data)
         if(event.data === 5) {
             // this.playNextNum(this.props.num)
 
@@ -64,12 +66,18 @@ class VideoComponent extends Component {
             // playType 에 따라 분기처리 필요
             // this.playNextNum(this.props.num)
             this.props.fastforward()
+        }else if(event.data === -1){
+            let player = this.state.player
+            let props = this.props
+            setTimeout(function(){
+                player && player.getPlayerState() === -1 && props.fastforward && props.fastforward()
+            }, 8000);
         }
     }
-
+    
     _onReady(event){
         this.props.setVideoPlayer(event.target)
-        this.setState({player: event.target})
+        this.setState({player: event.target})    
     }
 
     render() {
