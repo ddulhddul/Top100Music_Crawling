@@ -12,18 +12,19 @@ let app = express()
 app.use(bodyParser.urlencoded({ extended: true })); 
 
 /* original */
-// app.set('view engine', 'ejs')
-// app.use(express.static(__dirname +'/static'));
+app.set('view engine', 'ejs')
+app.use(express.static(__dirname +'/static'));
 // app.set('views', 'html');
+app.set('views', 'vue');
 
 /* react 
 let path = require('path')
 app.set('views', path.join(__dirname, 'build'));
 */
-app.use(express.static(__dirname +'/build'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html')
-app.set('views', 'build');
+// app.use(express.static(__dirname +'/build'));
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html')
+// app.set('views', 'build');
 
 //routing
 let message = require('./router/message')(express);

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" style="text-align:center;">
+
+<head>
+  <title>Vue) Music Top 100 Youtube</title>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="http://www.youtube.com/player_api"></script>
+  <script src="/js/vue.js"></script>
+</head>
+
+<body>
+  <div id=contentBody>
+    <div id="iframeDiv">
+      <h4 style="cursor:pointer;">
+        <strong>{{ currentMusic.song }}</strong>
+        <span style="white-space: nowrap">
+          <small>&nbsp;&nbsp;{{ currentMusic.singer }}</small>
+        </span>
+      </h4>
+      <div id="playerEmbedDiv" v-bind:style='{display: videoHidden? "none": "block"}' class="embed-responsive embed-responsive-4by3">
+        <div id="player" class="embed-responsive-item"></div>
+      </div>
+      <div style="text-align:right; margin:0px 0px -10px 0px;">
+        <button id="playerHiddenBtn" v-on:click='videoHidden=!videoHidden' style="padding:0px;font-size:9px;font-weight:bold;" class="btn btn-dark">hidden</button>
+      </div>
+      <div role="group" class="btn-group">
+        <button type="button" data-role="toggle-message-sidebar" class="btn btn-success">
+          <span aria-hidden="true" class="glyphicon glyphicon-comment"></span>
+        </button>
+      </div>
+      <div id="btnGroup" role="group" class="btn-group">
+        <button type="button" v-on:click="playType='1'" v-bind:class='playType == "1" ? "btn-info" : ""' style="font-weight:bold;"
+          class="btn btn-default">1</button>
+        <button type="button" v-on:click="playType='s'" v-bind:class='playType == "s" ? "btn-info" : ""' class="btn btn-default">
+          <span aria-hidden="true" class="glyphicon glyphicon-retweet"></span>
+        </button>
+        <button type="button" v-on:click="playType='r'" v-bind:class='playType == "r" ? "btn-info" : ""' class="btn btn-default">
+          <span aria-hidden="true" class="glyphicon glyphicon-random"></span>
+        </button>
+      </div>
+      <div role="group" class="btn-group">
+        <button type="button" v-on:click="pauseYoutube()" class="btn btn-warning">
+          <span aria-hidden="true" class="glyphicon glyphicon-pause"></span>
+        </button>
+        <button type="button" v-on:click="playYoutube()" class="btn btn-primary">
+          <span aria-hidden="true" class="glyphicon glyphicon-play"></span>
+        </button>
+        <button type="button" v-on:click="nextSong()" class="btn btn-danger">
+          <span aria-hidden="true" class="glyphicon glyphicon-forward"></span>
+        </button>
+      </div>
+      <div id="content">
+        <div class="btn-group">
+            {{ (currentMusic.yymmddhh || '').replace(/(.{4})(.{2})(.{2})(.{2})/,'$1-$2-$3 $4:00') }}
+        </div>
+        <table id="listDiv" style="display:inline-block;" class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>song</th>
+              <th>singer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-bind:id="music.num" v-for="(music,index) in musicList" v-bind:class='currentMusic.num == music.num ? "success" : ""'
+              v-on:click="changeMusic(music)">
+              <td>{{ music.num }}</td>
+              <td>{{ music.song }}</td>
+              <td>{{ music.singer }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <footer>
+
+      <p>
+        <strong onclick="window.open('https://github.com/ddulhddul/Top100Music_Crawling')">ddulh</strong>
+        <small>ddulhddul@gmail.com</small>
+        <span>contributed by
+          <b onclick="window.open('https://github.com/Kitchu0401')">kitchu</b>
+        </span>
+      </p>
+    </footer>
+    <div style="display:none;" id="tempfooter">
+      <b>URL changed ! </b>
+      <a href="http://mlchart.ml/song">http://mlchart.ml/</a>
+    </div>
+  </div>
+  <script>
+    var ML_CHART = new Vue({
+      el: '#contentBody',
+      data: {
+        playType: 's',
+        videoHidden: true,
+        musicList: [],
+        currentMusic: {},
+        totNum: 100
+      },
+      methods: {
+        pauseYoutube: function () {
+          if (player) player.pauseVideo();
+        },
+        playYoutube: function () {
+          if (player) player.playVideo();
+        },
+        nextSong: function () {
+
+          var nextSongNum = 0
+          if (ML_CHART.playType === 'r') nextSongNum = Math.floor(Math.random() * ML_CHART.totNum) + 1
+          else if (ML_CHART.playType === 's') nextSongNum = (Number(ML_CHART.currentMusic.num) + 1) % 100 || 1
+          else nextSongNum = ML_CHART.currentMusic.num
+
+          ML_CHART.changeMusic(ML_CHART.musicList.find(function (obj, index) {
+            return obj.num == nextSongNum
+          }))
+        },
+        changeMusic: function (data) {
+          if (data.videoId) {
+            ML_CHART.updatePlayList(data)
+            return;
+          }
+          fetch(`song/change?yymmddhh=${data.yymmddhh}&num=${data.num}`)
+            .then(res => res.json())
+            .then(result => {
+              var targetObj = {}
+              ML_CHART.musicList = ML_CHART.musicList.map(function (obj, index, array) {
+                if (obj.num === data.num) {
+                  obj.videoId = result.url
+                  targetObj = obj
+                }
+                return obj
+              })
+              ML_CHART.updatePlayList(targetObj)
+            })
+        },
+        updatePlayList: function (obj) {
+          ML_CHART.currentMusic = obj;
+          if (player && player.cuePlaylist) {
+            player.cuePlaylist([obj.videoId])
+            ML_CHART.setVideoTitleAndPlay(obj)
+          }
+        },
+        setVideoTitleAndPlay: function (obj) {
+          if (obj.singer && obj.song) {
+            document.title = `${obj.singer} - ${obj.song}`
+          }
+          if (document.getElementById(obj.num)) document.getElementById('listDiv').scrollTop = document.getElementById(obj.num).offsetTop
+        },
+        playVideoCustom: function () {
+          player.playVideo()
+          // 플레이하지 않는 경우 방지, 5초후 다시 실행
+          setTimeout(function () {
+            player && player.getPlayerState() != 1 && player.playVideo()
+          }, 5000);
+        }
+      }
+    })
+
+    /*****************************
+     * Create youtube player
+    *****************************/
+    var player;
+    // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
+    // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
+    function onYouTubePlayerAPIReady() {
+      player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: '',
+        playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
+        events: {
+          'onReady': function (event) {
+            if (ML_CHART.musicList.length) ML_CHART.changeMusic(ML_CHART.musicList[0])
+
+          },
+          'onStateChange': function (event) {
+            if (event.data === 5) {
+              ML_CHART.playVideoCustom()
+
+            } else if (event.data === 0) {
+              //동영상 끝난 후 이벤트
+              ML_CHART.nextSong()
+
+            } else if (event.data === -1) ML_CHART.playVideoCustom()
+
+          },
+          'onError': function (event) {
+            if (ML_CHART.videoHidden) ML_CHART.nextSong();
+          }
+        }
+      });
+    }
+
+    let callApi = (async () => {
+      const response = await fetch('song/list');
+      const body = await response.json();
+      if (response.status !== 200) throw Error(body.message);
+      return body;
+    })
+    callApi()
+      .then(res => {
+        console.log('result', res)
+        ML_CHART.musicList = res.result;
+        ML_CHART.changeMusic(res.result[0])
+      })
+      .catch(err => console.log(err));
+  </script>
+</body>
+
+</html>
