@@ -25,7 +25,7 @@
       <div style="text-align:right; margin:0px 0px -10px 0px;">
         <button id="playerHiddenBtn" v-on:click='videoHidden=!videoHidden' style="padding:0px;font-size:9px;font-weight:bold;" class="btn btn-dark">hidden</button>
       </div>
-      <div role="group" class="btn-group">
+      <div role="group" class="btn-group" style='display:none;'>
         <button type="button" data-role="toggle-message-sidebar" class="btn btn-success">
           <span aria-hidden="true" class="glyphicon glyphicon-comment"></span>
         </button>
@@ -51,24 +51,33 @@
           <span aria-hidden="true" class="glyphicon glyphicon-forward"></span>
         </button>
       </div>
-      <div id="content">
-        <div class="btn-group">
-          {{ (currentMusic.yymmddhh || '').replace(/(.{4})(.{2})(.{2})(.{2})/,'$1-$2-$3 $4:00') }}
+      <div id="content" class="container">
+        <div class="row">
+          <div class="col-xs-2 btn-group btn-group-xs" style="display:grid;">
+            <button v-bind:class='selectSongMode?"btn-link":"btn-success"' class="btn" @click="selectSongMode=!selectSongMode">Select</button>
+          </div>
+          <div class="col-xs-8 btn-group btn-group-xs" style="display:grid;">
+            <b>{{ (currentMusic.yymmddhh || '').replace(/(.{4})(.{2})(.{2})(.{2})/,'$1-$2-$3 $4:00') }}</b>
+          </div>
+          <div class="col-xs-2 btn-group btn-group-xs" style="display:grid;">
+            <!-- <button class="btn btn-default">Right</button> -->
+          </div>
         </div>
         <table id="listDiv" style="display:inline-block;" class="table table-striped table-hover">
           <thead>
             <tr>
+              <td v-if="selectSongMode"><input type=checkbox v-on:click="allCheck()" v-bind:checked="selectAll" /></td>
               <th>#</th>
               <th>song</th>
               <th>singer</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-bind:id="music.num" v-for="(music,index) in musicList" v-bind:class='currentMusic.num == music.num ? "success" : ""'
-              v-on:click="changeMusic(music)">
-              <td>{{ music.num }}</td>
-              <td>{{ music.song }}</td>
-              <td>{{ music.singer }}</td>
+            <tr v-bind:id="music.num" v-for="(music,index) in musicList" v-bind:class='currentMusic.num == music.num ? "success" : ""'>
+              <td v-if="selectSongMode"><input type=checkbox v-bind:checked="music.checked" v-on:click="music.checked=!music.checked;allCheckChk()" /></td>
+              <td v-on:click="changeMusic(music)">{{ music.num }}</td>
+              <td v-on:click="changeMusic(music)">{{ music.song }}</td>
+              <td v-on:click="changeMusic(music)">{{ music.singer }}</td>
             </tr>
           </tbody>
         </table>
@@ -89,14 +98,26 @@
     </div>
   </div>
   <script>
+    if(Array.contains === undefined) Array.prototype.contains = function (element) {
+      for (var i = 0; i < this.length; i++) {
+          if (this[i] == element) {
+              return true;
+          }
+      }
+      return false;
+    }
+    NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
+
     var ML_CHART = new Vue({
       el: '#contentBody',
       data: {
         playType: 's',
+        selectSongMode: false,
         videoHidden: true,
         musicList: [],
         currentMusic: {},
-        totNum: 100
+        totNum: 100,
+        selectAll: true
       },
       created: function () {
         (async () => {
@@ -108,11 +129,29 @@
           .then(res => {
             console.log('result', res)
             this.musicList = res.result;
+            this.musicList = this.musicList.map(function(value,index,array){
+              value.checked = ML_CHART.selectAll; return value;
+            })
             this.changeMusic(res.result[0])
           })
           .catch(err => console.log(err));
       },
       methods: {
+        allCheck: function(target){
+          this.selectAll 
+          ? this.musicList = this.musicList.map(function(value,index,array){
+              value.checked = false; return value;
+            })
+          : this.musicList = this.musicList.map(function(value,index,array){
+              value.checked = true; return value;
+            })
+          this.selectAll = !this.selectAll
+        },
+        allCheckChk: function(){
+          this.selectAll = this.musicList.length == this.musicList.filter(function(value,index,array){
+            return value.checked
+          }).length
+        },
         pauseYoutube: function () {
           if (player) player.pauseVideo();
         },

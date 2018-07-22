@@ -63,96 +63,9 @@ function getYymmdd(param){
         lpadNum(date.getDate())
 }
 
-function newCountSave(yymmdd, ip){
-    let countSch = new Count();
-    countSch.yymmdd = yymmdd;
-    countSch.cnt = 1;
-    if(ip) countSch.ip = [ip];
-    countSch.save((err,result)=>{
-        if(err) console.log(`new ${yymmdd} save error...`,err)
-    })
-}
-
-app.get('/song/count', (req, res)=>{
-    try {
-        // let ip = req.headers['x-forwarded-for'] ||
-        // req.connection.remoteAddress ||
-        // req.socket.remoteAddress;
-        // if(!ip && req.connection.socket) ip = req.connection.socket.remoteAddress;
-        // if(ip){
-        //     ip = ip.split(',')[0];
-        //     ip = ip.split(':').slice(-1)[0]; //in case the ip returned in a format: "::ffff:146.xxx.xxx.xxx"
-        // }
-        let ip = 'tempIp'
-        if(!ip){
-            res.send({err:'Undefined Ip'})
-
-        }else{
-            console.log('ip connected... ', ip)
-            let yymmdd = getYymmdd();
-            Count.findOne({yymmdd:yymmdd}, (err, count)=>{
-                if(err) res.send({err:'Ip Find Error'})
-                else{
-                    Count.findOne({yymmdd:'Total'}, (err, total)=>{
-                        if(err) res.send({err:'Total Find Error'})
-                        else{
-                            let totalCnt = 0;
-                            let todayCnt = 0;
-
-                            if(!total){
-                                newCountSave('Total');
-                                totalCnt = 1;
-                            }
-
-                            if(!count){
-                                Count.remove({'yymmdd': { $ne: 'Total' }}, (err)=>{
-                                    if(err) console.log('remove before count error...',err)
-                                    newCountSave(yymmdd);
-                                })
-                                todayCnt = 1;
-                            }
-                            
-                            // let iplist = count? count.ip: [];
-                            // if(iplist.includes(ip)){
-                            //     totalCnt = total.cnt;
-                            //     todayCnt = count.ip.length;
-                            // }else{
-                                if(total){
-                                    total.cnt +=1
-                                    total.save((err,result)=>{
-                                        if(err) console.log('total save error...',err)
-                                    })
-                                    totalCnt = total.cnt;
-                                }
-
-                                if(count){
-                                    count.ip.push(ip);
-                                    todayCnt = count.ip.length;
-                                    count.cnt = todayCnt;
-                                    count.save((err,result)=>{
-                                        if(err) console.log('iplist save error...',err)
-                                    })
-                                }
-                            // }
-                            res.send({
-                                total: totalCnt,
-                                today: todayCnt
-                            })
-                        }
-                    })
-                }
-            })
-        }
-        
-    } catch (error) {
-        res.send({err:'Call Count Error'+error})
-    }
-})
-
 app.get('/', (req, res)=>{
     return res.redirect('/song');
 })
-
 
 app.get('/song', (req, res)=>{
     res.render('index')
