@@ -63,21 +63,51 @@
             <!-- <button class="btn btn-default">Right</button> -->
           </div>
         </div>
-        <table id="listDiv" style="display:inline-block;" class="table table-striped table-hover">
+        <div v-if="selectSongMode" class="btn-group btn-group-xs">
+          <button v-if="removedSingerList.length" style="margin:0px 2px 1px 2px" @click="removedSingerList=[]" class="btn btn-success">reset</button>
+          <button v-for="singer in removedSingerList" @click="unremoveSinger(singer)" class="btn btn-dark" style="margin:0px 2px 1px 2px">{{singer}}</button>
+        </div>
+        <table id="listDiv" style="display:inline-block;margin-top:10px;" class="table table-striped table-hover">
+          <colgroup>
+            <col v-if="false"></col>
+            <col width='10%'></col>
+            <col width='40%'></col>
+            <col width='40%'></col>
+            <col v-if="selectSongMode"></col>
+          </colgroup>
           <thead>
             <tr>
-              <td v-if="selectSongMode"><input type=checkbox v-on:click="allCheck()" v-bind:checked="selectAll" /></td>
+              <td v-if="false"><input type=checkbox v-on:click="allCheck()" v-bind:checked="selectAll" /></td>
               <th>#</th>
               <th>song</th>
               <th>singer</th>
+              <th v-if="selectSongMode">
+                <div class="col-xs-2 btn-group btn-group-xs">
+                  <button @click="removeAllSinger()" class="btn btn-danger">
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> all
+                  </button>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-bind:id="music.num" v-for="(music,index) in musicList" v-bind:class='currentMusic.num == music.num ? "success" : ""'>
-              <td v-if="selectSongMode"><input type=checkbox v-bind:checked="music.checked" v-on:click="music.checked=!music.checked;allCheckChk()" /></td>
+            <tr v-bind:id="music.num" 
+              v-for="(music,index) in musicList" 
+              v-if="!removedSingerList.contains(music.singer)"
+              v-bind:class='currentMusic.num == music.num ? "success" : ""'
+              v-bind:style='music.checked ? "" : "text-decoration:line-through;"'
+              >
+              <td v-if="false"><input type=checkbox v-bind:checked="music.checked" v-on:click="music.checked=!music.checked;allCheckChk()" /></td>
               <td v-on:click="changeMusic(music)">{{ music.num }}</td>
               <td v-on:click="changeMusic(music)">{{ music.song }}</td>
               <td v-on:click="changeMusic(music)">{{ music.singer }}</td>
+              <td v-if="selectSongMode">
+                <div class="col-xs-2 btn-group btn-group-xs">
+                  <button @click="removeSinger(music)" class="btn btn-danger">
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> singer
+                  </button>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -112,12 +142,13 @@
       el: '#contentBody',
       data: {
         playType: 's',
-        selectSongMode: false,
+        selectSongMode: true,
         videoHidden: true,
         musicList: [],
         currentMusic: {},
         totNum: 100,
-        selectAll: true
+        selectAll: true,
+        removedSingerList: []
       },
       created: function () {
         (async () => {
@@ -137,6 +168,23 @@
           .catch(err => console.log(err));
       },
       methods: {
+        removeAllSinger: function(){
+          var singerList = []
+          this.musicList.filter(function(value,index,array){
+            if(!singerList.contains(value.singer)){
+              ML_CHART.removeSinger({singer:value.singer})
+              singerList.push(value.singer)
+            }
+          })
+        },
+        unremoveSinger: function(singer){
+          this.removedSingerList = this.removedSingerList.filter(function(value){
+            return value != singer
+          })
+        },
+        removeSinger: function(obj){
+          this.removedSingerList.push(obj.singer)
+        },
         allCheck: function(target){
           this.selectAll 
           ? this.musicList = this.musicList.map(function(value,index,array){
