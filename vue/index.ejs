@@ -209,14 +209,19 @@
         },
         nextSong: function () {
 
-          var nextSongNum = ML_CHART.currentMusic.num
           var curList = ML_CHART.musicList.filter(function(obj){
             return !ML_CHART.removedSingerList.contains(obj.singer)
           })
+          var nextSongNum = ML_CHART.currentMusic.num
           if(curList.length){
-            nextSongNum = curList[0].num
-            if (ML_CHART.playType === 'r') nextSongNum = curList[Math.floor((Math.random() * curList.length))].num
-            else if (ML_CHART.playType === 's'){
+            if (ML_CHART.playType === 'r'){
+              //remove self
+              curList = curList.filter(function(obj){
+                return obj.num != ML_CHART.currentMusic.num
+              })
+              nextSongNum = (curList[Math.floor((Math.random() * curList.length))] || ML_CHART.currentMusic).num
+
+            } else if (ML_CHART.playType === 's'){
               for (let index = 0; index < curList.length; index++) {
                 const element = curList[index];
                 if(element.num == ML_CHART.currentMusic.num){
