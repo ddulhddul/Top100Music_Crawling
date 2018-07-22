@@ -142,7 +142,7 @@
       el: '#contentBody',
       data: {
         playType: 's',
-        selectSongMode: true,
+        selectSongMode: false,
         videoHidden: true,
         musicList: [],
         currentMusic: {},
@@ -171,7 +171,8 @@
         removeAllSinger: function(){
           var singerList = []
           this.musicList.filter(function(value,index,array){
-            if(!singerList.contains(value.singer)){
+            if(!ML_CHART.removedSingerList.contains(value.singer) 
+                && !singerList.contains(value.singer)){
               ML_CHART.removeSinger({singer:value.singer})
               singerList.push(value.singer)
             }
@@ -208,10 +209,22 @@
         },
         nextSong: function () {
 
-          var nextSongNum = 0
-          if (ML_CHART.playType === 'r') nextSongNum = Math.floor(Math.random() * ML_CHART.totNum) + 1
-          else if (ML_CHART.playType === 's') nextSongNum = (Number(ML_CHART.currentMusic.num) + 1) % 100 || 1
-          else nextSongNum = ML_CHART.currentMusic.num
+          var nextSongNum = ML_CHART.currentMusic.num
+          var curList = ML_CHART.musicList.filter(function(obj){
+            return !ML_CHART.removedSingerList.contains(obj.singer)
+          })
+          if(curList.length){
+            nextSongNum = curList[0].num
+            if (ML_CHART.playType === 'r') nextSongNum = curList[Math.floor((Math.random() * curList.length))].num
+            else if (ML_CHART.playType === 's'){
+              for (let index = 0; index < curList.length; index++) {
+                const element = curList[index];
+                if(element.num == ML_CHART.currentMusic.num){
+                  nextSongNum = (curList[index+1] || curList[0]).num
+                }
+              } 
+            }
+          }
 
           ML_CHART.changeMusic(ML_CHART.musicList.find(function (obj, index) {
             return obj.num == nextSongNum
