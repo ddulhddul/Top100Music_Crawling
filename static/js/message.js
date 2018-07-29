@@ -1,6 +1,6 @@
 Vue.component('message-component', {
     template:
-        `<div>
+        `<div style="margin-top:10px;">
             <div class="row">
                 <div class="col-xs-4">
                     <input v-model="writer" class="form-control input-sm" placeholder='Anonymous' />
