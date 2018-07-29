@@ -5,8 +5,7 @@ footer strong {cursor: pointer;margin-right: 5px;}
 footer span {margin-left: 10px;font-size: 11px;}
 footer span b {cursor: pointer;}
 
-#listDiv{width: 100%;overflow-y:scroll;height:480px;}
-
+.listTable{width: 100%;overflow-y:scroll;height:480px;display:inline-block;margin-top:10px;}
 .iframeDiv{width:50%;max-width : 500px;min-width : 310px;vertical-align: top;margin-left: 20px;margin-right: 20px;}
 .content{max-width: 430px;}
 .btn-group{padding: 10px 5px 0px 5px;}
