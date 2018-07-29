@@ -17,14 +17,16 @@ Vue.component('message-component', {
             <table class="table table-striped table-hover listTable">
             <colgroup>
                 <col width="20%"></col>
-                <col width="50%"></col>
-                <col width="30%"></col>
+                <col width="80%"></col>
             </colgroup>
             <tbody>
                 <tr v-for="message in messageList">
-                    <td>{{message.writer}}</td>
-                    <td>{{message.content}}</td>
-                    <td style='text-align:right'><small>{{message.formattedDate}}</small></td>
+                    <td><b>{{message.writer}}</b></td>
+                    <td>
+                        {{message.content}}
+                        <div style='color:grey;text-align:right'><small><small>{{message.formattedDate}}</small></small></div>
+                    </td>
+                    
                 </tr>
             </tbody>
             </table>
