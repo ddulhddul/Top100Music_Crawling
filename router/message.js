@@ -43,7 +43,13 @@ module.exports = (express) => {
             message.seq = result ? result.seq + 1 : 1
             message.date = new Date()
             message.formattedDate = moment(message.date).locale('ko').format('LLL')
+            // message.formattedDate 
+            //     = [message.date.getFullYear(),message.date.getMonth()+1,message.date.getDate()].join('-')
+            //     + ' '
+            //     + [message.date.getHours(), message.date.getMinutes() < 10 ? '0'+message.date.getMinutes() : message.date.getMinutes()].join(':')
             message.state = 1
+            message.writer = req.body.writer
+            message.content = req.body.content
 
             // save
             message

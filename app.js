@@ -10,6 +10,7 @@ let Count = require('./model/Count');
 
 let app = express()
 app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.json());
 
 /* original */
 app.set('view engine', 'ejs')
