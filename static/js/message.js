@@ -67,6 +67,7 @@ Vue.component('message-component', {
             .then(res => res.json())
             .then(result => {
                 this.messageList = result.messageList
+                this.content = ''
             })
         }
     }
