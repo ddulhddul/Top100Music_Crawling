@@ -31,6 +31,9 @@ app.set('views', path.join(__dirname, 'build'));
 let message = require('./router/message')(express);
 app.use('/song/message',message);
 
+//passport
+app.use('/song/passport',require('./router/passport')(express));
+
 // socket.io
 let server = require('http').createServer()
 let io = require('socket.io')(server)
