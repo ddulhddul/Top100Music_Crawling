@@ -15,6 +15,7 @@
     <div class="iframeDiv">
       <h4 style="cursor:pointer;">
         <strong>{{ currentMusic.song }}</strong>
+        <small v-if="currentMusic.videoTime">({{ currentMusic.videoTime }})</small>
         <span style="white-space: nowrap">
           <small>&nbsp;&nbsp;{{ currentMusic.singer }}</small>
         </span>
@@ -286,6 +287,7 @@
               ML_CHART.musicList = ML_CHART.musicList.map(function (obj, index, array) {
                 if (obj.num === data.num) {
                   obj.videoId = result.url
+                  obj.videoTime = result.videoTime
                   targetObj = obj
                 }
                 return obj
@@ -302,7 +304,7 @@
         },
         setVideoTitleAndPlay: function (obj) {
           if (obj.singer && obj.song) {
-            document.title = `${obj.singer} - ${obj.song}`
+            document.title = `${obj.singer} - ${obj.song} (${obj.videoTime})`
           }
           if (document.getElementById(obj.num)) document.getElementById('listDiv').scrollTop = document.getElementById(obj.num).offsetTop
         },

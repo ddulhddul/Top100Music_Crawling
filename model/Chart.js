@@ -8,7 +8,8 @@ var chartSchema = new Schema({
     singer: String,
     url: String,
     videoId: String,
-    srch: String
+    srch: String,
+    videoTime: String
 });
 
 module.exports = mongoose.model('chart', chartSchema);

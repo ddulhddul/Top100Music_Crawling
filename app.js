@@ -184,11 +184,12 @@ app.get('/song/change', (req,res)=>{
                     let $tag = $('.yt-lockup-video a')
                     let tagLoop = 0, href='';
                     let passedHref = []
+                    let videoTime = ''
                     loop:
                     while(tagLoop < 15){
                         let $targetTag = $tag.eq(tagLoop++)
                         href = $targetTag.attr('href')
-                        let videoTime = $targetTag.find('.video-time').html()
+                        videoTime = $targetTag.find('.video-time').html()
                         if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
                             if(!passedHref.includes(href)) passedHref.push(href)
                             else continue loop;
@@ -205,8 +206,9 @@ app.get('/song/change', (req,res)=>{
 		            href = href.replace('/watch?v=','');
 			
                     chart.videoId = href;
+                    chart.videoTime = videoTime;
                     chart.save((err)=>{if(err) console.log('chart videoId update error...',err)})
-                    res.send({url: href});
+                    res.send({url: href, videoTime: videoTime});
 
                 }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
             }else res.send({err:'change error ... chart is not ready'});
