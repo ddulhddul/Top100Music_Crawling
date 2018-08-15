@@ -5,14 +5,27 @@ module.exports = (express) => {
     route.post('/login', (req,res)=>{
         console.log('req.body',req.body)
         const param = req.body
+        User.find({userId: param.userId}, (err, users)=>{
+            if(!users || !users.length) res.json({result: 'not exists'});
+            else if(users[0].password != param.userPw) res.json({result: 'invalid password'});
+            else res.json(users[0]);
+        })
+
+    })
+
+    route.post('/sign', (req,res)=>{
+        console.log('req.body',req.body)
+        const param = req.body
         User.find({userId: param.userId}, (err, user)=>{
-            if(!user || !user.length) User.insertMany([{
+            let resultMsg = ''
+            if(user && user.length) resultMsg = 'already exists'
+            else{
+                User.insertMany([{
                     userId: param.userId,
                     password: param.userPw
                 }])
-
-            if(user.password != param.userPw) res.json({result: 'invalid password'});
-            else res.json(user);
+            }
+            res.json({result: resultMsg});
         })
 
     })
