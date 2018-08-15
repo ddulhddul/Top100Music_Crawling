@@ -55,7 +55,7 @@
     <div class="content" style="margin-top:10px;">
       <ul class="nav nav-tabs">
         <li v-bind:class="tab=='song'?'active':''"><a href="#none" @click="tab='song'">Song</a></li>
-        <li v-bind:class="tab=='mySong'?'active':''"><a href="#none" @click="tab='mySong'">My Song</a></li>
+        <!-- <li v-bind:class="tab=='mySong'?'active':''"><a href="#none" @click="tab='mySong'">My Song</a></li> -->
         <li v-bind:class="tab=='message'?'active':''"><a href="#none" @click="tab='message'">Messages</a></li>
       </ul>
     </div>
@@ -155,7 +155,7 @@
     var ML_CHART = new Vue({
       el: '#contentBody',
       data: {
-        tab: 'mySong', //song,message,mySong
+        tab: 'song', //song,message,mySong
         playType: 's',
         selectSongMode: false,
         videoHidden: true,
