@@ -75,19 +75,18 @@ app.get('/song', (req, res)=>{
     res.render('index')
 })
 
-app.get('/song/list', (req, res)=>{
+app.get('/song/list/:tab', (req, res)=>{
+    const tab = req.params.tab
 	let yymmddhh= getYymmddhh();
-    Chart.find({yymmddhh: yymmddhh},null,{sort: {num: 1}},(err,result)=>{
+    Chart.find({yymmddhh: yymmddhh, tab: tab},null,{sort: {num: 1}},(err,result)=>{
         if(err) console.log('chart find error...', err)
 
         if(err || !result || result.length === 0){
-            console.log(`${yymmddhh} result not exists`)
-            getChartByUrlRequest(res);
+            console.log(`${yymmddhh} result not exists ${tab}`)
+            getChartByUrlRequest(res, tab);
         }else{
             
-            // getChartByUrlRequest(res);
             console.log(`${yymmddhh} result exists`)
-            
             //prevent dup data(temp)
             let filteredResult = [];
             let tempIndex = -1;
@@ -110,25 +109,42 @@ app.get('/song/list', (req, res)=>{
     })
 })
 
-function getChartByUrlRequest(res){
+function getChartByUrlRequest(res, tab){
 
     let yymmddhh = getYymmddhh()
     console.log(yymmddhh, 'chart url request.. ')
-    urlRequest('http://www.melon.com/chart/')
+    let url = ''
+    switch (tab) {
+        case 'song':
+            url = 'http://www.melon.com/chart/'
+            break;
+
+        case 'popsong':
+            url = 'https://www.melon.com/genre/song_list.htm?gnrCode=GN0900'
+            break;
+    
+        default:
+            url = 'http://www.melon.com/chart/'
+            break;
+    }
+    urlRequest(url)
     .then(($)=>{
         if(!$) res.send('Error')
         // let postElements = $('form table .wrap_song_info');
-        let postElements = $('table tr[class^="lst"]');
+        // let postElements = $('table tr[class^="lst"]');
+        let postElements = $('table tr td div[class^="wrap_song_info"]');
         let result = [];
         let index = 0;
         let reg = new RegExp('\\(.*?\\)','g')
         if(postElements.length > 0){
-            postElements.each(function(i, obj) {
-                let $obj = $(obj);
+            for(let key = 0; key < postElements.length; key++){
+                let $obj = $(postElements[key]);
                 let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text();
-
+                if(!song || !singer) continue;
+    
                 let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
-                let param = {
+                result.push({
+                    tab: tab,
                     yymmddhh: yymmddhh,
                     num: ++index,
                     song : song,
@@ -136,10 +152,9 @@ function getChartByUrlRequest(res){
                     url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
                     videoId: '',
                     srch : song.replace(reg,'')+' '+singer.replace(reg,'')
-                }
-                result.push(param)
-            });
-            Chart.remove({yymmddhh:yymmddhh}).then(()=>Chart.insertMany(result))
+                })
+            }
+            Chart.remove({yymmddhh:yymmddhh, tab:tab}).then(()=>Chart.insertMany(result))
             
             res.send({
                 result: result,
@@ -147,17 +162,6 @@ function getChartByUrlRequest(res){
                 totNum: result.length,
                 yymmddhh: yymmddhh
             });
-        }else{
-            Chart.find({},null,{sort: {num: 1}},(err,chart)=>{
-                result = chart;
-                yymmddhh = chart[0].yymmddhh;
-                res.send({
-                    result: result,
-                    index: 0,
-                    totNum: result.length,
-                    yymmddhh: yymmddhh
-                });
-            })  
         }
 
     }, (error)=>{
@@ -170,7 +174,7 @@ app.get('/song/change', (req,res)=>{
     ,paramYymmddhh = param.yymmddhh
     ,paramNum = param.num
     
-    Chart.findOne({yymmddhh:paramYymmddhh, num:paramNum},(err,chart)=>{
+    Chart.findOne({yymmddhh:paramYymmddhh, tab:param.tab, num:paramNum},(err,chart)=>{
         if(!err && chart && chart.videoId){
             console.log(paramYymmddhh, ' ', paramNum, ' videoId exists', chart.videoId)
             res.send({url: chart.videoId});

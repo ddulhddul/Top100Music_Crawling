@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var chartSchema = new Schema({
+    tab: String,
     yymmddhh: String,
     num: Number,
     song: String,
