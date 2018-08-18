@@ -181,7 +181,9 @@
       methods: {
         initTab: function(nextTab){
           this.tab = nextTab
-          if(!this.tabinfo[nextTab] || !this.tabinfo[nextTab].musicList || !this.tabinfo[nextTab].musicList.length) this.searchSongByTab()
+          if(nextTab != 'message'){
+            if(!this.tabinfo[nextTab] || !this.tabinfo[nextTab].musicList || !this.tabinfo[nextTab].musicList.length) this.searchSongByTab()
+          }
         },
         searchSongByTab: function(){
           (async () => {
