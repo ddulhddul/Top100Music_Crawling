@@ -25,6 +25,13 @@ Vue.component('mysong-component', {
             <div v-if="user" class="panel panel-primary">
                 <div class="panel-heading">{{user.userId}}</div>    
                 <div class="panel-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for..." v-model="searchInput">
+                        <span class="input-group-btn">
+                            <button @click="search" class="btn btn-default" type="button">Go!</button>
+                        </span>
+                    </div>
+          
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -51,7 +58,8 @@ Vue.component('mysong-component', {
             userPw:undefined,
             mySongList: [],
             errorMsg:undefined,
-            user: undefined
+            user: undefined,
+            searchInput: undefined
         }
     },
     created: function () {
@@ -59,6 +67,17 @@ Vue.component('mysong-component', {
             this.user = JSON.parse(localStorage.getItem('user'))
     },
     methods: {
+        search: function(){
+            console.log('search', this.searchInput)
+            //Youtube Search
+            fetch(`song/search?searchInput=${this.searchInput}`)
+            .then(res => res.json())
+            .then(result => {
+                console.log('search///', result)
+            })
+
+        },
+        
         login: function(event){
             if(!this.validate('userId') || !this.validate('userPw')) return
             (async () => {

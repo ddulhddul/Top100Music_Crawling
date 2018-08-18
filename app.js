@@ -237,3 +237,44 @@ let urlRequest = function (param) {
 app.listen(3000, function () {
   console.log('app listening on port 3000!!')
 })
+
+
+// MySong Func
+app.get('/song/search', (req,res)=>{
+    let param = req.query
+    ,searchUrl = 'https://www.youtube.com/results?search_query='+urlencode(param.searchInput)
+    
+    urlRequest(searchUrl)
+    .then(($)=>{
+        if(!$) res.send({err:'Error'})
+        // let href = $('#results ol li ol li a').first().attr('href');
+        let $tag = $('.yt-lockup-video a')
+        let tagLoop = 0, href='';
+        let passedHref = []
+
+        let resultList = []
+        loop:
+        while(tagLoop < 20){
+            let $targetTag = $tag.eq(tagLoop++)
+            href = $targetTag.attr('href')
+            if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
+                if(!passedHref.includes(href)) passedHref.push(href)
+                else continue loop;
+                
+                var title = $targetTag.parent().parent().find('.yt-lockup-description').eq(0).html();
+                if(!title) continue loop;
+                resultList.push({
+                    // html: $targetTag.parent().parent().html(),
+                    href: href,
+                    title: title,
+                    videoTime: $targetTag.find('.video-time').html()
+                })
+
+            }
+        }
+
+        res.send({resultList: resultList});
+
+    }, (error)=>{res.send({err:'url request Call Error :::\n'+error});});
+
+})
