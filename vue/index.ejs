@@ -211,7 +211,7 @@
                 }
                 if(this.tabinfo[this.tab].removedSingerList.length) this.selectSongMode=true
               }
-              this.changeMusic(res.result[0])
+              !this.currentMusic && this.changeMusic(res.result[0])
             })
             .catch(err => console.log(err));
         },
