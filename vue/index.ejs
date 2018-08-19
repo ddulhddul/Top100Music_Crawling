@@ -281,8 +281,10 @@
         },
         nextSong: function () {
 
-          var curList = ML_CHART.tabinfo[ML_CHART.tab].musicList.filter(function(obj){
-            return !ML_CHART.tabinfo[ML_CHART.tab].removedSingerList.contains(obj.singer)
+          let curTabInfo = ML_CHART.tabinfo[ML_CHART.tab]
+          if(!curTabInfo) curTabInfo = ML_CHART.tabinfo[ML_CHART.currentMusic.tab]
+          var curList = curTabInfo.musicList.filter(function(obj){
+            return !curTabInfo.removedSingerList.contains(obj.singer)
           })
           var nextSongNum = ML_CHART.currentMusic.num
           if(curList.length){
@@ -303,7 +305,7 @@
             }
           }
 
-          ML_CHART.changeMusic(ML_CHART.tabinfo[ML_CHART.tab].musicList.find(function (obj, index) {
+          ML_CHART.changeMusic(curTabInfo.musicList.find(function (obj, index) {
             return obj.num == nextSongNum
           }))
         },
@@ -316,7 +318,7 @@
             .then(res => res.json())
             .then(result => {
               var targetObj = {}
-              ML_CHART.tabinfo[ML_CHART.tab].musicList = ML_CHART.tabinfo[ML_CHART.tab].musicList.map(function (obj, index, array) {
+              ML_CHART.tabinfo[data.tab].musicList = ML_CHART.tabinfo[data.tab].musicList.map(function (obj, index, array) {
                 if (obj.num === data.num) {
                   obj.videoId = result.url
                   obj.videoTime = result.videoTime
