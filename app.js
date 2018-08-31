@@ -35,10 +35,10 @@ app.use('/song/message',message);
 app.use('/song/passport',require('./router/passport')(express));
 
 // socket.io
-let server = require('http').createServer()
-let io = require('socket.io')(server)
-require('./socket.io/message')(io.sockets)
-io.listen(3001)
+// let server = require('http').createServer()
+// let io = require('socket.io')(server)
+// require('./socket.io/message')(io.sockets)
+// io.listen(3001)
 
 let db = mongoose.connection;
 db.on('error', console.error);
