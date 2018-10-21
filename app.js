@@ -7,6 +7,7 @@ let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 let Chart = require('./model/Chart');
 let Count = require('./model/Count');
+let moment = require('./static/js/moment')
 
 let app = express()
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -54,6 +55,9 @@ function lpadNum(num){
 }
 
 function getYymmddhh(param){
+    if(typeof moment !== 'undefined'){
+        return moment().utcOffset("+09:00").format('YYYYMMDDHH')
+    }
     let date = param || new Date();
     return date.getFullYear()+
         lpadNum(date.getMonth()+1)+
