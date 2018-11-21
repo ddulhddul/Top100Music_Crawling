@@ -269,11 +269,11 @@ app.get('/song/search', (req,res)=>{
                 if(!passedHref.includes(href)) passedHref.push(href)
                 else continue loop;
                 
-                var title = $targetTag.parent().parent().find('.yt-lockup-description').eq(0).html();
+                var title = $targetTag.parent().parent().find('.yt-lockup-title a').eq(0).html();
                 if(!title) continue loop;
                 resultList.push({
                     // html: $targetTag.parent().parent().html(),
-                    href: href,
+                    href: href.replace('/watch?v=', ''),
                     title: title,
                     videoTime: $targetTag.find('.video-time').html()
                 })

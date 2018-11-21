@@ -1,6 +1,7 @@
 Vue.component('mysong-component', {
     template:
         `<div style="margin-top:10px;">
+            <div id="temp" style="display:none;"></div>
             <form v-if="!user" class="form-horizontal">
                 <div class="form-group" v-bind:class="validate('userId') ? 'has-success' : 'has-error'">
                     <label for="userId" class="col-xs-2 control-label">Username</label>
@@ -18,7 +19,7 @@ Vue.component('mysong-component', {
                 <div class="form-group">
                     <div class="col-xs-offset-1 col-xs-10">
                     <button type="submit" @click="login" class="btn btn-default">Log in</button>
-                    <button type="submit" @click="signin" class="btn btn-default">Sign in</button>
+                    <button @click="signin" class="btn btn-default">Sign in</button>
                     </div>
                 </div>
             </form>
@@ -35,16 +36,34 @@ Vue.component('mysong-component', {
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>AA</th>
-                                <th>AA</th>
-                                <th>AA</th>
+                                <th>Title</th>
+                                <th>Time</th>
+                                <th>Href</th>
                             </tr>
                         </thead>    
                         <tbody>
+                            <tr v-for="searchObj in searchList">
+                                <td>{{ searchObj.title }}</td>
+                                <td>{{ searchObj.videoTime }}</td>
+                                <td>{{ searchObj.href }}</td>
+                            </tr>
+                        </tbody>
+                    </table>            
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
                             <tr>
-                                <td>AA</td>
-                                <td>AA</td>
-                                <td>AA</td>
+                                <th>Title</th>
+                                <th>Time</th>
+                                <th>Href</th>
+                            </tr>
+                        </thead>    
+                        <tbody>
+                            <tr v-for="mySong in mySongList">
+                                <td>{{ mySong.title }}</td>
+                                <td>{{ mySong.videoTime }}</td>
+                                <td>{{ mySong.href }}</td>
                             </tr>
                         </tbody>
                     </table>            
@@ -59,7 +78,9 @@ Vue.component('mysong-component', {
             mySongList: [],
             errorMsg:undefined,
             user: undefined,
-            searchInput: undefined
+            searchInput: undefined,
+            searchList: [],
+            mySongList: []
         }
     },
     created: function () {
@@ -69,15 +90,26 @@ Vue.component('mysong-component', {
     methods: {
         search: function(){
             console.log('search', this.searchInput)
+
+            var curThis = this
             //Youtube Search
             fetch(`song/search?searchInput=${this.searchInput}`)
             .then(res => res.json())
             .then(result => {
+                var list = result ? (result.resultList||[]) : []
+                list = list.map(function(obj){
+                    var $temp = document.querySelector('#temp')
+                    $temp.innerHTML = obj.title
+                    obj.title = $temp.innerHTML
+                    return obj
+                })
+                curThis.searchList = list
                 console.log('search///', result)
+                console.log('search2//', decodeURI(encodeURI(result.resultList[0].title)))
             })
 
         },
-        
+
         login: function(event){
             if(!this.validate('userId') || !this.validate('userPw')) return
             (async () => {
