@@ -274,6 +274,7 @@ app.get('/song/search', (req,res)=>{
                 resultList.push({
                     // html: $targetTag.parent().parent().html(),
                     href: href.replace('/watch?v=', ''),
+                    videoId: href.replace('/watch?v=', ''),
                     title: title,
                     videoTime: $targetTag.find('.video-time').html()
                 })

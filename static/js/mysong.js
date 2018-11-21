@@ -76,7 +76,7 @@ Vue.component('mysong-component', {
             </div>
             <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
         </div>`,
-    props: ['changeMusic'],
+    props: ['changeMusic', 'tabinfo'],
     data: function(){
         return {
             userId:undefined,
@@ -104,6 +104,13 @@ Vue.component('mysong-component', {
         },
 
         updateMySongList: function(){
+            console.log('this.user.songList', this.user.songList)
+            for(var i = 0; i < this.user.songList.length; i++){
+                var thisObj = this.user.songList[i]
+                thisObj.num = i+1
+                thisObj.song = thisObj.title
+                thisObj.tab = 'mySong'
+            }
             (async () => {
                 var response = await fetch('song/passport/updateMySongList',{   
                     method: "POST",
@@ -125,6 +132,7 @@ Vue.component('mysong-component', {
                         this.user.songList = res.songList
                         //localStorage
                         typeof localStorage !== 'undefined' && localStorage.setItem('user', JSON.stringify(this.user))
+                        this.tabinfo.mySong.musicList = res.songList
                     }
                 })
                 .catch(err => console.log(err));

@@ -57,7 +57,7 @@
       <ul class="nav nav-tabs">
         <li v-bind:class="tab=='song'?'active':''"><a href="#none" @click="initTab('song')">Top100</a></li>
         <li v-bind:class="tab=='popsong'?'active':''"><a href="#none" @click="initTab('popsong')">Pop</a></li>
-        <!-- <li v-bind:class="tab=='mySong'?'active':''"><a href="#none" @click="tab='mySong'">My Song</a></li> -->
+        <li v-if="mySongDisplay" v-bind:class="tab=='mySong'?'active':''"><a href="#none" @click="tab='mySong'">My Song</a></li>
         <li v-bind:class="tab=='message'?'active':''"><a href="#none" @click="initTab('message')">Messages</a></li>
       </ul>
     </div>
@@ -67,7 +67,7 @@
       <message-component></message-component>
     </div>
     <div v-if="tab=='mySong'" class="content">
-      <mysong-component></mysong-component>
+      <mysong-component v-bind="{changeMusic, tabinfo}"></mysong-component>
     </div>
     <!-- Song Tab -->
     <div v-if="tab=='song' || tab=='popsong'" class="content">
@@ -163,6 +163,7 @@
         videoHidden: true,
         currentMusic: {},
         selectAll: true,
+        mySongDisplay: true,
         
         tabinfo: {
           song: {
@@ -170,6 +171,10 @@
             removedSingerList: []
           },
           popsong: {
+            musicList: [],
+            removedSingerList: []
+          },
+          mySong: {
             musicList: [],
             removedSingerList: []
           }
