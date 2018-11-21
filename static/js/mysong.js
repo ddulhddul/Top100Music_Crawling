@@ -23,53 +23,58 @@ Vue.component('mysong-component', {
                     </div>
                 </div>
             </form>
-            <div v-if="user" class="panel panel-primary">
-                <div class="panel-heading">{{user.userId}}</div>    
-                <div class="panel-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for..." v-model="searchInput">
-                        <span class="input-group-btn">
-                            <button @click="search" class="btn btn-default" type="button">Go!</button>
-                        </span>
+            <div v-if="user">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><b>{{user.userId}}</b>'s songs</div>
+                    <div style="padding:5px;">
+                        <div class="panel panel-info">
+                            <div class="panel-heading" @click="mySongSearch=!mySongSearch"><small>Search Song</small></div>
+                            <div v-if="mySongSearch" class="panel-body">
+                                <div class="input-group">
+                                    <input type="text" @keyup.enter="search()" class="form-control" placeholder="Search for..." v-model="searchInput">
+                                    <span class="input-group-btn">
+                                        <button @click="search" class="btn btn-default" type="button">Go!</button>
+                                    </span>
+                                </div>
+                    
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Time</th>
+                                            <th>Href</th>
+                                        </tr>
+                                    </thead>    
+                                    <tbody>
+                                        <tr v-for="searchObj in searchList" @click="addToMySong(searchObj)">
+                                            <td>{{ searchObj.title }}</td>
+                                            <td>{{ searchObj.videoTime }}</td>
+                                            <td>{{ searchObj.href }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>            
+                            </div>
+                        </div>
                     </div>
-          
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Time</th>
-                                <th>Href</th>
-                            </tr>
-                        </thead>    
-                        <tbody>
-                            <tr v-for="searchObj in searchList">
-                                <td>{{ searchObj.title }}</td>
-                                <td>{{ searchObj.videoTime }}</td>
-                                <td>{{ searchObj.href }}</td>
-                            </tr>
-                        </tbody>
-                    </table>            
+                    <div class="panel-body">
+                        <table class="table table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>    
+                            <tbody>
+                                <tr v-for="mySong in mySongList">
+                                    <td>{{ mySong.title }}</td>
+                                    <td>{{ mySong.videoTime }}</td>
+                                </tr>
+                            </tbody>
+                        </table>            
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Time</th>
-                                <th>Href</th>
-                            </tr>
-                        </thead>    
-                        <tbody>
-                            <tr v-for="mySong in mySongList">
-                                <td>{{ mySong.title }}</td>
-                                <td>{{ mySong.videoTime }}</td>
-                                <td>{{ mySong.href }}</td>
-                            </tr>
-                        </tbody>
-                    </table>            
-                </div>
-                <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
             </div>
+            <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
         </div>`,
     data: function(){
         return {
@@ -80,7 +85,7 @@ Vue.component('mysong-component', {
             user: undefined,
             searchInput: undefined,
             searchList: [],
-            mySongList: []
+            mySongSearch: false
         }
     },
     created: function () {
@@ -88,6 +93,14 @@ Vue.component('mysong-component', {
             this.user = JSON.parse(localStorage.getItem('user'))
     },
     methods: {
+        addToMySong: function(song){
+            var listCheck = this.mySongList.filter(function(obj){
+                return obj.href == song.href
+            })
+            if(!listCheck.length){
+                this.mySongList.push(song)
+            }
+        },
         search: function(){
             console.log('search', this.searchInput)
 
