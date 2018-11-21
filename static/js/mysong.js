@@ -65,9 +65,18 @@ Vue.component('mysong-component', {
                                 </tr>
                             </thead>    
                             <tbody>
-                                <tr v-for="mySong in user.songList" @click='changeMusic(mySong)'>
-                                    <td>{{ mySong.title }}</td>
-                                    <td>{{ mySong.videoTime }}</td>
+                                <tr v-for="mySong in user.songList"
+                                    v-bind:class='currentMusic.num == mySong.num && currentMusic.tab == mySong.tab ? "success" : ""'
+                                >
+                                    <td @click='changeMusic(mySong)'>{{ mySong.title }}</td>
+                                    <td @click='changeMusic(mySong)'>{{ mySong.videoTime }}</td>
+                                    <td>
+                                        <div class="col-xs-2 btn-group btn-group-xs">
+                                            <button @click="removeMySong(mySong)" class="btn btn-danger">
+                                                <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>            
@@ -76,7 +85,7 @@ Vue.component('mysong-component', {
             </div>
             <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
         </div>`,
-    props: ['changeMusic', 'tabinfo'],
+    props: ['changeMusic', 'tabinfo','currentMusic'],
     data: function(){
         return {
             userId:undefined,
@@ -89,8 +98,10 @@ Vue.component('mysong-component', {
         }
     },
     created: function () {
-        if(typeof localStorage !== 'undefined')
+        if(typeof localStorage !== 'undefined'){
             this.user = JSON.parse(localStorage.getItem('user'))
+            this.tabinfo.mySong.musicList = this.user.songList
+        }
     },
     methods: {
         addToMySong: function(song){
@@ -103,14 +114,14 @@ Vue.component('mysong-component', {
             }
         },
 
+        removeMySong: function(song){
+            this.user.songList = this.user.songList.filter(function(obj){
+                return obj.videoId != song.videoId
+            })
+            this.updateMySongList()
+        },
+
         updateMySongList: function(){
-            console.log('this.user.songList', this.user.songList)
-            for(var i = 0; i < this.user.songList.length; i++){
-                var thisObj = this.user.songList[i]
-                thisObj.num = i+1
-                thisObj.song = thisObj.title
-                thisObj.tab = 'mySong'
-            }
             (async () => {
                 var response = await fetch('song/passport/updateMySongList',{   
                     method: "POST",
@@ -184,6 +195,7 @@ Vue.component('mysong-component', {
                     this.user = res
                     //localStorage
                     typeof localStorage !== 'undefined' && localStorage.setItem('user', JSON.stringify(res))
+                    this.tabinfo.mySong.musicList = res.songList
                   }
                   
                 })

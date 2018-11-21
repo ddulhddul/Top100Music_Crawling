@@ -35,15 +35,22 @@ module.exports = (express) => {
         const param = req.body
         User.update(
             {userId: param.userId},
-            {songList: param.songList},
+            {songList: param.songList.map((obj, index)=>{
+                    obj.num = index+1
+                    obj.song = obj.title
+                    obj.tab = 'mySong'
+                    return obj
+                })},
             (err, raw) => {
                 console.log('upate result', err, raw)
                 if(!err){
                     User.find({userId: param.userId}, (err, users)=>{
                         if(!users || !users.length) res.json({result: 'not exists'});
-                        else res.json({
-                            songList: users[0].songList
-                        });
+                        else {
+                            res.json({
+                                songList: users[0].songList || []
+                            });
+                        }
                     })
                 }else{
                     res.json({
