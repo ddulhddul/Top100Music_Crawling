@@ -30,6 +30,31 @@ module.exports = (express) => {
 
     })
 
+    route.post('/updateMySongList', (req,res)=>{
+        console.log('req.body',req.body)
+        const param = req.body
+        User.update(
+            {userId: param.userId},
+            {songList: param.songList},
+            (err, raw) => {
+                console.log('upate result', err, raw)
+                if(!err){
+                    User.find({userId: param.userId}, (err, users)=>{
+                        if(!users || !users.length) res.json({result: 'not exists'});
+                        else res.json({
+                            songList: users[0].songList
+                        });
+                    })
+                }else{
+                    res.json({
+                        err: err,
+                        raw: raw
+                    });
+                }
+            }
+        )
+    })
+
     // let passport = require('passport')
     // let LocalStrategy = require('passport-local').Strategy
 

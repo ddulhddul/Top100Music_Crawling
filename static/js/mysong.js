@@ -65,7 +65,7 @@ Vue.component('mysong-component', {
                                 </tr>
                             </thead>    
                             <tbody>
-                                <tr v-for="mySong in mySongList" @click='changeMusic(mySong)'>
+                                <tr v-for="mySong in user.songList" @click='changeMusic(mySong)'>
                                     <td>{{ mySong.title }}</td>
                                     <td>{{ mySong.videoTime }}</td>
                                 </tr>
@@ -81,7 +81,6 @@ Vue.component('mysong-component', {
         return {
             userId:undefined,
             userPw:undefined,
-            mySongList: [],
             errorMsg:undefined,
             user: undefined,
             searchInput: undefined,
@@ -95,13 +94,42 @@ Vue.component('mysong-component', {
     },
     methods: {
         addToMySong: function(song){
-            var listCheck = this.mySongList.filter(function(obj){
+            var listCheck = this.user.songList.filter(function(obj){
                 return obj.href == song.href
             })
             if(!listCheck.length){
-                this.mySongList.push(song)
+                this.user.songList.push(song)
+                this.updateMySongList()
             }
         },
+
+        updateMySongList: function(){
+            (async () => {
+                var response = await fetch('song/passport/updateMySongList',{   
+                    method: "POST",
+                    headers: {"Content-type": "application/json; charset=UTF-8"},              
+                    body: JSON.stringify({
+                        userId: this.user.userId,
+                        songList: this.user.songList
+                    })
+                });
+                var body = await response.json();
+                if (response.status !== 200) throw Error(body.message);
+                return body;
+              })()
+                .then(res => {
+                    console.log('rese', res)
+                    if(res.err){
+                        alert(res.err)
+                    }else{
+                        this.user.songList = res.songList
+                        //localStorage
+                        typeof localStorage !== 'undefined' && localStorage.setItem('user', JSON.stringify(this.user))
+                    }
+                })
+                .catch(err => console.log(err));
+        },
+
         search: function(){
             console.log('search', this.searchInput)
 
