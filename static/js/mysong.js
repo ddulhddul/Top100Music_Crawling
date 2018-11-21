@@ -65,7 +65,7 @@ Vue.component('mysong-component', {
                                 </tr>
                             </thead>    
                             <tbody>
-                                <tr v-for="mySong in mySongList">
+                                <tr v-for="mySong in mySongList" @click='changeMusic(mySong)'>
                                     <td>{{ mySong.title }}</td>
                                     <td>{{ mySong.videoTime }}</td>
                                 </tr>
@@ -76,6 +76,7 @@ Vue.component('mysong-component', {
             </div>
             <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
         </div>`,
+    props: ['changeMusic'],
     data: function(){
         return {
             userId:undefined,
