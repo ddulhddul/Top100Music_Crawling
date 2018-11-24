@@ -68,7 +68,7 @@
       <message-component></message-component>
     </div>
     <div v-if="tab=='mySong'" class="content">
-      <mysong-component v-bind="{changeMusic, tabinfo, currentMusic}"></mysong-component>
+      <mysong-component v-bind="{changeMusic, tabinfo, currentMusic, toast}"></mysong-component>
     </div>
     <!-- Song Tab -->
     <div v-if="tab=='song' || tab=='popsong'" class="content">
@@ -141,6 +141,7 @@
         </span>
       </p>
     </footer>
+    <div v-bind:class='toastClass'>{{toastMessage}}</div>
   </div>
   <script src="js/message.js" type="text/javascript"></script>
   <script src="js/mysong.js" type="text/javascript"></script>
@@ -165,6 +166,8 @@
         currentMusic: {},
         selectAll: true,
         mySongDisplay: true,
+        toastMessage: '',
+        toastClass: 'toast',
         
         tabinfo: {
           song: {
@@ -185,6 +188,13 @@
         this.searchSongByTab()
       },
       methods: {
+        toast: function(message){
+          if(!message) return
+          var curThis = this
+          curThis.toastMessage = message
+          curThis.toastClass = "toast show";
+          setTimeout(function(){ curThis.toastClass = 'toast' }, 3000);
+        },
         initTab: function(nextTab){
           this.tab = nextTab
           if(nextTab != 'message'){
