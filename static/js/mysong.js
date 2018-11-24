@@ -112,6 +112,8 @@ Vue.component('mysong-component', {
                 this.user.songList.push(song)
                 this.toast([song.title, 'Added'].join(' '))
                 this.updateMySongList()
+            }else{
+                this.toast([song.title, 'Already Exists'].join(' '))
             }
         },
 
