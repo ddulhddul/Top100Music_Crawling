@@ -82,8 +82,8 @@ Vue.component('mysong-component', {
                         </table>            
                     </div>
                 </div>
+                <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
             </div>
-            <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
         </div>`,
     props: ['changeMusic', 'tabinfo','currentMusic'],
     data: function(){
