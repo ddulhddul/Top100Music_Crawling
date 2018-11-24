@@ -37,7 +37,7 @@ Vue.component('mysong-component', {
                                     </span>
                                 </div>
                     
-                                <table class="table table-striped table-hover">
+                                <table v-if="searchList && searchList.length" class="table table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
