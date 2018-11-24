@@ -136,7 +136,6 @@ Vue.component('mysong-component', {
                 return body;
               })()
                 .then(res => {
-                    console.log('rese', res)
                     if(res.err){
                         alert(res.err)
                     }else{
@@ -150,8 +149,6 @@ Vue.component('mysong-component', {
         },
 
         search: function(){
-            console.log('search', this.searchInput)
-
             var curThis = this
             //Youtube Search
             fetch(`song/search?searchInput=${this.searchInput}`)
@@ -165,8 +162,6 @@ Vue.component('mysong-component', {
                     return obj
                 })
                 curThis.searchList = list
-                console.log('search///', result)
-                console.log('search2//', decodeURI(encodeURI(result.resultList[0].title)))
             })
 
         },
@@ -187,7 +182,6 @@ Vue.component('mysong-component', {
                 return body;
               })()
                 .then(res => {
-                    console.log('rese', res)
                   if(!res.userId){
                     this.errorMsg = res.result
                   }else{
@@ -224,7 +218,6 @@ Vue.component('mysong-component', {
                 return body;
               })()
                 .then(res => {
-                    console.log('rese', res)
                   this.errorMsg = res.result
                   if(!res.result){
                       this.userId = ''
