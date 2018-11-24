@@ -100,7 +100,7 @@ Vue.component('mysong-component', {
     created: function () {
         if(typeof localStorage !== 'undefined'){
             this.user = JSON.parse(localStorage.getItem('user'))
-            this.tabinfo.mySong.musicList = this.user.songList
+            this.tabinfo.mySong.musicList = this.user ? (this.user.songList || []) : []
         }
     },
     methods: {
