@@ -85,7 +85,7 @@ Vue.component('mysong-component', {
                 <p><a class="btn btn-primary btn-sm" href="#none" @click="logout" role="button">Log out</a></p>
             </div>
         </div>`,
-    props: ['changeMusic', 'tabinfo','currentMusic'],
+    props: ['changeMusic', 'tabinfo','currentMusic','toast'],
     data: function(){
         return {
             userId:undefined,
@@ -110,6 +110,7 @@ Vue.component('mysong-component', {
             })
             if(!listCheck.length){
                 this.user.songList.push(song)
+                this.toast([song.title, 'Added'].join(' '))
                 this.updateMySongList()
             }
         },
@@ -118,6 +119,7 @@ Vue.component('mysong-component', {
             this.user.songList = this.user.songList.filter(function(obj){
                 return obj.videoId != song.videoId
             })
+            this.toast([song.title, 'Removed'].join(' '))
             this.updateMySongList()
         },
 
