@@ -87,50 +87,52 @@
         <button v-if="tabinfo[tab].removedSingerList.length" style="margin:0px 2px 1px 2px" @click="resetRemovedSingerList" class="btn btn-success">reset</button>
         <button v-for="singer in tabinfo[tab].removedSingerList" @click="unremoveSinger(singer)" class="btn btn-dark" style="margin:0px 2px 1px 2px">{{singer}}</button>
       </div>
-      <table id="listDiv" class="table table-striped table-hover listTable">
-        <colgroup>
-          <col v-if="false"></col>
-          <col width='10%'></col>
-          <col width='40%'></col>
-          <col width='40%'></col>
-          <col v-if="selectSongMode"></col>
-        </colgroup>
-        <thead>
-          <tr>
-            <td v-if="false"><input type=checkbox v-on:click="allCheck()" v-bind:checked="selectAll" /></td>
-            <th>#</th>
-            <th>song</th>
-            <th>singer</th>
-            <th v-if="selectSongMode">
-              <div class="col-xs-2 btn-group btn-group-xs">
-                <button @click="removeAllSinger()" class="btn btn-danger">
-                  <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> all
-                </button>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-bind:id="music.num" 
-            v-for="(music,index) in tabinfo[tab].musicList" 
-            v-if="!tabinfo[tab].removedSingerList.contains(music.singer)"
-            v-bind:class='currentMusic.num == music.num && currentMusic.tab == music.tab ? "success" : ""'
-            v-bind:style='music.checked ? "" : "text-decoration:line-through;"'
-            >
-            <td v-if="false"><input type=checkbox v-bind:checked="music.checked" v-on:click="music.checked=!music.checked;allCheckChk()" /></td>
-            <td v-on:click="changeMusic(music)">{{ music.num }}</td>
-            <td v-on:click="changeMusic(music)">{{ music.song }}</td>
-            <td v-on:click="changeMusic(music)">{{ music.singer }}</td>
-            <td v-if="selectSongMode">
-              <div class="col-xs-2 btn-group btn-group-xs">
-                <button @click="removeSinger(music)" class="btn btn-danger">
-                  <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> singer
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div id="listDiv" class="listTable">
+        <table class="table table-striped table-hover">
+          <colgroup>
+            <col v-if="false"></col>
+            <col width='10%'></col>
+            <col width='40%'></col>
+            <col width='40%'></col>
+            <col v-if="selectSongMode"></col>
+          </colgroup>
+          <thead>
+            <tr>
+              <td v-if="false"><input type=checkbox v-on:click="allCheck()" v-bind:checked="selectAll" /></td>
+              <th>#</th>
+              <th>song</th>
+              <th>singer</th>
+              <th v-if="selectSongMode">
+                <div class="col-xs-2 btn-group btn-group-xs">
+                  <button @click="removeAllSinger()" class="btn btn-danger">
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> all
+                  </button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-bind:id="music.num" 
+              v-for="(music,index) in tabinfo[tab].musicList" 
+              v-if="!tabinfo[tab].removedSingerList.contains(music.singer)"
+              v-bind:class='currentMusic.num == music.num && currentMusic.tab == music.tab ? "success" : ""'
+              v-bind:style='music.checked ? "" : "text-decoration:line-through;"'
+              >
+              <td v-if="false"><input type=checkbox v-bind:checked="music.checked" v-on:click="music.checked=!music.checked;allCheckChk()" /></td>
+              <td v-on:click="changeMusic(music)">{{ music.num }}</td>
+              <td v-on:click="changeMusic(music)">{{ music.song }}</td>
+              <td v-on:click="changeMusic(music)">{{ music.singer }}</td>
+              <td v-if="selectSongMode">
+                <div class="col-xs-2 btn-group btn-group-xs">
+                  <button @click="removeSinger(music)" class="btn btn-danger">
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span> singer
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <footer>
       <p>

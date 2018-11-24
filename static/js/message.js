@@ -14,21 +14,23 @@ Vue.component('message-component', {
                     </div>
                 </div>
             </div>
-            <table class="table table-striped table-hover listTable">
-            <colgroup>
-                <col width="20%"></col>
-                <col width="80%"></col>
-            </colgroup>
-            <tbody>
-                <tr v-for="message in messageList">
-                    <td><b>{{message.writer}}</b></td>
-                    <td>
-                        {{message.content}}
-                        <div style='color:grey;text-align:right'><small><small>{{message.formattedDate}}</small></small></div>
-                    </td>
-                    
-                </tr>
-            </tbody>
+            <div class="listTable">
+                <table class="table table-striped table-hover">
+                <colgroup>
+                    <col width="20%"></col>
+                    <col width="80%"></col>
+                </colgroup>
+                <tbody>
+                    <tr v-for="message in messageList">
+                        <td><b>{{message.writer}}</b></td>
+                        <td>
+                            {{message.content}}
+                            <div style='color:grey;text-align:right'><small><small>{{message.formattedDate}}</small></small></div>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </div>
             </table>
         </div>`,
     data: function(){
