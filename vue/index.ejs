@@ -147,7 +147,16 @@
   </div>
   <script src="js/message.js" type="text/javascript"></script>
   <script src="js/mysong.js" type="text/javascript"></script>
+  <!-- <script src="js/NoSleep.min.js" type="text/javascript"></script> -->
   <script>
+    // var noSleep = new NoSleep();
+    // Enable wake lock.
+    // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
+    // document.addEventListener('click', function enableNoSleep() {
+    //   document.removeEventListener('click', enableNoSleep, false);
+    //   noSleep.enable();
+    // }, false);
+
     if(Array.contains === undefined) Array.prototype.contains = function (element) {
       for (var i = 0; i < this.length; i++) {
           if (this[i] == element) {
@@ -170,6 +179,7 @@
         mySongDisplay: true,
         toastMessage: '',
         toastClass: 'toast',
+        pauseTf: false,
         
         tabinfo: {
           song: {
@@ -292,6 +302,7 @@
           }).length
         },
         pauseYoutube: function () {
+          this.pauseTf = true
           if (player) player.pauseVideo();
         },
         playYoutube: function () {
@@ -365,6 +376,18 @@
           // 플레이하지 않는 경우 방지, 5초후 다시 실행
           setTimeout(function () {
             player && player.getPlayerState() != 1 && player.playVideo()
+          }, 1000);
+          setTimeout(function () {
+            player && player.getPlayerState() != 1 && player.playVideo()
+          }, 2000);
+          setTimeout(function () {
+            player && player.getPlayerState() != 1 && player.playVideo()
+          }, 3000);
+          setTimeout(function () {
+            player && player.getPlayerState() != 1 && player.playVideo()
+          }, 4000);
+          setTimeout(function () {
+            player && player.getPlayerState() != 1 && player.playVideo()
           }, 5000);
         }
       }
@@ -394,6 +417,9 @@
             } else if (event.data === 0) {
               //동영상 끝난 후 이벤트
               ML_CHART.nextSong()
+            
+            } else if (event.data === 2) { // 일시정지
+              if(!ML_CHART.pauseTf) ML_CHART.playVideoCustom()
 
             } else if (event.data === -1) ML_CHART.playVideoCustom()
 
