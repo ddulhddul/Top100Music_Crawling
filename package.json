@@ -1,0 +1,42 @@
+{
+  "name": "youtube",
+  "version": "1.0.0",
+  "description": "URL : [http://mlchart.ml/](http://mlchart.ml/)",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "axios": "^0.18.0",
+    "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
+    "cheerio": "^1.0.0-rc.3",
+    "clean-webpack-plugin": "^2.0.2",
+    "css-loader": "^2.1.1",
+    "express": "^4.17.0",
+    "html-webpack-plugin": "^3.2.0",
+    "request": "^2.88.0",
+    "style-loader": "^0.23.1",
+    "urlencode": "^1.1.0",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
+    "webpack-hot-middleware": "^2.25.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server.js",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddulhddul/Top100Music_Crawling.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ddulhddul/Top100Music_Crawling/issues"
+  },
+  "homepage": "https://github.com/ddulhddul/Top100Music_Crawling#readme"
+}
