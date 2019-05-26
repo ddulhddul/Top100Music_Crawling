@@ -8,7 +8,17 @@ import App from './App.vue'
 import common from './common'
 Vue.mixin(common)
 
-new Vue({
-  el: '#app',
-  render: h => h(App)
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+
+import MusicList from './components/MusicList.vue'
+const router = new VueRouter({
+  routes: [
+    { path: 'musicList', name: 'musicList', component: MusicList, props: true },
+  ]
 })
+
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app')

@@ -9,7 +9,7 @@ const compiler = webpack(config)
 // node
 const express = require('express')
 const app = express()
-app.use(express.static(__dirname +'/assets'))
+app.use(express.static(__dirname +'/dist'))
 
 app.use(require("webpack-dev-middleware")(compiler, {
   noInfo: true, publicPath: config.output.publicPath
@@ -33,6 +33,6 @@ app.get('/song', (req, res)=>{
 app.get('/song/list', async (req, res)=>{
   const result = await ServerUtil.getChartByUrlRequest()
   res.send({
-    result
+    ...result
   })
 })
