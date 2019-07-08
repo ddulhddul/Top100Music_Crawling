@@ -1,7 +1,7 @@
 <template>
   <div>
     
-    <table>
+    <table class="basicTable">
       <colgroup>
         <col width='10%' />
         <col width='40%' />
@@ -65,5 +65,13 @@ export default {
 </script>
 
 <style>
-
+.basicTable tr{
+  height: 50px;
+  border-bottom: 1px;
+  border-bottom-color: grey;
+  border-bottom-style: dotted;
+}
+.basicTable tr.selected{
+  background-color: beige;
+}
 </style>
