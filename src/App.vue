@@ -77,9 +77,6 @@ export default {
       yymmddhh: '',
     }
   },
-  created(){
-    this.importYoutubeAPI()
-  },
   async mounted(){
     // const res = await this.ajax({
     //     url: '/song/list'
@@ -92,6 +89,8 @@ export default {
 
     this.initTab('musicList')
     this.tab = 'musicList'
+
+    this.importYoutubeAPI()
   },
   methods: {
     initTab(name){
@@ -108,7 +107,7 @@ export default {
     // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
     // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
     importYoutubeAPI(){
-      const script = document.createElement('script')
+      let script = document.createElement('script')
       script.src = 'http://www.youtube.com/player_api'
       document.getElementsByTagName('head')[0].appendChild(script)
       this.onYouTubePlayerAPIReady()
@@ -124,7 +123,7 @@ export default {
         height: '100%',
         width: '100%',
         videoId: '',
-        playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
+        playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1, 'origin':'http://localhost:3000' },
         events: {
           'onReady': function (event) {
             // if (ML_CHART.tabinfo[ML_CHART.tab].musicList.length) ML_CHART.changeMusic(ML_CHART.tabinfo[ML_CHART.tab].musicList[0])
