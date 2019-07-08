@@ -4,9 +4,10 @@ document.body.prepend(div)
 
 import 'babel-polyfill'
 import Vue from 'vue'
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
-Vue.use(Vuetify)
+import BootstrapVue from 'bootstrap-vue'
+Vue.use(BootstrapVue)
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue'
 import common from './common'

@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <div>
       <!-- Title -->
       <h4>
@@ -16,15 +16,11 @@
         <div id="player"></div>
       </div>
       <div>
-        <v-btn color="error" @click='videoHidden=!videoHidden'>
+        <b-button variant="danger" @click='videoHidden=!videoHidden'>
           {{ !videoHidden? 'Hidden': 'Show' }}
-        </v-btn>
+        </b-button>
       </div>
-      <div role="group" class="btn-group" style='display:none;'>
-        <button type="button">
-          <span aria-hidden="true" class="glyphicon glyphicon-comment"></span>
-        </button>
-      </div>
+      <!-- Playtype 설정 -->
       <div role="group" class="btn-group">
         <button type="button" @click="playType='1'" :class='playType == "1" ? "btn-info" : ""' style="font-weight:bold;"
           class="btn btn-default">1</button>
@@ -48,19 +44,20 @@
       </div>
     </div>
 
+    <!-- Tab -->
     <div>
-      <ul class="nav nav-tabs">
-        <li v-bind:class="tab=='musicList'?'active':''"><a href="#none" @click="initTab('musicList')">Top100</a></li>
-        <li v-bind:class="tab=='popsong'?'active':''"><a href="#none" @click="initTab('popsong')">Pop</a></li>
-        <li v-bind:class="tab=='message'?'active':''"><a href="#none" @click="initTab('message')">Messages</a></li>
-      </ul>
+      <b-tabs content-class="mt-3">
+        <b-tab title="Top100" :class="{active: tab=='musicList'}" @click="initTab('musicList')"></b-tab>
+        <b-tab title="Pop" :class="{active: tab=='popsong'}" @click="initTab('popsong')"></b-tab>
+        <b-tab title="Messages" :class="{active: tab=='message'}" @click="initTab('message')"></b-tab>
+      </b-tabs>
     </div>
 
     <div>
       <router-view></router-view>
     </div>
 
-  </v-app>
+  </div>
 </template>
 
 <script>
