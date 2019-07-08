@@ -1,18 +1,24 @@
 <template>
-  <div>
+  <v-app>
     <div>
+      <!-- Title -->
       <h4>
         <strong>{{ currentMusic.song }}</strong>
-        <small v-if="currentMusic.videoTime">({{ currentMusic.videoTime }})</small>
+        <small v-if="currentMusic.videoTime">
+          ({{ currentMusic.videoTime }})
+        </small>
         <span style="white-space: nowrap">
-          <small>&nbsp;&nbsp;{{ currentMusic.singer }}</small>
+          <small>{{ currentMusic.singer }}</small>
         </span>
       </h4>
+      <!-- Youtube -->
       <div :style='{display: videoHidden? "none": "block"}'>
         <div id="player"></div>
       </div>
-      <div style="text-align:right; margin:5px 0px -10px 0px;">
-        <button @click='videoHidden=!videoHidden' class="btn btn-dark btn-xs">hidden</button>
+      <div>
+        <v-btn color="error" @click='videoHidden=!videoHidden'>
+          {{ !videoHidden? 'Hidden': 'Show' }}
+        </v-btn>
       </div>
       <div role="group" class="btn-group" style='display:none;'>
         <button type="button">
@@ -54,13 +60,14 @@
       <router-view></router-view>
     </div>
 
-  </div>
+  </v-app>
 </template>
 
 <script>
 export default {
   data(){
     return {
+      player: undefined, // youtube 플레이어
       tab: '',
       currentMusic: {
         song: '노래',
@@ -72,6 +79,9 @@ export default {
       musicList: [],
       yymmddhh: '',
     }
+  },
+  created(){
+    this.importYoutubeAPI()
   },
   async mounted(){
     // const res = await this.ajax({
@@ -94,6 +104,54 @@ export default {
           musicList: this.musicList
         }
       })
+    },
+    /*****************************
+     * Create youtube player
+    *****************************/
+    // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
+    // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
+    importYoutubeAPI(){
+      const script = document.createElement('script')
+      script.src = 'http://www.youtube.com/player_api'
+      document.getElementsByTagName('head')[0].appendChild(script)
+      this.onYouTubePlayerAPIReady()
+    },
+    onYouTubePlayerAPIReady() {
+      if(typeof YT === 'undefined'){
+        setTimeout(() => {
+          this.onYouTubePlayerAPIReady()
+        }, 500)
+        return
+      }
+      this.player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: '',
+        playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1 },
+        events: {
+          'onReady': function (event) {
+            // if (ML_CHART.tabinfo[ML_CHART.tab].musicList.length) ML_CHART.changeMusic(ML_CHART.tabinfo[ML_CHART.tab].musicList[0])
+
+          },
+          'onStateChange': function (event) {
+            // if (event.data === 5) {
+            //   ML_CHART.playVideoCustom()
+
+            // } else if (event.data === 0) {
+            //   //동영상 끝난 후 이벤트
+            //   ML_CHART.nextSong()
+            
+            // } else if (event.data === 2) { // 일시정지
+            //   if(!ML_CHART.pauseTf) ML_CHART.playVideoCustom()
+
+            // } else if (event.data === -1) ML_CHART.playVideoCustom()
+
+          },
+          'onError': function (event) {
+            // if (ML_CHART.videoHidden) ML_CHART.nextSong();
+          }
+        }
+      });
     }
   }
 }
