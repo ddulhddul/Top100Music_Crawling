@@ -1,5 +1,5 @@
 require('babel-polyfill')
-// const urlencode = require('urlencode')
+const urlencode = require('urlencode')
 const request = require('request')
 const cheerio = require('cheerio')
 
@@ -21,54 +21,81 @@ module.exports = {
         this.lpadNum(date.getHours())
   },
 
-  async getChartByUrlRequest(tab){
+  async getChartByUrlRequest(tab, yymmddhh=this.getYymmddhh()){
 
-    let yymmddhh = this.getYymmddhh()
     console.log(yymmddhh, 'chart url request.. ')
     let url = ''
     switch (tab) {
-        case 'song':
+        case 'top100':
             url = 'http://www.melon.com/chart/'
-            break;
+            break
 
-        case 'popsong':
+        case 'pop':
             url = 'https://www.melon.com/genre/song_list.htm?gnrCode=GN0900'
-            break;
-    
+            break
+
         default:
             url = 'http://www.melon.com/chart/'
-            break;
+            break
     }
     const $ = await this.urlRequest(url)
     if(!$) return
 
-    let postElements = $('table tr td div[class^="wrap_song_info"]');
-    let result = [];
-    let index = 0;
-    let reg = new RegExp('\\(.*?\\)','g')
+    let postElements = $('table tr td div[class^="wrap_song_info"]')
+    let list = []
+    let index = 0
     if(postElements.length > 0){
       for(let key = 0; key < postElements.length; key++){
-        let $obj = $(postElements[key]);
-        let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text();
-        if(!song || !singer) continue;
+        let $obj = $(postElements[key])
+        let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text()
+        if(!song || !singer) continue
 
-        // let encodedSrchparam = urlencode(song.replace(reg,'')+' '+singer.replace(reg,''));
-        result.push({
-            num: ++index,
-            song : song,
-            singer : singer,
-            // url : 'https://www.youtube.com/results?search_query='+encodedSrchparam,
-            // videoId: '',
-            srch : song.replace(reg,'')+' '+singer.replace(reg,'')
+        list.push({
+          num: ++index,
+          song : song,
+          singer : singer
         })
       }
-      
-      return {
-        result: result,
-        yymmddhh: yymmddhh
+    }
+    return list
+
+  },
+
+  /* 
+    param 
+      - song
+      - singer
+  */
+  async getVideoIdBySongAndSinger(param={}){
+
+    if(!param.song || !param.singer) return
+    const reg = new RegExp('\\(.*?\\)','g')
+    const encodedSrchparam = urlencode(param.song.replace(reg,'') + ' ' + param.singer.replace(reg,''))
+    const url = 'https://www.youtube.com/results?search_query=' + encodedSrchparam
+    console.log('getVideoIdBySongAndSinger', JSON.stringify(param), encodedSrchparam, url)
+    const $ = await this.urlRequest(url)
+    if(!$) return {}
+
+    const $tag = $('.yt-lockup-video a')
+    let tagLoop = 0, href='', passedId = [], videoTime = ''
+    loop:
+    while(tagLoop < 15){
+      const $targetTag = $tag.eq(tagLoop++)
+      href = $targetTag.attr('href')
+      videoTime = $targetTag.find('.video-time').html()
+      if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
+        if(!passedId.includes(href)) passedId.push(href)
+        else continue loop
+
+        if(videoTime){
+          const timeArr = videoTime.split(':')
+          if(timeArr.length !== 2) continue loop // over 1hour continue
+          else if(timeArr[0] >= 10) continue loop // over 10 minuites continue
+        }
+        break loop
       }
     }
-
+    return { ...param, videoId: String(href||'').replace('/watch?v=',''), videoTime }
   },
 
   urlRequest(url) {
@@ -78,7 +105,7 @@ module.exports = {
           if (error) reject('Unexpected Error :::')
           let $ = cheerio.load(body)
           resolve($)
-            
+
         } catch(e) {
           resolve()
           console.log('request Error :::', e)
