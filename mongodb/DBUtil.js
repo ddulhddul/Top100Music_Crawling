@@ -2,6 +2,7 @@ require('babel-polyfill')
 const ServerUtil = require('../ServerUtil')
 // MongoDB
 const Chart = require('./model/Chart')
+const User = require('./model/User')
 
 module.exports = {
 
@@ -44,6 +45,76 @@ module.exports = {
       return {...obj, tab, yymmddhh}
     })
     Chart.remove({yymmddhh, tab}).then(()=>{Chart.insertMany(saveList)})
-  }
+  },
+
+  findUserByIdPw(userId, userPassword){
+    return new Promise(function (resolve, reject) {
+      try {
+        User.find({ userId }, (err, users)=>{
+          if(!users || !users.length) resolve('NOTEXISTS')
+          else if(users[0].userPassword != userPassword) resolve('INVALID')
+          else resolve(users[0])
+        })
+      } catch (error) {
+        console.log('find user error...', error)
+        reject('find user catch error...')
+      }
+    })
+  },
+
+  findUserBy_id(userId){
+    return new Promise(function (resolve, reject) {
+      try {
+        User.find({ userId }, (err, users)=>{
+          if(!users || !users.length) resolve('NOTEXISTS')
+          else resolve(users[0])
+        })
+      } catch (error) {
+        console.log('find user one error...', error)
+        reject('find user one catch error...')
+      }
+    })
+  },
+
+  joinUser(userId, userPassword){
+    return new Promise(function (resolve, reject) {
+      try {
+        User.find({ userId }, (err, users)=>{
+          if(users && users.length) resolve('EXISTS')
+          else{
+            User.insertMany([{
+              userId, userPassword
+            }])
+            resolve('SUCCESS')
+          }
+        })
+      } catch (error) {
+        console.log('join user error...', error)
+        reject('join user catch error...')
+      }
+    })
+  },
+
+  // userId, music
+  insertMySong(param){
+    return new Promise(function (resolve, reject) {
+      try {
+        User.update(
+          {userId: param.userId},
+          {music: param.music},
+          (err, raw)=>{
+            if(!err) resolve('SUCCESS')
+            else{
+              console.log('update user error', err)
+              reject('update user error')
+            }
+          }
+        )
+      } catch (error) {
+        console.log('update user error...', error)
+        reject('update user catch error...')
+      }
+    })
+  },
 
 }

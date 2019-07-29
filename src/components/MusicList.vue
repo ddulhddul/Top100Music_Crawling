@@ -4,29 +4,37 @@
       <colgroup>
         <col width='40px' />
         <col />
-        <col width='35%' />
+        <col v-if="!noSinger" width='35%' />
       </colgroup>
       <thead>
         <tr>
           <th class="tc">#</th>
           <th>song</th>
-          <th>singer</th>
+          <th v-if="!noSinger">singer</th>
+          <th v-else></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(music,index) in thisMusicList" :key="index" :name="`${refName}${music.num}`" :class='{selected: music.selected}'>
           <td @click="changeMusic(music)" class="tc">{{ music.num }}</td>
           <td @click="changeMusic(music)">{{ music.song }}</td>
-          <td @click="changeMusic(music)">{{ music.singer }}</td>
+          <td @click="changeMusic(music)" v-if="!noSinger">{{ music.singer }}</td>
+          <td v-else>
+            <button type="button" @click="deleteSong(music)" class="btn btn-sm btn-danger">X</button>
+          </td>
         </tr>
       </tbody>
     </table>
+    <div class="no_data" v-if="!thisMusicList || !thisMusicList.length">
+      No Music Found
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
+    noSinger: Boolean,
     refName: String,
     musicList: Array
   },
@@ -46,6 +54,9 @@ export default {
     }
   },
   methods: {
+    deleteSong(music){
+      this.$emit('deleteSong', music)
+    },
     changeMusic(music){
       this.$emit('changeMusic', music)
     }

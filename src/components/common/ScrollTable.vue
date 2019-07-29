@@ -1,0 +1,85 @@
+<template>
+  <div class="list_wrap">
+    <div ref="list_thead_wrap" class="list_thead_wrap">
+      <table class="list_table">
+        <slot name="colgroup"></slot>
+        <thead>
+          <slot name="thead"></slot>
+        </thead>
+      </table>
+    </div>
+    <div ref="scrollDiv" :class="{list_table_wrap_y: true}">
+      <table class="list_table">
+        <slot name="colgroup"></slot>
+        <tbody>
+          <template v-if="list && list.length">
+            <slot name="tbody"></slot>
+          </template>
+          <tr v-else>
+            <!-- 좌우 스크롤 표시를 위해, display table-column 적용 -->
+            <td style="display:table-column;"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="!list || !list.length" class="no_data">
+        No Data Found
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+
+export default {
+  props: {
+    list: {type: Array},
+    search: {type: Function},
+   // pageObject: {type: Object}
+    pageObject: [Object, String]
+
+  },
+  data: ()=>({
+    lastIndex: 0
+  }),
+
+  watch: {
+    pageObject: function (obj={}) {
+      if(obj.currentPage == 1){
+        this.$refs.scrollDiv.scrollTop = 0
+        this.lastIndex = 0
+      }
+    }
+  },
+  mounted(){
+
+    this.$refs.scrollDiv.addEventListener('scroll', this.handleScroll);
+
+    // 가로 스크롤
+    const scrollDiv = this.$refs.scrollDiv
+    const list_thead_wrap = this.$refs.list_thead_wrap
+    scrollDiv.onscroll = function(event) {
+      list_thead_wrap.scrollLeft = this.scrollLeft
+    }
+  },
+  beforeDestroy () {
+    this.$refs.scrollDiv.removeEventListener('scroll', this.handleScroll);
+  },
+  methods: {
+    handleScroll (event) {
+      const eventDiv = event.target
+      if (eventDiv.offsetHeight + eventDiv.scrollTop + 5 >= eventDiv.scrollHeight) {
+        const pageObject = this.pageObject
+        if(pageObject.currentPage !== pageObject.maxPage){
+          const nextPageIndex = Number(pageObject.currentPage||0)+1
+          if(this.lastIndex < nextPageIndex){
+            this.lastIndex = nextPageIndex
+            this.$emit('search', {pageIndex: nextPageIndex})
+          }
+        }
+      }
+    },
+    thisSearch(param){
+      this.$emit('search', param)
+    }
+  },
+};
+</script>

@@ -1,30 +1,31 @@
 <template>
   <div class="wrap-contents">
-    <table class="messageTable">
-      <colgroup>
-        <col width='40px' />
-        <col />
-        <col width='35%' />
+    <Scroll-Table :list="messageList" pageObject="N">
+      <colgroup slot="colgroup">
+        <col width="100%" />
       </colgroup>
-      <tbody>
-        <tr v-for="(message,index) in messageList" :key="index">
-          <td class="tc">{{ message.num }}</td>
-          <td>{{ message.song }}</td>
-          <td>{{ message.singer }}</td>
+      <template slot="tbody">
+        <tr v-for="message in messageList">
+          <td>{{ JSON.stringify(message) }}</td>
         </tr>
-      </tbody>
-    </table>
+      </template>
+    </Scroll-Table>
   </div>
 </template>
 
 <script>
+import ScrollTable from './common/ScrollTable.vue'
+
 export default {
+  components: {
+    ScrollTable
+  },
   props: {
     initMessageInfo: Object
   },
   data(){
     return {
-      messageList: []
+      messageList: Array.from(Array(100)).map((obj, index)=> index)
     }
   },
   mounted(){
@@ -40,20 +41,4 @@ export default {
   height: 400px;
   overflow-y: auto;
 }
-.messageTable{
-  cursor: default;
-  width: 100%;
-}
-.messageTable tr{
-  height: 30px;
-  border-bottom: 1px;
-  border-bottom-color: grey;
-  border-bottom-style: dotted;
-}
-.messageTable td,th{
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.tr{text-align: right;}
-.tc{text-align: center;}
 </style>

@@ -1,10 +1,9 @@
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
-
-let userSchema = new Schema({
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const userSchema = new Schema({
     userId: String,
-    password: String,
-    songList: Array
-});
-
-module.exports = mongoose.model('user', userSchema);
+    userPassword: String,
+    userKey: String,
+    music: Object
+})
+module.exports = mongoose.model('user', userSchema)

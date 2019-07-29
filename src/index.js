@@ -23,6 +23,13 @@ const router = new VueRouter({
   ]
 })
 
+import VeeValidate from 'vee-validate'
+import validationMessage from './validationMessage'
+Vue.use(VeeValidate, {
+  locale: 'validationMessage',
+  dictionary: { validationMessage }
+})
+
 new Vue({
   router,
   render: h => h(App)

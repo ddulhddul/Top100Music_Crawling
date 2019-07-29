@@ -20,7 +20,10 @@ const compiler = webpack(config)
 
 // node
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 app.use(express.static(__dirname +'/dist'))
 
 app.use(require("webpack-dev-middleware")(compiler, {
@@ -33,10 +36,6 @@ app.listen(3000, function () {
 })
 
 app.get('/', (req, res)=>{
-  return res.redirect('/song')
-})
-
-app.get('/song', (req, res)=>{
   res.render('index')
 })
 
@@ -56,4 +55,56 @@ app.get('/song/list/:tab', async (req, res)=>{
 app.get('/song/change', async (req, res)=>{
   const result = await ServerUtil.getVideoIdBySongAndSinger(req.query)
   res.send({ ...result })
+})
+
+app.get('/song/search', async (req, res)=>{
+  const list = await ServerUtil.getSearchSongList(req.query)
+  res.send({ list })
+})
+
+app.post('/song/passport/login', async (req, res)=>{
+  const param = req.body
+  const result = await DBUtil.findUserByIdPw(param.userId, param.userPassword)
+  res.send(result)
+})
+
+app.post('/song/passport/getUserInfo', async (req, res)=>{
+  const param = req.body
+  const result = await DBUtil.findUserBy_id(param.userId)
+  res.send(result)
+})
+
+app.post('/song/passport/join', async (req, res)=>{
+  const param = req.body
+  const result = await DBUtil.joinUser(param.userId, param.userPassword)
+  res.send(result)
+})
+
+app.post('/song/passport/updateMySongList', async (req, res)=>{
+  const param = req.body
+  const user = (await DBUtil.findUserBy_id(param.userId))._doc || {}
+  let defaultMusicList = (user.music || {}).default || []
+  if(!param.deleteVideoId){
+    const musicDupCheck = defaultMusicList.find((obj)=> obj.videoId == param.videoId)
+    if(musicDupCheck){
+      res.send('DUP')
+      return
+    }
+    defaultMusicList.push({
+      videoId: param.videoId,
+      videoTime: param.videoTime,
+      title: param.title,
+    })
+  }else{
+    defaultMusicList = defaultMusicList.filter((obj)=> obj.videoId != param.deleteVideoId)
+  }
+
+  await DBUtil.insertMySong({
+    ...user,
+    music: {
+      ...user.music,
+      default: defaultMusicList
+    }
+  })
+  res.send('SUCCESS')
 })

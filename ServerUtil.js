@@ -98,6 +98,36 @@ module.exports = {
     return { ...param, videoId: String(href||'').replace('/watch?v=',''), videoTime }
   },
 
+  // param - searchInput
+  async getSearchSongList(param={}){
+    const searchUrl = 'https://www.youtube.com/results?search_query=' + urlencode(param.searchInput)
+    const $ = await this.urlRequest(searchUrl)
+    if(!$) return
+
+    let $tag = $('.yt-lockup-video a')
+    let tagLoop = 0, href=''
+    let passedHref = []
+    let resultList = []
+    loop:
+    while(tagLoop < 20){
+      let $targetTag = $tag.eq(tagLoop++)
+      href = $targetTag.attr('href')
+      if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
+        if(!passedHref.includes(href)) passedHref.push(href)
+        else continue loop
+            
+        const title = $targetTag.parent().parent().find('.yt-lockup-title a').eq(0).attr('title')
+        if(!title) continue loop
+        resultList.push({
+          videoId: href.replace('/watch?v=', ''),
+          title: title,
+          videoTime: $targetTag.find('.video-time').html()
+        })
+      }
+    }
+    return resultList
+  },
+
   urlRequest(url) {
     return new Promise(function (resolve, reject) {
       request(url, function (error, response, body) {

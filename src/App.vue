@@ -53,6 +53,9 @@
           <b-tab title="Messages" :class="{active: tab=='message'}" @click="changeTab('message')">
             <Message :initMessageInfo="initMessageInfo" />
           </b-tab>
+          <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="changeTab('mysong')">
+            <My-Song :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :userInfo="userInfo" @updateUserInfo="updateUserInfo" />
+          </b-tab>
         </b-tabs>
       </div>
 
@@ -70,10 +73,11 @@
 <script>
 import MusicList from './components/MusicList.vue'
 import Message from './components/Message.vue'
+import MySong from './components/MySong.vue'
 
 export default {
   components: {
-    MusicList, Message
+    MusicList, Message, MySong
   },
   data(){
     return {
@@ -92,6 +96,7 @@ export default {
 
       top100List: [],
       popList: [],
+      userInfo: undefined,
       initMessageInfo: {}
     }
   },
@@ -100,6 +105,10 @@ export default {
     this.importYoutubeAPI()
   },
   methods: {
+    updateUserInfo(userInfo){
+      this.userInfo = userInfo
+      this.musicList = ((userInfo||{}).music||{}).default || []
+    },
     // 음악 변경
     async changeMusic(data){
       console.log('changeMusic', data)
@@ -132,7 +141,7 @@ export default {
         if(wrapContent) wrapContent.scrollTop = 0
         return
       }
-      if(obj.singer && obj.song) document.title = `${obj.song} - ${obj.singer}` + (!obj.videoTime?'':` (${obj.videoTime})`)
+      if(obj.song) document.title = `${obj.song}` + (obj.singer? ` - ${obj.singer}`: '') + (!obj.videoTime?'':` (${obj.videoTime})`)
       if(document.getElementsByName(`${this.tab}${obj.num}`).length && obj.tab == this.currentMusic.tab){
         wrapContent.scrollTop = document.getElementsByName(`${this.tab}${obj.num}`)[0].offsetTop
       }
@@ -159,6 +168,8 @@ export default {
           this.popList = (data.list || []).map((obj)=>{return {...obj, tab}})
         }
         this.musicList = this.popList
+      }else if(tab == 'mysong'){
+        this.musicList = ((this.userInfo||{}).music||{}).default || []
       }
       // selected song 체크
       this.musicList = this.musicList.map((obj)=>{
@@ -275,7 +286,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .wrap-all {
   display: flex;
   justify-content: center;
@@ -314,5 +325,42 @@ footer {
 }
 footer strong {
   cursor: pointer;
+}
+
+.form_table{
+  background: #fff;
+  clear: both;
+  width: 100%;
+  margin-bottom: 10px;
+  border-collapse: collapse;
+  border-top: 1px solid rgba(0,0,0,0.2);
+  table-layout: fixed;
+}
+.form_table th, .form_table td{
+  padding: 5px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  vertical-align: top;
+  line-height: 24px;
+}
+.form_table th{
+  background: rgba(0,0,0,0.3);
+  padding: 5px 0 0 10px;
+  height: 39px;
+}
+.form_table tr:hover td{background: #f4f6fd;}
+
+input[type="text"], input[type="password"], input[type="search"], input[type="date"]{
+  border: 1px solid #cccccc;
+  height: 28px;
+  border-radius: 0px;
+  padding: 3px;
+  width: 100%;
+}
+.tr{text-align: right;}
+.tc{text-align: center;}
+.no_data{
+  padding: 10px 0 10px;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: center;
 }
 </style>
