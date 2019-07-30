@@ -78,8 +78,9 @@ export default {
 
     async addToMySong(song={}){
       const res = await this.ajax({
-        method: 'post',
-        url: 'song/passport/updateMySongList',
+        method: 'POST',
+        headers: { 'content-type': 'application/json; charset=UTF-8' },
+        url: '/song/passport/updateMySongList',
         data: {
           ...song,
           userId: this.userId
