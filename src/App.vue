@@ -363,4 +363,8 @@ input[type="text"], input[type="password"], input[type="search"], input[type="da
   border-bottom: 1px solid #e5e5e5;
   text-align: center;
 }
+.modal_open {
+  overflow: hidden;
+  height: 100%;
+}
 </style>

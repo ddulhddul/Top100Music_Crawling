@@ -12,7 +12,6 @@
           error: errors && errors[0], 
           tc: ['hh:mm', 'hh:mm:ss'].includes(mask),
           tr: (mask=='number' && allowLeadingZeroes===undefined),
-          imeMode: imeMode !== undefined,
         }"
         v-model="thisValue"
         :maxlength="maxlength"
@@ -53,7 +52,6 @@ export default {
     mobile: {},
     notShow: {},
     autofocus: {},
-    imeMode: {},
     // nubmer 일 경우, 0부터 시작해도 되는지
     allowLeadingZeroes: {},
     // nubmer 일 경우, 천단위 구분자
@@ -225,10 +223,9 @@ export default {
 };
 </script>
 <style scoped>
-.imeMode{
-  -webkit-ime-mode:active; 
-  -moz-ime-mode:active; 
-  -ms-ime-mode:active; 
-  ime-mode:active; 
-}
+.error{color: #f24035;}
+strong.error{color: #ee1f29;}
+.error_msg_wrap{position:relative;display:block;}
+.error_msg_wrap .error_msg{position: absolute; top:100%; left:0; margin-top:-1px; background: rgba(255,0,0,1); color: rgba(255,255,255,1); font-size: 11px; padding: 4px 6px 5px; z-index: 999999; border-radius: 0; text-align: left;}
+input.error{border-color: rgba(255,0,0,1) !important;}
 </style>
