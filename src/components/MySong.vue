@@ -80,10 +80,8 @@ export default {
     async login(param={}){
       if(!await this.validateFocus([this.$refs.validationArea])) return
       const res = await this.ajax({
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=UTF-8' },
         url: '/song/passport/login',
-        data: {
+        params: {
           userId: param.userId || this.userId,
           userPassword: param.userPassword || this.userPassword
         }
@@ -121,10 +119,8 @@ export default {
         userPassword: this.userPassword
       }
       const res = await this.ajax({
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=UTF-8' },
         url: '/song/passport/join',
-        data: param
+        params: param
       })
       
       const data = res.data
@@ -134,10 +130,8 @@ export default {
 
     async getUserInfo(userId){
       const res = await this.ajax({
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=UTF-8' },
         url: '/song/passport/getUserInfo',
-        data: {
+        params: {
           userId: userId || this.userInfo.userId
         }
       })
@@ -151,10 +145,8 @@ export default {
 
     async deleteSong(song={}){
       await this.ajax({
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=UTF-8' },
         url: '/song/passport/updateMySongList',
-        data: {
+        params: {
           deleteVideoId: song.videoId,
           userId: this.userInfo.userId
         }

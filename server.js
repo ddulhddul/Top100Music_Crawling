@@ -62,26 +62,26 @@ app.get('/song/search', async (req, res)=>{
   res.send({ list })
 })
 
-app.post('/song/passport/login', async (req, res)=>{
-  const param = req.body
+app.get('/song/passport/login', async (req, res)=>{
+  const param = req.query || {}
   const result = await DBUtil.findUserByIdPw(param.userId, param.userPassword)
   res.send(result)
 })
 
-app.post('/song/passport/getUserInfo', async (req, res)=>{
-  const param = req.body
+app.get('/song/passport/getUserInfo', async (req, res)=>{
+  const param = req.query || {}
   const result = await DBUtil.findUserBy_id(param.userId)
   res.send(result)
 })
 
-app.post('/song/passport/join', async (req, res)=>{
-  const param = req.body
+app.get('/song/passport/join', async (req, res)=>{
+  const param = req.query || {}
   const result = await DBUtil.joinUser(param.userId, param.userPassword)
   res.send(result)
 })
 
-app.post('/song/passport/updateMySongList', async (req, res)=>{
-  const param = req.body
+app.get('/song/passport/updateMySongList', async (req, res)=>{
+  const param = req.query || {}
   const user = (await DBUtil.findUserBy_id(param.userId))._doc || {}
   let defaultMusicList = (user.music || {}).default || []
   if(!param.deleteVideoId){
