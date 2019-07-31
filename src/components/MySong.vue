@@ -79,12 +79,13 @@ export default {
 
     async login(param={}){
       if(!await this.validateFocus([this.$refs.validationArea])) return
+      const params = {
+        userId: param.userId || this.userId,
+        userPassword: param.userPassword || this.userPassword
+      }
       const res = await this.ajax({
         url: '/song/passport/login',
-        params: {
-          userId: param.userId || this.userId,
-          userPassword: param.userPassword || this.userPassword
-        }
+        params
       })
 
       const data = res.data
@@ -94,7 +95,7 @@ export default {
         this.userId = ''
         this.userPassword = ''
         this.setMusicListByUserInfo({...data})
-        if(typeof localStorage !== 'undefined' && this.userInfo) localStorage.setItem('userId', this.userInfo.userId)
+        if(typeof localStorage !== 'undefined') localStorage.setItem('userId', params.userId)
       }
     },
 
