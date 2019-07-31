@@ -179,5 +179,6 @@ export default {
 .class-search-song{
   display: flex;
   justify-content: space-between;
+  min-width: 300px;
 }
 </style>

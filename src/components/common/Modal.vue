@@ -53,7 +53,7 @@ export default {
   left: 0px;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,5);
+  background-color: rgba(0,0,0,0.5);
   display: table;
   transition: opacity .3s ease;
 }

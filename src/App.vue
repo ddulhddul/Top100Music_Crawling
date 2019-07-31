@@ -116,7 +116,14 @@ export default {
         this.updateCurrentMusic(data)
         return
       }
-      const res = await this.ajax({url: `/song/change?yymmddhh=${this.yymmddhh}&song=${data.song}&singer=${data.singer}`})
+      const res = await this.ajax({
+        url: `/song/change`,
+        params: {
+          yymmddhh: this.yymmddhh,
+          song: data.song,
+          singer: data.singer
+        }
+      })
       this.updateCurrentMusic({...data, ...res.data})
     },
     // currentMusic update 및 load youtube
