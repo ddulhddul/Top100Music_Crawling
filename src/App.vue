@@ -51,7 +51,7 @@
             <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="pop" />
           </b-tab>
           <b-tab title="Messages" :class="{active: tab=='message'}" @click="changeTab('message')">
-            <Message :initMessageInfo="initMessageInfo" />
+            <Message :initMessageInfo="initMessageInfo" :tab="tab" />
           </b-tab>
           <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="changeTab('mysong')">
             <My-Song :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :userInfo="userInfo" @updateUserInfo="updateUserInfo" />

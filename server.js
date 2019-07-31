@@ -62,6 +62,10 @@ app.get('/song/search', async (req, res)=>{
   res.send({ list })
 })
 
+
+/*
+  My Songs
+*/
 app.get('/song/passport/login', async (req, res)=>{
   const param = req.query || {}
   const result = await DBUtil.findUserByIdPw(param.userId, param.userPassword)
@@ -107,4 +111,20 @@ app.get('/song/passport/updateMySongList', async (req, res)=>{
     }
   })
   res.send('SUCCESS')
+})
+
+
+/*
+  Message
+*/
+app.get('/song/message/list', async (req, res)=>{
+  const param = req.query || {}
+  const list = await DBUtil.listMessage(param) || []
+  res.send({ list })
+})
+
+app.get('/song/message/insert', async (req, res)=>{
+  const param = req.query || {}
+  await DBUtil.insertMessage(param)
+  res.send({ result: 'SUCCESS' })
 })

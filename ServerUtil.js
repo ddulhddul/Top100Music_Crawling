@@ -2,23 +2,17 @@ require('babel-polyfill')
 const urlencode = require('urlencode')
 const request = require('request')
 const cheerio = require('cheerio')
+const moment = require('moment-timezone')
+const timeZone = 'Asiz/Seoul'
 
 module.exports = {
 
-  lpadNum(num){
-    if(num < 10) return '0'+num
-    else return String(num)
+  getCurrentFullDateStr(){
+    return moment().tz(timeZone).format('YYYYMMDDHHmiss')
   },
 
-  getYymmddhh(param){
-    // if(typeof moment !== 'undefined'){
-    //     return moment().utcOffset("+09:00").format('YYYYMMDDHH')
-    // }
-    let date = param || new Date();
-    return date.getFullYear()+
-        this.lpadNum(date.getMonth()+1)+
-        this.lpadNum(date.getDate())+
-        this.lpadNum(date.getHours())
+  getYymmddhh(){
+    return moment().tz(timeZone).format('YYYYMMDDHH')
   },
 
   async getChartByUrlRequest(tab, yymmddhh=this.getYymmddhh()){

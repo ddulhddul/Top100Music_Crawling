@@ -3,6 +3,7 @@ const ServerUtil = require('../ServerUtil')
 // MongoDB
 const Chart = require('./model/Chart')
 const User = require('./model/User')
+const Message = require('./model/Message')
 
 module.exports = {
 
@@ -116,5 +117,33 @@ module.exports = {
       }
     })
   },
+
+  listMessage(param={}) {
+    return new Promise(function (resolve, reject) {
+
+      try {
+        Message.find({}, null, {sort: {date: -1}}, (err, result)=>{
+          if(err){
+            console.log('message find error...', err)
+            reject('message find error...')
+
+          }else{
+            resolve(result || [])
+          }
+        })
+      } catch (error) {
+        console.log('message find error...', error)
+        reject('message find catch error...')
+      }
+    })
+  },
+
+  insertMessage(param={}){
+    return Message.insertMany([{
+      writer: param.writer,
+      contents: param.contents,
+      date: ServerUtil.getCurrentFullDateStr()
+    }])
+  }
 
 }
