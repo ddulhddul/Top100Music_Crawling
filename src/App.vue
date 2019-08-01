@@ -51,7 +51,7 @@
             <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="pop" />
           </b-tab>
           <b-tab title="Messages" :class="{active: tab=='message'}" @click="changeTab('message')">
-            <Message :initMessageInfo="initMessageInfo" :tab="tab" />
+            <Message :tab="tab" />
           </b-tab>
           <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="changeTab('mysong')">
             <My-Song :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :userInfo="userInfo" @updateUserInfo="updateUserInfo" />
@@ -74,10 +74,18 @@
 import MusicList from './components/MusicList.vue'
 import Message from './components/Message.vue'
 import MySong from './components/MySong.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     MusicList, Message, MySong
+  },
+  computed: {
+    ...mapState([
+      'top100List',
+      'popList',
+      'userInfo'
+    ])
   },
   data(){
     return {
@@ -93,11 +101,6 @@ export default {
       firstVideoHidden: false,
       musicList: [],
       yymmddhh: '',
-
-      top100List: [],
-      popList: [],
-      userInfo: undefined,
-      initMessageInfo: {}
     }
   },
   mounted(){
@@ -106,7 +109,7 @@ export default {
   },
   methods: {
     updateUserInfo(userInfo){
-      this.userInfo = userInfo
+      this.$store.commit('setUserInfo', userInfo)
       this.musicList = ((userInfo||{}).music||{}).default || []
     },
     // 음악 변경
@@ -164,7 +167,7 @@ export default {
         if(!this.top100List.length){
           const data = await this.callChartListByTab(tab)
           this.yymmddhh = data.yymmddhh
-          this.top100List = (data.list || []).map((obj)=>{return {...obj, tab}})
+          this.$store.commit('setTop100List', (data.list || []).map((obj)=>{return {...obj, tab}}))
         }
         this.musicList = this.top100List
 
@@ -172,7 +175,7 @@ export default {
         if(!this.popList.length){
           const data = await this.callChartListByTab(tab)
           this.yymmddhh = data.yymmddhh
-          this.popList = (data.list || []).map((obj)=>{return {...obj, tab}})
+          this.$store.commit('setPopList', (data.list || []).map((obj)=>{return {...obj, tab}}))
         }
         this.musicList = this.popList
       }else if(tab == 'mysong'){

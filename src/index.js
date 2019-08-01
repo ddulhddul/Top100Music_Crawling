@@ -30,7 +30,29 @@ Vue.use(VeeValidate, {
   dictionary: { validationMessage }
 })
 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+const store = new Vuex.Store({
+  state: {
+    top100List: [],
+    popList: [],
+    userInfo: undefined
+  },
+  mutations: {
+    setTop100List(state, payload=[]){
+      state.top100List = payload
+    },
+    setPopList(state, payload=[]){
+      state.popList = payload
+    },
+    setUserInfo(state, payload){
+      state.userInfo = payload
+    }
+  }
+})
+
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

@@ -3,7 +3,7 @@ const urlencode = require('urlencode')
 const request = require('request')
 const cheerio = require('cheerio')
 const moment = require('moment-timezone')
-const timeZone = 'Asiz/Seoul'
+const timeZone = 'Asia/Seoul'
 
 module.exports = {
 
