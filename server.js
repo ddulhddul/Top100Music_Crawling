@@ -32,7 +32,7 @@ app.use(require("webpack-dev-middleware")(compiler, {
 app.use(require("webpack-hot-middleware")(compiler))
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!\n')
+  console.log('App listening on port 3000!\n')
 })
 
 app.get('/', (req, res)=>{
@@ -53,7 +53,13 @@ app.get('/song/list/:tab', async (req, res)=>{
 })
 
 app.get('/song/change', async (req, res)=>{
-  const result = await ServerUtil.getVideoIdBySongAndSinger(req.query)
+  const param = req.query || {}
+  const list = (await DBUtil.listChart(param.tab, param.yymmddhh)) || []
+  let result = list.find((obj)=>(obj.song == param.song && obj.singer == param.singer)) || {}
+  if(!result.videoId){
+    result = await ServerUtil.getVideoIdBySongAndSinger(param)
+    DBUtil.updateChartVideoInfo(param.tab, param.yymmddhh, param.num, result)
+  }
   res.send({ ...result })
 })
 

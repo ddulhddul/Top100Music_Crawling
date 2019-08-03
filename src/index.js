@@ -34,16 +34,24 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
+    yymmddhh: '',
+    currentMusic: {},
     top100List: [],
     popList: [],
     userInfo: undefined
   },
   mutations: {
+    setYymmddhh(state, payload=''){
+      state.yymmddhh = payload
+    },
+    setCurrentMusic(state, payload={}){
+      state.currentMusic = payload
+    },
     setTop100List(state, payload=[]){
-      state.top100List = payload
+      state.top100List = payload.map((obj)=>{return {...obj, tab: 'top100'}})
     },
     setPopList(state, payload=[]){
-      state.popList = payload
+      state.popList = payload.map((obj)=>{return {...obj, tab: 'pop'}})
     },
     setUserInfo(state, payload){
       state.userInfo = payload

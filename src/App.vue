@@ -44,17 +44,17 @@
       <!-- Tabs -->
       <div class="wrap-tabs">
         <b-tabs content-class="mt-3">
-          <b-tab title="Top100" :class="{active: tab=='top100'}" @click="changeTab('top100')">
-            <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="top100" />
+          <b-tab title="Top100" :class="{active: tab=='top100'}" @click="tab='top100'">
+            <Top100-List @changeMusic="changeMusic" :tab="tab" @updateMusicList="updateMusicList" />
           </b-tab>
-          <b-tab title="Pop" :class="{active: tab=='pop'}" @click="changeTab('pop')">
-            <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="pop" />
+          <b-tab title="Pop" :class="{active: tab=='pop'}" @click="tab='pop'">
+            <Pop-List @changeMusic="changeMusic" :tab="tab" @updateMusicList="updateMusicList" />
           </b-tab>
-          <b-tab title="Messages" :class="{active: tab=='message'}" @click="changeTab('message')">
+          <b-tab title="Messages" :class="{active: tab=='message'}" @click="tab='message'">
             <Message :tab="tab" />
           </b-tab>
-          <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="changeTab('mysong')">
-            <My-Song :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :userInfo="userInfo" @updateUserInfo="updateUserInfo" />
+          <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="tab='mysong'">
+            <My-Song :musicList="musicList" @changeMusic="changeMusic" @updateMusicList="updateMusicList" :tab="tab" />
           </b-tab>
         </b-tabs>
       </div>
@@ -74,14 +74,18 @@
 import MusicList from './components/MusicList.vue'
 import Message from './components/Message.vue'
 import MySong from './components/MySong.vue'
+import Top100List from './components/Top100List.vue'
+import PopList from './components/PopList.vue'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    MusicList, Message, MySong
+    MusicList, Message, MySong, Top100List, PopList
   },
   computed: {
     ...mapState([
+      'yymmddhh',
+      'currentMusic',
       'top100List',
       'popList',
       'userInfo'
@@ -91,30 +95,19 @@ export default {
     return {
       player: undefined, // youtube 플레이어
       tab: '',
-      currentMusic: {
-        song: '',
-        singer: '',
-        videoTime: '',
-      },
       playType: 's',
       videoHidden: false,
       firstVideoHidden: false,
       musicList: [],
-      yymmddhh: '',
     }
   },
   mounted(){
-    this.changeTab()
+    this.tab = 'top100'
     this.importYoutubeAPI()
   },
   methods: {
-    updateUserInfo(userInfo){
-      this.$store.commit('setUserInfo', userInfo)
-      this.musicList = ((userInfo||{}).music||{}).default || []
-    },
     // 음악 변경
     async changeMusic(data){
-      console.log('changeMusic', data)
       if(data.videoId){
         this.updateCurrentMusic(data)
         return
@@ -123,29 +116,51 @@ export default {
         url: `/song/change`,
         params: {
           yymmddhh: this.yymmddhh,
+          tab: this.tab,
+          num: data.num,
           song: data.song,
           singer: data.singer
         }
       })
-      this.updateCurrentMusic({...data, ...res.data})
+      const currentMusic = {...data, ...res.data, tab: this.tab}
+      console.log('changeMusic', currentMusic)
+      if(currentMusic.tab == 'top100'){
+        this.$store.commit('setTop100List', this.top100List.map((obj)=>{
+          return {...obj, 
+            videoId: obj.num == data.num? currentMusic.videoId: undefined,
+            selected: (obj.videoId == currentMusic.videoId)? true: false
+          }
+        }))
+      }else if(currentMusic.tab == 'pop'){
+        this.$store.commit('setPopList', this.popList.map((obj)=>{
+          return {...obj, 
+            videoId: obj.num == data.num? currentMusic.videoId: undefined,
+            selected: (obj.videoId == currentMusic.videoId)? true: false
+          }
+        }))
+      }else if(currentMusic.tab == 'mysong'){
+        const userInfo = this.userInfo || {music: {default: []}}
+        userInfo.music.default = userInfo.music.default.map((obj)=>{
+          return {...obj, 
+            videoId: obj.num == data.num? currentMusic.videoId: undefined,
+            selected: (obj.videoId == currentMusic.videoId)? true: false
+          }
+        })
+        this.$store.commit('setUserInfo', userInfo)
+      }
+      this.updateCurrentMusic(currentMusic)
     },
     // currentMusic update 및 load youtube
     updateCurrentMusic(obj={}){
-      this.currentMusic = obj
+      this.$store.commit('setCurrentMusic', obj)
       if (this.player && this.player.cuePlaylist && obj.videoId) {
         this.player.cuePlaylist([obj.videoId])
-        this.musicList = this.musicList.map((music)=>{
-          return {
-            ...music,
-            selected: music.num === obj.num
-          }
-        })
         this.setVideoTitleAndPlay(obj)
       }
     },
     // 제목 Title 변경
     setVideoTitleAndPlay(param){
-      const obj = param || this.musicList.find((obj)=>obj.selected)
+      const obj = param || this.musicList.find((obj)=>obj.videoId==this.currentMusic.videoId)
       const wrapContent = document.getElementsByName(this.tab)[0]
       if(!obj){
         if(wrapContent) wrapContent.scrollTop = 0
@@ -156,41 +171,8 @@ export default {
         wrapContent.scrollTop = document.getElementsByName(`${this.tab}${obj.num}`)[0].offsetTop
       }
     },
-    async callChartListByTab(tab){
-      const res = await this.ajax({url: '/song/list/'+tab})
-      return res.data || {}
-    },
-    // 탭 변경
-    async changeTab(tab='top100'){
-      this.tab = tab
-      if(tab == 'top100'){
-        if(!this.top100List.length){
-          const data = await this.callChartListByTab(tab)
-          this.yymmddhh = data.yymmddhh
-          this.$store.commit('setTop100List', (data.list || []).map((obj)=>{return {...obj, tab}}))
-        }
-        this.musicList = this.top100List
-
-      }else if(tab == 'pop'){
-        if(!this.popList.length){
-          const data = await this.callChartListByTab(tab)
-          this.yymmddhh = data.yymmddhh
-          this.$store.commit('setPopList', (data.list || []).map((obj)=>{return {...obj, tab}}))
-        }
-        this.musicList = this.popList
-      }else if(tab == 'mysong'){
-        this.musicList = ((this.userInfo||{}).music||{}).default || []
-      }
-      // selected song 체크
-      this.musicList = this.musicList.map((obj)=>{
-        return {
-          ...obj,
-          selected: (obj.tab == this.currentMusic.tab && obj.num == this.currentMusic.num)? true: false
-        }
-      })
-      this.$nextTick(()=>{
-        this.setVideoTitleAndPlay()
-      })
+    updateMusicList(list=[]){
+      this.musicList = list
     },
     // 초기 Player 로딩시
     startPlayer(){
@@ -217,12 +199,12 @@ export default {
         nextSong = this.currentMusic
 
       }else if(this.playType === 'r'){
-        list = list.filter((obj)=>!obj.selected)
+        list = list.filter((obj)=>obj.videoId!=this.currentMusic.videoId)
         nextSong = list[Math.ceil(Math.random()*list.length)]
 
       }else if(this.playType === 's'){
         const index = list.reduce((entry, obj, index)=>{
-          if(entry === 'e' && obj.selected) return index
+          if(entry === 'e' && (obj.videoId==this.currentMusic.videoId)) return index
           else return entry
         }, 'e')
         nextSong = list[index+1] || list[0]

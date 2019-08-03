@@ -48,6 +48,19 @@ module.exports = {
     Chart.remove({yymmddhh, tab}).then(()=>{Chart.insertMany(saveList)})
   },
 
+  updateChartVideoInfo(tab, yymmddhh, num, videoInfo) {
+    Chart.findOne({yymmddhh, tab, num}, (err,chart)=>{
+      if(err || !chart){
+        console.log('updateChartVideoInfo error', err)
+      }else{
+        chart.videoId = videoInfo.videoId
+        chart.videoTime = videoInfo.videoTime
+        chart.save((err)=>{if(err) console.log('updateChartVideoInfo update error...', err)})
+        // console.log('updateChartVideoInfo success', videoInfo)
+      }
+    })
+  },
+
   findUserByIdPw(userId, userPassword){
     return new Promise(function (resolve, reject) {
       try {

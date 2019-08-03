@@ -42,7 +42,7 @@
           <button type="button" @click="logout()" class="btn btn-sm btn-success">Logout</button>
         </div>
       </div>
-      <Music-List :musicList="musicList" @changeMusic="changeMusic" :refName="refName" :noSinger="true" @deleteSong="deleteSong" />
+      <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
     </div>
   </div>
 </template>
@@ -52,27 +52,41 @@ import MusicList from './MusicList.vue'
 import MySongSrchModal from './MySongSrchModal.vue'
 import VInput from './common/VInput.vue'
 import { ValidationObserver } from 'vee-validate'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     MusicList, MySongSrchModal, VInput, ValidationObserver
   },
+  computed: {
+    ...mapState([
+      'userInfo'
+    ])
+  },
   props: {
-    userInfo: Object,
-    refName: String,
+    tab: String,
     musicList: Array
+  },
+  watch: {
+    async tab(newValue, oldValue){
+      if(newValue == 'mysong'){
+        if(!this.init){
+          this.init = true
+          if(typeof localStorage !== 'undefined'){
+            const userId = localStorage.getItem('userId')
+            if(userId) await this.getUserInfo(userId)
+          }
+        }
+        this.$emit('updateMusicList', ((this.userInfo||{}).music||{}).default || [])
+      }
+    }
   },
   data(){
     return {
+      init: false,
       userId: '',
       userPassword: '',
       srchModal: false
-    }
-  },
-  mounted(){
-    if(typeof localStorage !== 'undefined'){
-      const userId = localStorage.getItem('userId')
-      if(userId) this.getUserInfo(userId)
     }
   },
   methods: {
@@ -105,12 +119,13 @@ export default {
       targetData.music.default = ((targetData.music || {}).default || []).map((obj, index)=>{
         return {
           ...obj,
-          tab: this.refName,
+          tab: 'mysong',
           song: obj.title,
           num: index+1
         }
       })
-      this.$emit('updateUserInfo', targetData)
+      this.$store.commit('setUserInfo', targetData)
+      this.$emit('updateMusicList', targetData.music.default || [])
     },
 
     async join(){
@@ -158,7 +173,8 @@ export default {
     logout(){
       this.userId = ''
       this.userPassword = ''
-      this.$emit('updateUserInfo', undefined)
+      this.$store.commit('setUserInfo', undefined)
+      this.$emit('updateMusicList', [])
     }
 
   }

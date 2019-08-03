@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(music,index) in thisMusicList" :key="index" :name="`${refName}${music.num}`" :class='{selected: music.selected}'>
+        <tr v-for="(music,index) in thisMusicList" :key="index" :name="`${refName}${music.num}`" :class='{selected: (music.videoId && music.videoId == (currentMusic||{}).videoId)}'>
           <td @click="changeMusic(music)" class="tc">{{ music.num }}</td>
           <td @click="changeMusic(music)">{{ music.song }}</td>
           <td @click="changeMusic(music)" v-if="!noSinger">{{ music.singer }}</td>
@@ -32,7 +32,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
+  computed: {
+    ...mapState([
+      'currentMusic'
+    ])
+  },
   props: {
     noSinger: Boolean,
     refName: String,
@@ -41,7 +48,6 @@ export default {
   data(){
     return {
       selectSongMode: false,
-      currentMusic: {},
       thisMusicList: [],
     }
   },
@@ -57,7 +63,7 @@ export default {
     deleteSong(music){
       this.$emit('deleteSong', music)
     },
-    changeMusic(music){
+    async changeMusic(music){
       this.$emit('changeMusic', music)
     }
   }
