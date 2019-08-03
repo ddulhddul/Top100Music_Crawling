@@ -22,6 +22,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Music Top 100 Youtube',
+      meta: {viewport: 'width=device-width, initial-scale=1'}
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
