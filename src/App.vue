@@ -103,7 +103,7 @@ export default {
   },
   mounted(){
     this.tab = 'top100'
-    this.importYoutubeAPI()
+    this.onYouTubePlayerAPIReady()
   },
   methods: {
     // 음악 변경
@@ -218,12 +218,6 @@ export default {
     *****************************/
     // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
     // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
-    importYoutubeAPI(){
-      let script = document.createElement('script')
-      script.src = 'https://www.youtube.com/player_api'
-      document.getElementsByTagName('head')[0].appendChild(script)
-      this.onYouTubePlayerAPIReady()
-    },
     onYouTubePlayerAPIReady() {
       if(typeof YT === 'undefined' || !YT.Player){
         setTimeout(() => {
