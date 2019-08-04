@@ -21,8 +21,8 @@ module.exports = {
     new VueLoaderPlugin(),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Music Top 100 Youtube',
-      meta: {viewport: 'width=device-width, initial-scale=1'}
+      template: 'src/index.html',
+      inject: 'body'
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],

@@ -1,7 +1,3 @@
-const div = document.createElement('div')
-div.setAttribute('id', 'app')
-document.body.prepend(div)
-
 import 'babel-polyfill'
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'

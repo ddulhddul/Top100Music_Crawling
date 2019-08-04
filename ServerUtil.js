@@ -8,7 +8,7 @@ const timeZone = 'Asia/Seoul'
 module.exports = {
 
   getCurrentFullDateStr(){
-    return moment().tz(timeZone).format('YYYYMMDDHHmiss')
+    return moment().tz(timeZone).format('YYYYMMDDHHmmss')
   },
 
   getYymmddhh(){
