@@ -204,7 +204,7 @@ export default {
 
       }else if(this.playType === 's'){
         const index = list.reduce((entry, obj, index)=>{
-          if(entry === 1000 && (obj.videoId==this.currentMusic.videoId)) return index
+          if(entry === 1000 && (obj.num==this.currentMusic.num)) return index
           else return entry
         }, 1000)
         nextSong = list[index+1] || list[0]
