@@ -157,6 +157,16 @@ module.exports = {
       contents: param.contents,
       date: ServerUtil.getCurrentFullDateStr()
     }])
+  },
+
+  insertManyMessage(param=[]){
+    return Message.insertMany(param.map((obj)=>{
+      return {
+        writer: obj.writer,
+        contents: obj.contents,
+        date: obj.date
+      }
+    }))
   }
 
 }

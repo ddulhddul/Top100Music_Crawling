@@ -19,6 +19,13 @@
               <button type="button" @click="insertMessage()" class="btn btn-sm btn-success">등록</button>
             </td>
           </tr>
+          <tr v-if="(userInfo||{}).userId=='admin'">
+            <td colspan=3>
+              <button type="button" @click="backupMessage()" class="btn btn-sm btn-danger">Backup</button>
+              <textarea v-model="backup"/>
+              <button type="button" @click="insertMany()" class="btn btn-sm btn-danger">Insertmany</button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </ValidationObserver>
@@ -50,14 +57,19 @@
 import ScrollTable from './common/ScrollTable.vue'
 import VInput from './common/VInput.vue'
 import { ValidationObserver } from 'vee-validate'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     ScrollTable, VInput, ValidationObserver
   },
+  computed: {
+    ...mapState([
+      'userInfo'
+    ])
+  },
   props: {
-    tab: String,
-    initMessageInfo: Object
+    tab: String
   },
   watch: {
     tab(newValue, oldValue){
@@ -72,6 +84,7 @@ export default {
       init: false,
       writer: '',
       contents: '',
+      backup: '',
       messageList: []
     }
   },
@@ -104,6 +117,27 @@ export default {
       this.writer = ''
       this.contents = ''
       this.$refs.messageValidationArea.reset()
+      this.initMessage()
+    },
+
+    async backupMessage(){
+      const res = await this.ajax({
+        url: '/song/message/listAll'
+      })
+      this.backup = JSON.stringify(res.data.list || [])
+    },
+    
+    async insertMany(){
+      const res = await this.ajax({
+        url: '/song/message/insertMany',
+        params: {
+          json: this.backup
+        }
+      })
+      if(res.data.result != 'SUCCESS'){
+        alert('메세지 작성 에러')
+        return
+      }
       this.initMessage()
     }
 

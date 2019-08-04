@@ -70,6 +70,12 @@ pm2 start app.js
 
 ## URL 포트번호 없애기 (포트포워딩) - CentOS 7
 ```linux
+## new
+iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000 
+service iptables save
+```
+```linux
+## old
 iptables --insert INPUT --protocol tcp --dport 80 --jump ACCEPT
 iptables --insert INPUT --protocol tcp --dport 3000 --jump ACCEPT
 iptables --table nat --append PREROUTING --in-interface eth0 --protocol tcp --dport 80 --jump REDIRECT --to-port 3000

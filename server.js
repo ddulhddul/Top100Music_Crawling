@@ -134,3 +134,15 @@ app.get('/song/message/insert', async (req, res)=>{
   await DBUtil.insertMessage(param)
   res.send({ result: 'SUCCESS' })
 })
+
+app.get('/song/message/listAll', async (req, res)=>{
+  const param = req.query || {}
+  const list = await DBUtil.listMessage(param) || []
+  res.send({ list })
+})
+
+app.get('/song/message/insertMany', async (req, res)=>{
+  const param = req.query || {}
+  await DBUtil.insertManyMessage(JSON.parse(param.json))
+  res.send({ result: 'SUCCESS' })
+})
