@@ -124,30 +124,32 @@ export default {
       })
       const currentMusic = {...data, ...res.data, tab: this.tab}
       console.log('changeMusic', currentMusic)
+      let musicList = undefined
       if(currentMusic.tab == 'top100'){
-        this.$store.commit('setTop100List', this.top100List.map((obj)=>{
+        musicList = this.top100List.map((obj)=>{
           return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: undefined,
-            selected: (obj.videoId == currentMusic.videoId)? true: false
+            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
           }
-        }))
+        })
+        this.$store.commit('setTop100List', musicList)
       }else if(currentMusic.tab == 'pop'){
-        this.$store.commit('setPopList', this.popList.map((obj)=>{
+        musicList = this.popList.map((obj)=>{
           return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: undefined,
-            selected: (obj.videoId == currentMusic.videoId)? true: false
+            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
           }
-        }))
+        })
+        this.$store.commit('setPopList', musicList)
       }else if(currentMusic.tab == 'mysong'){
         const userInfo = this.userInfo || {music: {default: []}}
         userInfo.music.default = userInfo.music.default.map((obj)=>{
           return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: undefined,
-            selected: (obj.videoId == currentMusic.videoId)? true: false
+            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
           }
         })
+        musicList = userInfo.music.default
         this.$store.commit('setUserInfo', userInfo)
       }
+      if(musicList) this.musicList = musicList
       this.updateCurrentMusic(currentMusic)
     },
     // currentMusic update 및 load youtube

@@ -60,7 +60,7 @@ app.get('/song/change', async (req, res)=>{
     result = await ServerUtil.getVideoIdBySongAndSinger(param)
     DBUtil.updateChartVideoInfo(param.tab, param.yymmddhh, param.num, result)
   }
-  res.send({ ...result })
+  res.send(result)
 })
 
 app.get('/song/search', async (req, res)=>{
