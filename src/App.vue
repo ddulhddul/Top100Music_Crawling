@@ -200,13 +200,13 @@ export default {
 
       }else if(this.playType === 'r'){
         list = list.filter((obj)=>obj.videoId!=this.currentMusic.videoId)
-        nextSong = list[Math.ceil(Math.random()*list.length)]
+        nextSong = list[Math.floor(Math.random()*list.length)]
 
       }else if(this.playType === 's'){
         const index = list.reduce((entry, obj, index)=>{
-          if(entry === 'e' && (obj.videoId==this.currentMusic.videoId)) return index
+          if(entry === 1000 && (obj.videoId==this.currentMusic.videoId)) return index
           else return entry
-        }, 'e')
+        }, 1000)
         nextSong = list[index+1] || list[0]
       }
       if(nextSong) this.changeMusic(nextSong)
@@ -240,6 +240,8 @@ export default {
               // console.log('event', event.data, event)
               if (event.data === 5) { // 동영상 신호
                 curThis.player.playVideo()
+                // 플레이하지 않는 경우 방지, 5초후 다시 실행
+                setTimeout(()=>{curThis.player && curThis.player.getPlayerState() != 1 && curThis.player.playVideo()}, 5000)
 
               } else if (event.data === 0) { // 종료 (동영상 끝난 후 이벤트)
                 curThis.nextSong()
@@ -254,6 +256,8 @@ export default {
 
               } else if (event.data === -1) { // 시작되지 않음
                 curThis.player.playVideo()
+                // 플레이하지 않는 경우 방지, 5초후 다시 실행
+                setTimeout(()=>{curThis.player && curThis.player.getPlayerState() != 1 && curThis.player.playVideo()}, 5000)
               }
 
             },
