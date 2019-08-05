@@ -24,16 +24,34 @@
 
       <!-- Play Buttons -->
       <div class="wrap-buttons">
-        <div class="btn-group">
-          <button type="button" @click="playType='1'" class="btn btn-sm" :class="{'btn-info': playType=='1', 'btn-light': playType!='1'}">한곡</button>
-          <button type="button" @click="playType='s'" class="btn btn-sm" :class="{'btn-info': playType=='s', 'btn-light': playType!='s'}">순차</button>
-          <button type="button" @click="playType='r'" class="btn btn-sm" :class="{'btn-info': playType=='r', 'btn-light': playType!='r'}">랜덤</button>
+        <div class="btn-group btn-group-border">
+          <button type="button" @click="playType='1'" class="btn btn-sm" :class="{'btn-info': playType=='1', 'btn-light': playType!='1'}">
+            <!-- 한곡 -->
+            <img class="image22" :src="require('../static/icons/icons8-repeat-one-30.png')" :style="{filter: playType=='1'? 'invert(1)': ''}" />
+          </button>
+          <button type="button" @click="playType='s'" class="btn btn-sm" :class="{'btn-info': playType=='s', 'btn-light': playType!='s'}">
+            <!-- 순차 -->
+            <img class="image22" :src="require('../static/icons/icons8-repeat-30.png')" :style="{filter: playType=='s'? 'invert(1)': ''}" />
+          </button>
+          <button type="button" @click="playType='r'" class="btn btn-sm" :class="{'btn-info': playType=='r', 'btn-light': playType!='r'}">
+            <!-- 랜덤 -->
+            <img class="image20" :src="require('../static/icons/icons8-curly-arrow-24.png')" :style="{filter: playType=='r'? 'invert(1)': ''}" />
+          </button>
         </div>
         &nbsp;
         <div class="btn-group">
-          <button type="button" @click="pauseYoutube()" class="btn btn-sm btn-warning">일시정지</button>
-          <button type="button" @click="playYoutube()" class="btn btn-sm btn-primary">재생</button>
-          <button type="button" @click="nextSong()" class="btn btn-sm btn-danger">다음</button>
+          <button type="button" @click="pauseYoutube()" class="btn btn-sm btn-warning">
+            <!-- 일시정지 -->
+            <img class="image22" :src="require('../static/icons/icons8-pause-24.png')" :style="{filter:'invert(1)'}" />
+          </button>
+          <button type="button" @click="playYoutube()" class="btn btn-sm btn-primary">
+            <!-- 재생 -->
+            <img class="image22" :src="require('../static/icons/icons8-play-24.png')" :style="{filter:'invert(1)'}" />
+          </button>
+          <button type="button" @click="nextSong()" class="btn btn-sm btn-danger">
+            <!-- 다음 -->
+            <img class="image22" :src="require('../static/icons/icons8-fast-forward-24.png')" :style="{filter:'invert(1)'}" />
+          </button>
         </div>
         &nbsp;
         <button class="btn btn-sm" :class="{'btn-success': videoHidden, 'btn-secondary': !videoHidden}" @click='videoHidden=!videoHidden'>
@@ -358,5 +376,13 @@ input[type="text"], input[type="password"], input[type="search"], input[type="da
 .modal_open {
   overflow: hidden;
   height: 100%;
+}
+.image22 {height: 22px; width: 22px;}
+.image20 {height: 20px; width: 20px;}
+.btn-group-border {
+  border-color: grey;
+  border-width: 1px;
+  border-style: dotted;
+  border-radius: 5px;
 }
 </style>

@@ -18,6 +18,7 @@
     "css-loader": "^2.1.1",
     "ejs": "^2.6.2",
     "express": "^4.17.0",
+    "file-loader": "^4.1.0",
     "html-webpack-plugin": "^3.2.0",
     "moment-timezone": "^0.5.26",
     "mongoose": "^5.6.5",
