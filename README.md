@@ -1,5 +1,5 @@
-# [Music Top 100](http://mlchart.ml/song/)
-URL : [http://mlchart.ml/song/](http://mlchart.ml/song/)
+# [Music Top 100](http://mlchart.ml/)
+URL : [http://mlchart.ml/](http://mlchart.ml/)
 
 
 ## 1. 개요
