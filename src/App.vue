@@ -61,7 +61,7 @@
 
       <!-- Tabs -->
       <div class="wrap-tabs">
-        <b-tabs content-class="mt-3">
+        <b-tabs content-class="mt-3 wrap-b-tabs">
           <b-tab title="Top100" :class="{active: tab=='top100'}" @click="tab='top100'">
             <Top100-List @changeMusic="changeMusic" :tab="tab" @updateMusicList="updateMusicList" />
           </b-tab>
@@ -102,7 +102,6 @@ export default {
   },
   computed: {
     ...mapState([
-      'yymmddhh',
       'currentMusic',
       'top100List',
       'popList',
@@ -111,6 +110,7 @@ export default {
   },
   data(){
     return {
+      yymmddhh: '',
       player: undefined, // youtube 플레이어
       tab: '',
       playType: 's',
@@ -133,7 +133,7 @@ export default {
       const res = await this.ajax({
         url: `/song/change`,
         params: {
-          yymmddhh: this.yymmddhh,
+          yymmddhh: data.yymmddhh,
           tab: this.tab,
           num: data.num,
           song: data.song,
@@ -181,14 +181,15 @@ export default {
     // 제목 Title 변경
     setVideoTitleAndPlay(param){
       const obj = param || this.musicList.find((obj)=>obj.videoId==this.currentMusic.videoId)
-      const wrapContent = document.getElementsByName(this.tab)[0]
+      const wrapContent = document.querySelector(`[name=${this.tab}] .list_table_wrap_y`)
       if(!obj){
         if(wrapContent) wrapContent.scrollTop = 0
         return
       }
       if(obj.song) document.title = `${obj.song}` + (obj.singer? ` - ${obj.singer}`: '') + (!obj.videoTime?'':` (${obj.videoTime})`)
+      this.yymmddhh = obj.yymmddhh || ''
       if(document.getElementsByName(`${this.tab}${obj.num}`).length && obj.tab == this.currentMusic.tab){
-        wrapContent.scrollTop = document.getElementsByName(`${this.tab}${obj.num}`)[0].offsetTop
+        if(wrapContent) wrapContent.scrollTop = document.getElementsByName(`${this.tab}${obj.num}`)[0].offsetTop
       }
     },
     updateMusicList(list=[]){
@@ -298,14 +299,20 @@ export default {
 
 <style>
 .wrap-all {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 92%;
   display: flex;
+  flex: 1;
+  flex-direction: row;
   justify-content: center;
 }
 .contents {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 500px;
+  max-width: 600px;
 }
 .wrap-date {
   cursor: default;
@@ -328,8 +335,14 @@ export default {
   margin: 10px;
 }
 .wrap-tabs {
-  width: 95%;
+  width: 100%;
+  height: calc(100% - 150px);
 }
+.wrap-b-tabs {
+  height: calc(100% - 65px);
+}
+.tabs, .tab-pane{height: 100%;}
+
 footer {
   cursor: default;
 }
@@ -344,7 +357,7 @@ footer strong {
   margin-bottom: 10px;
   border-collapse: collapse;
   border-top: 1px solid rgba(0,0,0,0.2);
-  table-layout: fixed;
+  table-layout: auto;
 }
 .form_table th, .form_table td{
   padding: 5px;

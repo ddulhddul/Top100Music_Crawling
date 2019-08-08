@@ -30,16 +30,12 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
-    yymmddhh: '',
     currentMusic: {},
     top100List: [],
     popList: [],
     userInfo: undefined
   },
   mutations: {
-    setYymmddhh(state, payload=''){
-      state.yymmddhh = payload
-    },
     setCurrentMusic(state, payload={}){
       state.currentMusic = payload
     },

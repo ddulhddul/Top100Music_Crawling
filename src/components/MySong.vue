@@ -29,7 +29,7 @@
       <button type="button" @click="join()" class="btn btn-sm btn-danger">Join</button>
       <button type="button" @click="login()" class="btn btn-sm btn-success">Login</button>
     </div>
-    <div v-else>
+    <div v-else class="mysong-wrapper">
       <!-- 노래 검색 팝업 -->
       <My-Song-Srch-Modal v-if="srchModal" @close="srchModal=false" :userId="(userInfo||{}).userId" @getUserInfo="getUserInfo()" />
       <div class="class-search-song">
@@ -42,7 +42,9 @@
           <button type="button" @click="logout()" class="btn btn-sm btn-success">Logout</button>
         </div>
       </div>
-      <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
+      <div class="wrapper-musiclist">
+        <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
+      </div>
     </div>
   </div>
 </template>
@@ -183,11 +185,19 @@ export default {
 
 <style scoped>
 .wrapper{
+  height: 100%;
   display: flex;
   justify-content: center;
 }
 .login-wrapper{
   text-align: center;
+}
+.mysong-wrapper{
+  width: 100%;
+}
+.wrapper-musiclist{
+  width: 100%;
+  height: calc(100% - 80px);
 }
 .form_table tr{
   margin-top: 5px;

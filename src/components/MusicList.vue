@@ -1,20 +1,20 @@
 <template>
-  <div class="wrap-contents" :name="refName">
-    <table class="basicTable">
-      <colgroup>
+  <div class="wrap-contents basicTable" :name="refName">
+    <Scroll-Table :list="thisMusicList" pageObject="N">
+      <colgroup slot="colgroup">
         <col width='40px' />
         <col />
-        <col v-if="!noSinger" width='35%' />
+        <col v-if="!noSinger" width='40%' />
       </colgroup>
-      <thead>
+      <template slot="thead">
         <tr>
           <th class="tc">#</th>
           <th>song</th>
           <th v-if="!noSinger">singer</th>
           <th v-else></th>
         </tr>
-      </thead>
-      <tbody>
+      </template>
+      <template slot="tbody">
         <tr v-for="(music,index) in thisMusicList" :key="index" :name="`${refName}${music.num}`" :class='{selected: (music.videoId && music.videoId == (currentMusic||{}).videoId)}'>
           <td @click="changeMusic(music)" class="tc">{{ music.num }}</td>
           <td @click="changeMusic(music)">{{ music.song }}</td>
@@ -23,18 +23,19 @@
             <button type="button" @click="deleteSong(music)" class="btn btn-sm btn-danger">X</button>
           </td>
         </tr>
-      </tbody>
-    </table>
-    <div class="no_data" v-if="!thisMusicList || !thisMusicList.length">
-      No Music Found
-    </div>
+      </template>
+    </Scroll-Table>
   </div>
 </template>
 
 <script>
+import ScrollTable from './common/ScrollTable.vue'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    ScrollTable
+  },
   computed: {
     ...mapState([
       'currentMusic'
@@ -72,9 +73,8 @@ export default {
 
 <style scoped>
 .wrap-contents {
-  width: 95%;
-  height: 400px;
-  overflow-y: auto;
+  width: 100%;
+  height: 100%;
 }
 .basicTable{
   cursor: default;

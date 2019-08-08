@@ -31,8 +31,8 @@
     </ValidationObserver>
     <Scroll-Table :list="messageList" pageObject="N">
       <colgroup slot="colgroup">
-        <col style="width:30%" />
-        <col />
+        <col width="30%" />
+        <col width="70%" />
       </colgroup>
       <template slot="tbody">
         <tr v-for="message in messageList">
@@ -40,12 +40,12 @@
             <div class="write-wrapper">{{ message.writer }}</div>
           </td>
           <td>
-            <div class="contents-wrapper">
+            <!-- <div class="contents-wrapper"> -->
               {{ message.contents }}
               <div class="date-wrapper">
                 {{ String(message.date||'').replace(/(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})/, '$1.$2.$3 $4:$5:$6') }}
               </div>
-            </div>
+            <!-- </div> -->
           </td>
         </tr>
       </template>
@@ -147,9 +147,8 @@ export default {
 
 <style scoped>
 .wrap-contents {
-  width: 95%;
-  height: 400px;
-  overflow-y: auto;
+  width: 100%;
+  height: calc(100% - 60px);
 }
 .write-wrapper {
   font-weight: bold;

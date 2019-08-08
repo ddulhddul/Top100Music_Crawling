@@ -46,8 +46,9 @@ module.exports = {
 
         list.push({
           num: ++index,
-          song : song,
-          singer : singer
+          yymmddhh,
+          song,
+          singer
         })
       }
     }

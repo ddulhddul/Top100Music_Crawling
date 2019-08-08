@@ -1,5 +1,7 @@
 <template>
-  <Music-List :musicList="popList" @changeMusic="changeMusic" refName="pop" />  
+  <div class="wrapper-musiclist">
+    <Music-List :musicList="popList" @changeMusic="changeMusic" refName="pop" />  
+  </div>
 </template>
 
 <script>
@@ -39,7 +41,6 @@ export default {
     async initMusicList(){
       const res = await this.ajax({url: '/song/list/pop'})
       const data = res.data || {}
-      this.$store.commit('setYymmddhh', data.yymmddhh)
       this.$store.commit('setPopList', (data.list || []).map((obj)=>{return {...obj, tab: 'pop'}}))
     },
     
@@ -50,3 +51,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.wrapper-musiclist{
+  width: 100%;
+  height: calc(100% - 60px);
+}
+</style>
