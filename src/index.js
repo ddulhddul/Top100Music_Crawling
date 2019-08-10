@@ -30,12 +30,17 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
+    loading: false,
     currentMusic: {},
     top100List: [],
     popList: [],
     userInfo: undefined
   },
   mutations: {
+    setLoading(state, payload=false){
+      document.body.style.overflow = payload? 'hidden': ''
+      state.loading = payload
+    },
     setCurrentMusic(state, payload={}){
       state.currentMusic = payload
     },

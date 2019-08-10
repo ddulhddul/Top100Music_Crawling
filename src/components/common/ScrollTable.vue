@@ -85,8 +85,12 @@ export default {
 </script>
 <style scoped>
 .list_wrap {height: 100%;}
-.list_table {width: 100%;}
-.list_thead_wrap {position: relative;width: 100%;overflow-y: scroll;}
-.list_thead_wrap::-webkit-scrollbar {opacity: 0;}
+.list_table {width: 100%; table-layout: fixed; word-break: break-word;}
+.list_thead_wrap {position: relative;width: 100%;overflow-y: scroll;
+  -ms-scrollbar-highlight-color: white;
+  -ms-scrollbar-arrow-color: white;
+}
+.list_thead_wrap::-webkit-scrollbar {opacity: 0;
+}
 .list_table_wrap_y {overflow-y: scroll; overflow-x: auto; position: relative; height: 100%;}
 </style>

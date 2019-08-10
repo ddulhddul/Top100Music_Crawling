@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper-musiclist">
-    <Music-List :musicList="popList" @changeMusic="changeMusic" refName="pop" />  
+    <Music-List :musicList="popList" @changeMusic="changeMusic" @remove="remove" @add="add" refName="pop" />  
   </div>
 </template>
 
@@ -27,7 +27,6 @@ export default {
           this.init = true
           this.initMusicList()
         }
-        this.$emit('updateMusicList', this.popList || [])
       }
     }
   },
@@ -42,6 +41,24 @@ export default {
       const res = await this.ajax({url: '/song/list/pop'})
       const data = res.data || {}
       this.$store.commit('setPopList', (data.list || []).map((obj)=>{return {...obj, tab: 'pop'}}))
+    },
+
+    remove(music){
+      this.$store.commit('setPopList', (this.popList||[]).map((obj)=>{
+        return {
+          ...obj,
+          removed: !music? true: (music.song == obj.song && music.singer == obj.singer)? true: obj.removed
+        }
+      }))
+    },
+
+    add(music){
+      this.$store.commit('setPopList', (this.popList||[]).map((obj)=>{
+        return {
+          ...obj,
+          removed: !music? false: (music.song == obj.song && music.singer == obj.singer)? false: obj.removed
+        }
+      }))
     },
     
     changeMusic(music){

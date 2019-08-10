@@ -2,11 +2,25 @@ import axios from 'axios'
 export default {
   methods: {
 
-    ajax(param){
-      return axios({
+    async ajax(param){
+      this.showLoading()
+      const axiosResult = axios({
         method: 'GET',
         ...param
       })
+      axiosResult.finally((obj)=>{
+        this.hideLoading()
+      })
+      return axiosResult
+    },
+
+    showLoading(){
+      window.document.activeElement && window.document.activeElement.blur()
+      this.$store.commit('setLoading', true)
+    },
+
+    hideLoading(){
+      this.$store.commit('setLoading', false)
     },
 
     async validateFocus(args){

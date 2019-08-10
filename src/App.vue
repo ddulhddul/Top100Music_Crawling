@@ -1,5 +1,8 @@
 <template>
   <div class="wrap-all">
+    <div class="loading" v-if="loading">
+      <b-spinner variant="primary" label="Spinning" style="width: 3rem; height: 3rem;"></b-spinner>
+    </div>
     <div class="contents">
 
       <!-- Date -->
@@ -63,16 +66,16 @@
       <div class="wrap-tabs">
         <b-tabs content-class="mt-3 wrap-b-tabs">
           <b-tab title="Top100" :class="{active: tab=='top100'}" @click="tab='top100'">
-            <Top100-List @changeMusic="changeMusic" :tab="tab" @updateMusicList="updateMusicList" />
+            <Top100-List @changeMusic="changeMusic" :tab="tab" />
           </b-tab>
           <b-tab title="Pop" :class="{active: tab=='pop'}" @click="tab='pop'">
-            <Pop-List @changeMusic="changeMusic" :tab="tab" @updateMusicList="updateMusicList" />
+            <Pop-List @changeMusic="changeMusic" :tab="tab" />
           </b-tab>
           <b-tab title="Messages" :class="{active: tab=='message'}" @click="tab='message'">
             <Message :tab="tab" />
           </b-tab>
           <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="tab='mysong'">
-            <My-Song :musicList="musicList" @changeMusic="changeMusic" @updateMusicList="updateMusicList" :tab="tab" />
+            <My-Song @changeMusic="changeMusic" :tab="tab" />
           </b-tab>
         </b-tabs>
       </div>
@@ -102,6 +105,7 @@ export default {
   },
   computed: {
     ...mapState([
+      'loading',
       'currentMusic',
       'top100List',
       'popList',
@@ -116,7 +120,6 @@ export default {
       playType: 's',
       videoHidden: false,
       firstVideoHidden: false,
-      musicList: [],
     }
   },
   mounted(){
@@ -126,6 +129,7 @@ export default {
   methods: {
     // 음악 변경
     async changeMusic(data){
+      if(!data) return
       if(data.videoId){
         this.updateCurrentMusic(data)
         return
@@ -142,32 +146,18 @@ export default {
       })
       const currentMusic = {...data, ...res.data, tab: this.tab}
       console.log('changeMusic', currentMusic)
-      let musicList = undefined
-      if(currentMusic.tab == 'top100'){
-        musicList = this.top100List.map((obj)=>{
-          return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
-          }
-        })
-        this.$store.commit('setTop100List', musicList)
-      }else if(currentMusic.tab == 'pop'){
-        musicList = this.popList.map((obj)=>{
-          return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
-          }
-        })
-        this.$store.commit('setPopList', musicList)
-      }else if(currentMusic.tab == 'mysong'){
+      const changedList = this.getMusicListByTab(currentMusic.tab).map((obj)=>{
+        return {...obj, 
+          videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
+        }
+      })
+      if(currentMusic.tab == 'top100') this.$store.commit('setTop100List', changedList)
+      else if(currentMusic.tab == 'pop') this.$store.commit('setPopList', changedList)
+      else if(currentMusic.tab == 'mysong'){
         const userInfo = this.userInfo || {music: {default: []}}
-        userInfo.music.default = userInfo.music.default.map((obj)=>{
-          return {...obj, 
-            videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
-          }
-        })
-        musicList = userInfo.music.default
+        userInfo.music.default = changedList
         this.$store.commit('setUserInfo', userInfo)
       }
-      if(musicList) this.musicList = musicList
       this.updateCurrentMusic(currentMusic)
     },
     // currentMusic update 및 load youtube
@@ -180,26 +170,21 @@ export default {
     },
     // 제목 Title 변경
     setVideoTitleAndPlay(param){
-      const obj = param || this.musicList.find((obj)=>obj.videoId==this.currentMusic.videoId)
-      const wrapContent = document.querySelector(`[name=${this.tab}] .list_table_wrap_y`)
-      if(!obj){
-        if(wrapContent) wrapContent.scrollTop = 0
-        return
-      }
+      const obj = param || this.currentMusic
+      if(!obj) return
+      const wrapContent = document.querySelector(`[name=${obj.tab}] .list_table_wrap_y`)
       if(obj.song) document.title = `${obj.song}` + (obj.singer? ` - ${obj.singer}`: '') + (!obj.videoTime?'':` (${obj.videoTime})`)
       this.yymmddhh = obj.yymmddhh || ''
-      if(document.getElementsByName(`${this.tab}${obj.num}`).length && obj.tab == this.currentMusic.tab){
-        if(wrapContent) wrapContent.scrollTop = document.getElementsByName(`${this.tab}${obj.num}`)[0].offsetTop
+      if(document.getElementsByName(`${obj.tab}${obj.num}`).length && obj.tab == this.currentMusic.tab){
+        if(wrapContent) wrapContent.scrollTop = document.getElementsByName(`${obj.tab}${obj.num}`)[0].offsetTop
       }
-    },
-    updateMusicList(list=[]){
-      this.musicList = list
     },
     // 초기 Player 로딩시
     startPlayer(){
       setTimeout(() => {
-        if (this.player && this.player.cuePlaylist && this.musicList && this.musicList[0]) {
-          this.changeMusic(this.musicList[0])
+        const list = this.getMusicListByTab()
+        if (this.player && this.player.cuePlaylist && list && list[0]) {
+          this.changeMusic(list[0])
         }else this.startPlayer()
       }, 500)
     },
@@ -211,17 +196,24 @@ export default {
     playYoutube(){
       this.player && this.player.playVideo()
     },
+    // tab으로 list 가져오기
+    getMusicListByTab(tab='top100'){
+      let list = []
+      if(tab == 'top100') list = this.top100List
+      else if(tab == 'pop') list = this.popList
+      else if(tab == 'mysong') list = ((this.userInfo||{}).music||{}).default
+      return list || []
+    },
     // 다음
     nextSong(){
-      let list = this.musicList || []
-      if(!list.length) return
+      const list = this.getMusicListByTab(this.currentMusic.tab).filter((obj)=>!obj.removed)
       let nextSong = undefined
       if(this.playType === '1'){
         nextSong = this.currentMusic
 
       }else if(this.playType === 'r'){
-        list = list.filter((obj)=>obj.videoId!=this.currentMusic.videoId)
-        nextSong = list[Math.floor(Math.random()*list.length)]
+        const randomList = list.filter((obj)=>obj.videoId!=this.currentMusic.videoId)
+        nextSong = randomList[Math.floor(Math.random()*randomList.length)]
 
       }else if(this.playType === 's'){
         const index = list.reduce((entry, obj, index)=>{
@@ -230,7 +222,7 @@ export default {
         }, 1000)
         nextSong = list[index+1] || list[0]
       }
-      if(nextSong) this.changeMusic(nextSong)
+      this.changeMusic(nextSong || this.currentMusic)
     },
 
     /*****************************
@@ -302,7 +294,8 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  height: 92%;
+  height: 100%;
+  padding-bottom: 5%;
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -357,7 +350,7 @@ footer strong {
   margin-bottom: 10px;
   border-collapse: collapse;
   border-top: 1px solid rgba(0,0,0,0.2);
-  table-layout: auto;
+  table-layout: fixed;
 }
 .form_table th, .form_table td{
   padding: 5px;
@@ -397,5 +390,14 @@ input[type="text"], input[type="password"], input[type="search"], input[type="da
   border-width: 1px;
   border-style: dotted;
   border-radius: 5px;
+}
+.loading {
+  position: absolute;
+  z-index: 999999;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

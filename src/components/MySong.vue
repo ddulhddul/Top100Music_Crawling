@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="wrapper-musiclist">
-        <Music-List :musicList="musicList" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
+        <Music-List :musicList="((userInfo||{}).music||{}).default||[]" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
       </div>
     </div>
   </div>
@@ -66,8 +66,7 @@ export default {
     ])
   },
   props: {
-    tab: String,
-    musicList: Array
+    tab: String
   },
   watch: {
     async tab(newValue, oldValue){
@@ -79,7 +78,6 @@ export default {
             if(userId) await this.getUserInfo(userId)
           }
         }
-        this.$emit('updateMusicList', ((this.userInfo||{}).music||{}).default || [])
       }
     }
   },
@@ -127,7 +125,6 @@ export default {
         }
       })
       this.$store.commit('setUserInfo', targetData)
-      this.$emit('updateMusicList', targetData.music.default || [])
     },
 
     async join(){
@@ -176,7 +173,6 @@ export default {
       this.userId = ''
       this.userPassword = ''
       this.$store.commit('setUserInfo', undefined)
-      this.$emit('updateMusicList', [])
     }
 
   }
