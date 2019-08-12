@@ -1,4 +1,3 @@
-require('babel-polyfill')
 const ServerUtil = require('../ServerUtil')
 // MongoDB
 const Chart = require('./model/Chart')
@@ -131,24 +130,16 @@ module.exports = {
     })
   },
 
-  listMessage(param={}) {
-    return new Promise(function (resolve, reject) {
-
-      try {
-        Message.find({}, null, {sort: {date: -1}}, (err, result)=>{
-          if(err){
-            console.log('message find error...', err)
-            reject('message find error...')
-
-          }else{
-            resolve(result || [])
-          }
-        })
-      } catch (error) {
-        console.log('message find error...', error)
-        reject('message find catch error...')
-      }
-    })
+  async listMessage(param) {
+    let list = []
+    if(!param){
+      list = await Message.find({}, null, {sort: {date: -1}})
+    }else{
+      const pageIndex = param.pageIndex || 1
+      list = await Message.find({}, null, {sort: {date: -1}})
+        .skip((pageIndex-1)*param.pageSize).limit(param.pageSize)
+    }
+    return list
   },
 
   insertMessage(param={}){

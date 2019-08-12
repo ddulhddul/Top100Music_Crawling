@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import MusicList from './components/MusicList.vue'
 import Message from './components/Message.vue'
 import MySong from './components/MySong.vue'
 import Top100List from './components/Top100List.vue'
@@ -101,7 +100,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    MusicList, Message, MySong, Top100List, PopList
+    Message, MySong, Top100List, PopList
   },
   computed: {
     ...mapState([
@@ -138,13 +137,13 @@ export default {
         url: `/song/change`,
         params: {
           yymmddhh: data.yymmddhh,
-          tab: this.tab,
+          tab: data.tab,
           num: data.num,
           song: data.song,
           singer: data.singer
         }
       })
-      const currentMusic = {...data, ...res.data, tab: this.tab}
+      const currentMusic = {...data, ...res.data, tab: data.tab}
       console.log('changeMusic', currentMusic)
       const changedList = this.getMusicListByTab(currentMusic.tab).map((obj)=>{
         return {...obj, 
@@ -244,7 +243,7 @@ export default {
           height: '100%',
           width: '100%',
           videoId: '',
-          playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1, 'origin':'http://localhost:3000' },
+          playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1, 'origin':'http://mlchart.ml:3000' },
           events: {
             onReady(event) {
               curThis.startPlayer()

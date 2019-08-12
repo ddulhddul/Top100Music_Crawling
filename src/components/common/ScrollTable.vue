@@ -8,7 +8,7 @@
         </thead>
       </table>
     </div>
-    <div ref="scrollDiv" :class="{list_table_wrap_y: true}">
+    <div ref="scrollDiv" @scroll="handleScroll" :class="{list_table_wrap_y: true}">
       <table class="list_table">
         <slot name="colgroup"></slot>
         <tbody>
@@ -33,14 +33,11 @@ export default {
   props: {
     list: {type: Array},
     search: {type: Function},
-   // pageObject: {type: Object}
-    pageObject: [Object, String]
-
+    pageObject: [Object, String] // currentPage, maxYn
   },
   data: ()=>({
     lastIndex: 0
   }),
-
   watch: {
     pageObject: function (obj={}) {
       if(obj.currentPage == 1){
@@ -49,26 +46,15 @@ export default {
       }
     }
   },
-  mounted(){
-
-    this.$refs.scrollDiv.addEventListener('scroll', this.handleScroll);
-
-    // 가로 스크롤
-    const scrollDiv = this.$refs.scrollDiv
-    const list_thead_wrap = this.$refs.list_thead_wrap
-    scrollDiv.onscroll = function(event) {
-      list_thead_wrap.scrollLeft = this.scrollLeft
-    }
-  },
-  beforeDestroy () {
-    this.$refs.scrollDiv.removeEventListener('scroll', this.handleScroll);
-  },
   methods: {
     handleScroll (event) {
+      // 가로 스크롤
+      this.$refs.list_thead_wrap.scrollLeft = this.$refs.scrollDiv.scrollLeft
+
       const eventDiv = event.target
       if (eventDiv.offsetHeight + eventDiv.scrollTop + 5 >= eventDiv.scrollHeight) {
         const pageObject = this.pageObject
-        if(pageObject.currentPage !== pageObject.maxPage){
+        if(pageObject.maxYn != 'Y'){
           const nextPageIndex = Number(pageObject.currentPage||0)+1
           if(this.lastIndex < nextPageIndex){
             this.lastIndex = nextPageIndex
@@ -76,9 +62,6 @@ export default {
           }
         }
       }
-    },
-    thisSearch(param){
-      this.$emit('search', param)
     }
   },
 };

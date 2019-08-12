@@ -2,7 +2,7 @@
   <div class="wrap-contents basicTable" :name="refName">
     <Scroll-Table :list="thisMusicList" pageObject="N">
       <colgroup slot="colgroup">
-        <col width='40px' />
+        <col width='50px' />
         <col />
         <col v-if="!noSinger" width='30%' />
         <col width='50px' />

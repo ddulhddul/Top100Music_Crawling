@@ -1,9 +1,8 @@
-// server.js
-require('babel-polyfill')
 const ServerUtil = require('./ServerUtil')
 
 // DB
 const mongoose = require('mongoose')
+mongoose.set('useNewUrlParser', true)
 mongoose.Promise = require('bluebird')
 const db = mongoose.connection
 db.on('error', console.error)
@@ -13,11 +12,6 @@ db.once('open', function(){
 mongoose.connect('mongodb://127.0.0.1/chartdb')
 const DBUtil = require('./mongodb/DBUtil')
 
-// webpack
-const webpack = require('webpack')
-const config = require('./webpack.config')
-const compiler = webpack(config)
-
 // node
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -26,10 +20,17 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(express.static(__dirname +'/dist'))
 
-app.use(require("webpack-dev-middleware")(compiler, {
-  noInfo: true, publicPath: config.output.publicPath
-}))
-app.use(require("webpack-hot-middleware")(compiler))
+// webpack
+console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+if(process.env.NODE_ENV !== 'production'){
+  const webpack = require('webpack')
+  const config = require('./webpack.config.development')
+  const compiler = webpack(config)
+  app.use(require("webpack-dev-middleware")(compiler, {
+    noInfo: true, publicPath: config.output.publicPath
+  }))
+  app.use(require("webpack-hot-middleware")(compiler))
+}
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!\n')
@@ -125,8 +126,15 @@ app.get('/song/passport/updateMySongList', async (req, res)=>{
 */
 app.get('/song/message/list', async (req, res)=>{
   const param = req.query || {}
-  const list = await DBUtil.listMessage(param) || []
-  res.send({ list })
+  const pageSize = 20
+  const list = await DBUtil.listMessage({...param, pageSize}) || []
+  res.send({ 
+    list,
+    pageObject: {
+      maxYn: pageSize != list.length? 'Y': 'N',
+      currentPage: param.pageIndex
+    }
+  })
 })
 
 app.get('/song/message/insert', async (req, res)=>{
@@ -136,8 +144,7 @@ app.get('/song/message/insert', async (req, res)=>{
 })
 
 app.get('/song/message/listAll', async (req, res)=>{
-  const param = req.query || {}
-  const list = await DBUtil.listMessage(param) || []
+  const list = await DBUtil.listMessage() || []
   res.send({ list })
 })
 

@@ -85,3 +85,14 @@ service iptables save
 
 ## youtube end event
 [http://1004lucifer.blogspot.kr/2015/04/youtube-player-api.html](http://1004lucifer.blogspot.kr/2015/04/youtube-player-api.html)
+
+## Fast and Efficient Pagination in MongoDB
+[https://www.codementor.io/arpitbhayani/fast-and-efficient-pagination-in-mongodb-9095flbqr](https://www.codementor.io/arpitbhayani/fast-and-efficient-pagination-in-mongodb-9095flbqr)
+
+## webpack production setting
+```bash
+$ export NODE_ENV=production
+```
+
+## Extracting CSS based on entry
+[https://webpack.js.org/plugins/mini-css-extract-plugin/](https://webpack.js.org/plugins/mini-css-extract-plugin/)

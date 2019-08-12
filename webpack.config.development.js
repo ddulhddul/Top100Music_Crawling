@@ -1,12 +1,23 @@
+const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  mode: 'production',
-  entry: ['@babel/polyfill', './src/index.js'],
+  mode: 'development',
+  entry: {
+    app: [
+      '@babel/polyfill',
+      'webpack-hot-middleware/client',
+      './src/index.js'
+    ],
+  },
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: './dist',
+    hot: true
+  },
   plugins: [
     new VueLoaderPlugin(),
     new CleanWebpackPlugin(),
@@ -14,9 +25,7 @@ module.exports = {
       template: 'src/index.html',
       inject: 'body'
     }),
-    new MiniCssExtractPlugin({
-      filename: '[name].css'
-    })
+    new webpack.HotModuleReplacementPlugin(),
   ],
   module: {
     rules: [
@@ -32,7 +41,7 @@ module.exports = {
       },
       {
         test:/\.css$/,
-        use:[MiniCssExtractPlugin.loader, 'css-loader']
+        use:['style-loader','css-loader']
       },
       {
         test:/\.png$/,
@@ -44,18 +53,5 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
-  },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true
-        }
-      }
-    }
   }
 }

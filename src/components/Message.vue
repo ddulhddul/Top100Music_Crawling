@@ -17,6 +17,7 @@
             </td>
             <td>
               <button type="button" @click="insertMessage()" class="btn btn-sm btn-success">등록</button>
+              <button type="button" @click="initMessage()" class="btn btn-sm btn-default">조회</button>
             </td>
           </tr>
           <tr v-if="(userInfo||{}).userId=='admin'">
@@ -29,7 +30,7 @@
         </tbody>
       </table>
     </ValidationObserver>
-    <Scroll-Table :list="messageList" pageObject="N">
+    <Scroll-Table :list="messageList" :pageObject="messagePageObject" @search="getMessage">
       <colgroup slot="colgroup">
         <col width="30%" />
         <col width="70%" />
@@ -85,20 +86,25 @@ export default {
       writer: '',
       contents: '',
       backup: '',
-      messageList: []
+      messageList: [],
+      messagePageObject: {}
     }
   },
   methods: {
     
     initMessage(){
-      this.getMessage()
+      this.getMessage({pageIndex: 1})
     },
 
-    async getMessage(){
+    async getMessage(param={}){
       const res = await this.ajax({
-        url: '/song/message/list'
+        url: '/song/message/list',
+        params: { ...param }
       })
-      this.messageList = res.data.list || []
+      const list = res.data.list || []
+      console.log('message call', list)
+      this.messageList = param.pageIndex == 1? list: this.messageList.concat(list)
+      this.messagePageObject = res.data.pageObject || {}
     },
 
     async insertMessage(){

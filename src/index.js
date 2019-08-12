@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
@@ -8,16 +7,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import App from './App.vue'
 import common from './common'
 Vue.mixin(common)
-
-import VueRouter from 'vue-router'
-Vue.use(VueRouter)
-
-import MusicList from './components/MusicList.vue'
-const router = new VueRouter({
-  routes: [
-    { path: 'musicList', name: 'musicList', component: MusicList, props: true },
-  ]
-})
 
 import VeeValidate from 'vee-validate'
 import validationMessage from './validationMessage'
@@ -57,7 +46,6 @@ const store = new Vuex.Store({
 })
 
 new Vue({
-  router,
   store,
   render: h => h(App)
 }).$mount('#app')

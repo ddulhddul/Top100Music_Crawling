@@ -1,4 +1,3 @@
-require('babel-polyfill')
 const urlencode = require('urlencode')
 const request = require('request')
 const cheerio = require('cheerio')
