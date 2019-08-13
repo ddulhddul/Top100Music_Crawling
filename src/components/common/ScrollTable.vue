@@ -1,27 +1,37 @@
 <template>
   <div class="list_wrap">
-    <div ref="list_thead_wrap" class="list_thead_wrap">
+    <div
+      ref="list_thead_wrap"
+      class="list_thead_wrap"
+    >
       <table class="list_table">
-        <slot name="colgroup"></slot>
+        <slot name="colgroup" />
         <thead>
-          <slot name="thead"></slot>
+          <slot name="thead" />
         </thead>
       </table>
     </div>
-    <div ref="scrollDiv" @scroll="handleScroll" :class="{list_table_wrap_y: true}">
+    <div
+      ref="scrollDiv"
+      :class="{list_table_wrap_y: true}"
+      @scroll="handleScroll"
+    >
       <table class="list_table">
-        <slot name="colgroup"></slot>
+        <slot name="colgroup" />
         <tbody>
           <template v-if="list && list.length">
-            <slot name="tbody"></slot>
+            <slot name="tbody" />
           </template>
           <tr v-else>
             <!-- 좌우 스크롤 표시를 위해, display table-column 적용 -->
-            <td style="display:table-column;"></td>
+            <td style="display:table-column;" />
           </tr>
         </tbody>
       </table>
-      <div v-if="!list || !list.length" class="no_data">
+      <div
+        v-if="!list || !list.length"
+        class="no_data"
+      >
         No Data Found
       </div>
     </div>
@@ -31,16 +41,16 @@
 
 export default {
   props: {
-    list: {type: Array},
-    search: {type: Function},
-    pageObject: [Object, String] // currentPage, maxYn
+    list: { type: Array, default: undefined },
+    search: { type: Function, default: undefined },
+    pageObject: { type: [Object, String], default: undefined } // currentPage, maxYn
   },
-  data: ()=>({
+  data: () => ({
     lastIndex: 0
   }),
   watch: {
-    pageObject: function (obj={}) {
-      if(obj.currentPage == 1){
+    pageObject: function (obj = {}) {
+      if (obj.currentPage === 1) {
         this.$refs.scrollDiv.scrollTop = 0
         this.lastIndex = 0
       }
@@ -54,17 +64,17 @@ export default {
       const eventDiv = event.target
       if (eventDiv.offsetHeight + eventDiv.scrollTop + 5 >= eventDiv.scrollHeight) {
         const pageObject = this.pageObject
-        if(pageObject.maxYn != 'Y'){
-          const nextPageIndex = Number(pageObject.currentPage||0)+1
-          if(this.lastIndex < nextPageIndex){
+        if (pageObject.maxYn !== 'Y') {
+          const nextPageIndex = Number(pageObject.currentPage || 0) + 1
+          if (this.lastIndex < nextPageIndex) {
             this.lastIndex = nextPageIndex
-            this.$emit('search', {pageIndex: nextPageIndex})
+            this.$emit('search', { pageIndex: nextPageIndex })
           }
         }
       }
     }
-  },
-};
+  }
+}
 </script>
 <style scoped>
 .list_wrap {height: 100%;}

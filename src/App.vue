@@ -1,18 +1,27 @@
 <template>
   <div class="wrap-all">
-    <div class="loading" v-if="loading">
-      <b-spinner variant="primary" label="Spinning" style="width: 3rem; height: 3rem;"></b-spinner>
+    <div
+      v-if="loading"
+      class="loading"
+    >
+      <b-spinner
+        variant="primary"
+        label="Spinning"
+        style="width: 3rem; height: 3rem;"
+      />
     </div>
     <div class="contents">
-
       <!-- Date -->
       <div class="wrap-date">
         <small>{{ yymmddhh.replace(/(.{4})(.{2})(.{2})(.{2})/, '$2.$3') }}</small>
         <small>{{ yymmddhh.replace(/(.{4})(.{2})(.{2})(.{2})/, '$4:00') }}</small>
-      </div>    
+      </div>
 
       <!-- Title -->
-      <div class="wrap-title" @click="setVideoTitleAndPlay()">
+      <div
+        class="wrap-title"
+        @click="setVideoTitleAndPlay()"
+      >
         <h4>
           <strong>{{ currentMusic.song }}</strong>
           <span style="white-space: nowrap;"><small>{{ currentMusic.singer }}</small></span>
@@ -21,43 +30,101 @@
       </div>
 
       <!-- Youtube -->
-      <div class="wrap-youtube" :style='{display: videoHidden? "none": "block"}'>
-        <div id="player"></div>
+      <div
+        class="wrap-youtube"
+        :style="{display: videoHidden? &quot;none&quot;: &quot;block&quot;}"
+      >
+        <div id="player" />
       </div>
 
       <!-- Play Buttons -->
       <div class="wrap-buttons">
         <div class="btn-group btn-group-border">
-          <button type="button" @click="playType='1'" class="btn btn-sm" :class="{'btn-info': playType=='1', 'btn-light': playType!='1'}">
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="{'btn-info': playType=='1', 'btn-light': playType!='1'}"
+            @click="playType='1'"
+          >
             <!-- 한곡 -->
-            <img class="image22" :src="require('../static/icons/icons8-repeat-one-30.png')" :style="{filter: playType=='1'? 'invert(1)': ''}" />
+            <img
+              class="image22"
+              :src="require('../static/icons/icons8-repeat-one-30.png')"
+              :style="{filter: playType=='1'? 'invert(1)': ''}"
+            >
           </button>
-          <button type="button" @click="playType='s'" class="btn btn-sm" :class="{'btn-info': playType=='s', 'btn-light': playType!='s'}">
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="{'btn-info': playType=='s', 'btn-light': playType!='s'}"
+            @click="playType='s'"
+          >
             <!-- 순차 -->
-            <img class="image22" :src="require('../static/icons/icons8-repeat-30.png')" :style="{filter: playType=='s'? 'invert(1)': ''}" />
+            <img
+              class="image22"
+              :src="require('../static/icons/icons8-repeat-30.png')"
+              :style="{filter: playType=='s'? 'invert(1)': ''}"
+            >
           </button>
-          <button type="button" @click="playType='r'" class="btn btn-sm" :class="{'btn-info': playType=='r', 'btn-light': playType!='r'}">
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="{'btn-info': playType=='r', 'btn-light': playType!='r'}"
+            @click="playType='r'"
+          >
             <!-- 랜덤 -->
-            <img class="image20" :src="require('../static/icons/icons8-curly-arrow-24.png')" :style="{filter: playType=='r'? 'invert(1)': ''}" />
+            <img
+              class="image20"
+              :src="require('../static/icons/icons8-curly-arrow-24.png')"
+              :style="{filter: playType=='r'? 'invert(1)': ''}"
+            >
           </button>
         </div>
         &nbsp;
         <div class="btn-group">
-          <button type="button" @click="pauseYoutube()" class="btn btn-sm btn-warning">
+          <button
+            type="button"
+            class="btn btn-sm btn-warning"
+            @click="pauseYoutube()"
+          >
             <!-- 일시정지 -->
-            <img class="image22" :src="require('../static/icons/icons8-pause-24.png')" :style="{filter:'invert(1)'}" />
+            <img
+              class="image22"
+              :src="require('../static/icons/icons8-pause-24.png')"
+              :style="{filter:'invert(1)'}"
+            >
           </button>
-          <button type="button" @click="playYoutube()" class="btn btn-sm btn-primary">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            @click="playYoutube()"
+          >
             <!-- 재생 -->
-            <img class="image22" :src="require('../static/icons/icons8-play-24.png')" :style="{filter:'invert(1)'}" />
+            <img
+              class="image22"
+              :src="require('../static/icons/icons8-play-24.png')"
+              :style="{filter:'invert(1)'}"
+            >
           </button>
-          <button type="button" @click="nextSong()" class="btn btn-sm btn-danger">
+          <button
+            type="button"
+            class="btn btn-sm btn-danger"
+            @click="nextSong()"
+          >
             <!-- 다음 -->
-            <img class="image22" :src="require('../static/icons/icons8-fast-forward-24.png')" :style="{filter:'invert(1)'}" />
+            <img
+              class="image22"
+              :src="require('../static/icons/icons8-fast-forward-24.png')"
+              :style="{filter:'invert(1)'}"
+            >
           </button>
         </div>
         &nbsp;
-        <button class="btn btn-sm" :class="{'btn-success': videoHidden, 'btn-secondary': !videoHidden}" @click='videoHidden=!videoHidden'>
+        <button
+          class="btn btn-sm"
+          :class="{'btn-success': videoHidden, 'btn-secondary': !videoHidden}"
+          @click="videoHidden=!videoHidden"
+        >
           {{ !videoHidden? '숨김': '표시' }}
         </button>
       </div>
@@ -65,17 +132,42 @@
       <!-- Tabs -->
       <div class="wrap-tabs">
         <b-tabs content-class="mt-3 wrap-b-tabs">
-          <b-tab title="Top100" :class="{active: tab=='top100'}" @click="tab='top100'">
-            <Top100-List @changeMusic="changeMusic" :tab="tab" />
+          <b-tab
+            title="Top100"
+            :class="{active: tab=='top100'}"
+            @click="tab='top100'"
+          >
+            <Top100-List
+              :tab="tab"
+              @changeMusic="changeMusic"
+            />
           </b-tab>
-          <b-tab title="Pop" :class="{active: tab=='pop'}" @click="tab='pop'">
-            <Pop-List @changeMusic="changeMusic" :tab="tab" />
+          <b-tab
+            title="Pop"
+            :class="{active: tab=='pop'}"
+            @click="tab='pop'"
+          >
+            <Pop-List
+              :tab="tab"
+              @changeMusic="changeMusic"
+            />
           </b-tab>
-          <b-tab title="Messages" :class="{active: tab=='message'}" @click="tab='message'">
+          <b-tab
+            title="Messages"
+            :class="{active: tab=='message'}"
+            @click="tab='message'"
+          >
             <Message :tab="tab" />
           </b-tab>
-          <b-tab title="My Songs" :class="{active: tab=='mysong'}" @click="tab='mysong'">
-            <My-Song @changeMusic="changeMusic" :tab="tab" />
+          <b-tab
+            title="My Songs"
+            :class="{active: tab=='mysong'}"
+            @click="tab='mysong'"
+          >
+            <My-Song
+              :tab="tab"
+              @changeMusic="changeMusic"
+            />
           </b-tab>
         </b-tabs>
       </div>
@@ -86,7 +178,6 @@
           <small>ddulhddul@gmail.com</small>
         </p>
       </footer>
-
     </div>
   </div>
 </template>
@@ -102,6 +193,16 @@ export default {
   components: {
     Message, MySong, Top100List, PopList
   },
+  data () {
+    return {
+      yymmddhh: '',
+      player: undefined, // youtube 플레이어
+      tab: '',
+      playType: 's',
+      videoHidden: false,
+      firstVideoHidden: false
+    }
+  },
   computed: {
     ...mapState([
       'loading',
@@ -111,25 +212,15 @@ export default {
       'userInfo'
     ])
   },
-  data(){
-    return {
-      yymmddhh: '',
-      player: undefined, // youtube 플레이어
-      tab: '',
-      playType: 's',
-      videoHidden: false,
-      firstVideoHidden: false,
-    }
-  },
-  mounted(){
+  mounted () {
     this.tab = 'top100'
     this.onYouTubePlayerAPIReady()
   },
   methods: {
     // 음악 변경
-    async changeMusic(data){
-      if(!data) return
-      if(data.videoId){
+    async changeMusic (data) {
+      if (!data) return
+      if (data.videoId) {
         this.updateCurrentMusic(data)
         return
       }
@@ -143,24 +234,24 @@ export default {
           singer: data.singer
         }
       })
-      const currentMusic = {...data, ...res.data, tab: data.tab}
+      const currentMusic = { ...data, ...res.data, tab: data.tab }
       console.log('changeMusic', currentMusic)
-      const changedList = this.getMusicListByTab(currentMusic.tab).map((obj)=>{
-        return {...obj, 
-          videoId: obj.num == data.num? currentMusic.videoId: obj.videoId
+      const changedList = this.getMusicListByTab(currentMusic.tab).map((obj) => {
+        return { ...obj,
+          videoId: obj.num === data.num ? currentMusic.videoId : obj.videoId
         }
       })
-      if(currentMusic.tab == 'top100') this.$store.commit('setTop100List', changedList)
-      else if(currentMusic.tab == 'pop') this.$store.commit('setPopList', changedList)
-      else if(currentMusic.tab == 'mysong'){
-        const userInfo = this.userInfo || {music: {default: []}}
+      if (currentMusic.tab === 'top100') this.$store.commit('setTop100List', changedList)
+      else if (currentMusic.tab === 'pop') this.$store.commit('setPopList', changedList)
+      else if (currentMusic.tab === 'mysong') {
+        const userInfo = this.userInfo || { music: { default: [] } }
         userInfo.music.default = changedList
         this.$store.commit('setUserInfo', userInfo)
       }
       this.updateCurrentMusic(currentMusic)
     },
     // currentMusic update 및 load youtube
-    updateCurrentMusic(obj={}){
+    updateCurrentMusic (obj = {}) {
       this.$store.commit('setCurrentMusic', obj)
       if (this.player && this.player.cuePlaylist && obj.videoId) {
         this.player.cuePlaylist([obj.videoId])
@@ -168,58 +259,56 @@ export default {
       }
     },
     // 제목 Title 변경
-    setVideoTitleAndPlay(param){
+    setVideoTitleAndPlay (param) {
       const obj = param || this.currentMusic
-      if(!obj) return
+      if (!obj) return
       const wrapContent = document.querySelector(`[name=${obj.tab}] .list_table_wrap_y`)
-      if(obj.song) document.title = `${obj.song}` + (obj.singer? ` - ${obj.singer}`: '') + (!obj.videoTime?'':` (${obj.videoTime})`)
+      if (obj.song) document.title = `${obj.song}` + (obj.singer ? ` - ${obj.singer}` : '') + (!obj.videoTime ? '' : ` (${obj.videoTime})`)
       this.yymmddhh = obj.yymmddhh || ''
-      if(document.getElementsByName(`${obj.tab}${obj.num}`).length && obj.tab == this.currentMusic.tab){
-        if(wrapContent) wrapContent.scrollTop = document.getElementsByName(`${obj.tab}${obj.num}`)[0].offsetTop
+      if (document.getElementsByName(`${obj.tab}${obj.num}`).length && obj.tab === this.currentMusic.tab) {
+        if (wrapContent) wrapContent.scrollTop = document.getElementsByName(`${obj.tab}${obj.num}`)[0].offsetTop
       }
     },
     // 초기 Player 로딩시
-    startPlayer(){
+    startPlayer () {
       setTimeout(() => {
         const list = this.getMusicListByTab()
         if (this.player && this.player.cuePlaylist && list && list[0]) {
           this.changeMusic(list[0])
-        }else this.startPlayer()
+        } else this.startPlayer()
       }, 500)
     },
     // 일시정지
-    pauseYoutube(){
+    pauseYoutube () {
       this.player && this.player.pauseVideo()
     },
     // 재생
-    playYoutube(){
+    playYoutube () {
       this.player && this.player.playVideo()
     },
     // tab으로 list 가져오기
-    getMusicListByTab(tab='top100'){
+    getMusicListByTab (tab = 'top100') {
       let list = []
-      if(tab == 'top100') list = this.top100List
-      else if(tab == 'pop') list = this.popList
-      else if(tab == 'mysong') list = ((this.userInfo||{}).music||{}).default
+      if (tab === 'top100') list = this.top100List
+      else if (tab === 'pop') list = this.popList
+      else if (tab === 'mysong') list = ((this.userInfo || {}).music || {}).default
       return list || []
     },
     // 다음
-    nextSong(){
-      const list = this.getMusicListByTab(this.currentMusic.tab).filter((obj)=>!obj.removed)
-      let nextSong = undefined
-      if(this.playType === '1'){
+    nextSong () {
+      const list = this.getMusicListByTab(this.currentMusic.tab).filter((obj) => !obj.removed)
+      let nextSong
+      if (this.playType === '1') {
         nextSong = this.currentMusic
-
-      }else if(this.playType === 'r'){
-        const randomList = list.filter((obj)=>obj.videoId!=this.currentMusic.videoId)
-        nextSong = randomList[Math.floor(Math.random()*randomList.length)]
-
-      }else if(this.playType === 's'){
-        const index = list.reduce((entry, obj, index)=>{
-          if(entry === 1000 && (obj.num==this.currentMusic.num)) return index
+      } else if (this.playType === 'r') {
+        const randomList = list.filter((obj) => obj.videoId !== this.currentMusic.videoId)
+        nextSong = randomList[Math.floor(Math.random() * randomList.length)]
+      } else if (this.playType === 's') {
+        const index = list.reduce((entry, obj, index) => {
+          if (entry === 1000 && (obj.num === this.currentMusic.num)) return index
           else return entry
         }, 1000)
-        nextSong = list[index+1] || list[0]
+        nextSong = list[index + 1] || list[0]
       }
       this.changeMusic(nextSong || this.currentMusic)
     },
@@ -230,8 +319,8 @@ export default {
     *****************************/
     // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
     // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
-    onYouTubePlayerAPIReady() {
-      if(typeof YT === 'undefined' || !YT.Player){
+    onYouTubePlayerAPIReady () {
+      if (typeof YT === 'undefined' || !YT.Player) {
         setTimeout(() => {
           this.onYouTubePlayerAPIReady()
         }, 500)
@@ -239,50 +328,47 @@ export default {
       }
       try {
         const curThis = this
-        if(!this.player) this.player = new YT.Player('player', {
-          height: '100%',
-          width: '100%',
-          videoId: '',
-          playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1, 'origin':'http://mlchart.ml:3000' },
-          events: {
-            onReady(event) {
-              curThis.startPlayer()
-            },
-            onStateChange(event) {
+        if (!this.player) {
+          this.player = new YT.Player('player', {
+            height: '100%',
+            width: '100%',
+            videoId: '',
+            playerVars: { autoplay: 1, controls: 1, html5: 1 },
+            events: {
+              onReady (event) {
+                curThis.startPlayer()
+              },
+              onStateChange (event) {
               // console.log('event', event.data, event)
-              if (event.data === 5) { // 동영상 신호
-                curThis.player.playVideo()
-                // 플레이하지 않는 경우 방지, 5초후 다시 실행
-                setTimeout(()=>{curThis.player && curThis.player.getPlayerState() != 1 && curThis.player.playVideo()}, 5000)
+                if (event.data === 5) { // 동영상 신호
+                  curThis.player.playVideo()
+                  // 플레이하지 않는 경우 방지, 5초후 다시 실행
+                  setTimeout(() => { curThis.player && curThis.player.getPlayerState() !== 1 && curThis.player.playVideo() }, 5000)
+                } else if (event.data === 0) { // 종료 (동영상 끝난 후 이벤트)
+                  curThis.nextSong()
+                } else if (event.data === 1) { // 재생 중
+                  if (!curThis.firstVideoHidden) {
+                    curThis.videoHidden = true
+                    curThis.firstVideoHidden = true
+                  }
+                } else if (event.data === 2) { // 일시정지
 
-              } else if (event.data === 0) { // 종료 (동영상 끝난 후 이벤트)
-                curThis.nextSong()
-
-              } else if (event.data === 1) { // 재생 중
-                if(!curThis.firstVideoHidden){
-                  curThis.videoHidden = true
-                  curThis.firstVideoHidden = true
+                } else if (event.data === -1) { // 시작되지 않음
+                  curThis.player.playVideo()
+                  // 플레이하지 않는 경우 방지, 5초후 다시 실행
+                  setTimeout(() => { curThis.player && curThis.player.getPlayerState() !== 1 && curThis.player.playVideo() }, 5000)
                 }
-
-              } else if (event.data === 2) { // 일시정지
-
-              } else if (event.data === -1) { // 시작되지 않음
-                curThis.player.playVideo()
-                // 플레이하지 않는 경우 방지, 5초후 다시 실행
-                setTimeout(()=>{curThis.player && curThis.player.getPlayerState() != 1 && curThis.player.playVideo()}, 5000)
+              },
+              onError (event) {
+                if (curThis.videoHidden) curThis.nextSong()
               }
-
-            },
-            onError(event) {
-              if (curThis.videoHidden) curThis.nextSong()
             }
-          }
-        })
+          })
+        }
       } catch (error) {
         console.log('YT Player error', error)
         this.onYouTubePlayerAPIReady()
       }
-
     }
   }
 }

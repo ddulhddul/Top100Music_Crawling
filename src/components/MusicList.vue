@@ -1,38 +1,101 @@
 <template>
-  <div class="wrap-contents basicTable" :name="refName">
-    <Scroll-Table :list="thisMusicList" pageObject="N">
+  <div
+    class="wrap-contents basicTable"
+    :name="refName"
+  >
+    <Scroll-Table
+      :list="thisMusicList"
+      page-object="N"
+    >
       <colgroup slot="colgroup">
-        <col width='50px' />
-        <col />
-        <col v-if="!noSinger" width='30%' />
-        <col width='50px' />
+        <col width="50px">
+        <col>
+        <col
+          v-if="!noSinger"
+          width="30%"
+        >
+        <col width="50px">
       </colgroup>
       <template slot="thead">
         <tr>
-          <th class="tc">#</th>
+          <th class="tc">
+            #
+          </th>
           <th>song</th>
-          <th v-if="!noSinger">singer</th>
+          <th v-if="!noSinger">
+            singer
+          </th>
           <th class="button-wrapper-th">
             <template v-if="!noSinger">
-              <button type="button" @click="$emit('remove')" class="btn btn-sm btn-danger small-button button-th">-</button>
-              <button type="button" @click="$emit('add')" class="btn btn-sm btn-success small-button button-th">+</button>
+              <button
+                type="button"
+                class="btn btn-sm btn-danger small-button button-th"
+                @click="$emit('remove')"
+              >
+                -
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-success small-button button-th"
+                @click="$emit('add')"
+              >
+                +
+              </button>
             </template>
           </th>
         </tr>
       </template>
       <template slot="tbody">
-        <tr v-for="(music,index) in thisMusicList" :key="index" :name="`${refName}${music.num}`" :class='{
+        <tr
+          v-for="(music,index) in thisMusicList"
+          :key="index"
+          :name="`${refName}${music.num}`"
+          :class="{
             selected: (music.videoId && music.videoId == (currentMusic||{}).videoId),
             removed: music.removed
-          }'>
-          <td @click="changeMusic(music)" class="tc">{{ music.num }}</td>
-          <td @click="changeMusic(music)">{{ music.song }}</td>
-          <td @click="changeMusic(music)" v-if="!noSinger">{{ music.singer }}</td>
+          }"
+        >
+          <td
+            class="tc"
+            @click="changeMusic(music)"
+          >
+            {{ music.num }}
+          </td>
+          <td @click="changeMusic(music)">
+            {{ music.song }}
+          </td>
+          <td
+            v-if="!noSinger"
+            @click="changeMusic(music)"
+          >
+            {{ music.singer }}
+          </td>
           <td class="button-wrapper">
-            <button v-if="noSinger" type="button" @click="deleteSong(music)" class="btn btn-sm btn-danger">X</button>
+            <button
+              v-if="noSinger"
+              type="button"
+              class="btn btn-sm btn-danger"
+              @click="deleteSong(music)"
+            >
+              X
+            </button>
             <template v-else>
-              <button v-if="!music.removed" type="button" @click="$emit('remove',music)" class="btn btn-sm btn-danger small-button">-</button>
-              <button v-else type="button" @click="$emit('add',music)" class="btn btn-sm btn-success small-button">+</button>
+              <button
+                v-if="!music.removed"
+                type="button"
+                class="btn btn-sm btn-danger small-button"
+                @click="$emit('remove',music)"
+              >
+                -
+              </button>
+              <button
+                v-else
+                type="button"
+                class="btn btn-sm btn-success small-button"
+                @click="$emit('add',music)"
+              >
+                +
+              </button>
             </template>
           </td>
         </tr>
@@ -49,35 +112,35 @@ export default {
   components: {
     ScrollTable
   },
+  props: {
+    noSinger: Boolean,
+    refName: { type: String, default: undefined },
+    musicList: { type: Array, default: undefined }
+  },
+  data () {
+    return {
+      selectSongMode: false,
+      thisMusicList: []
+    }
+  },
   computed: {
     ...mapState([
       'currentMusic'
     ])
   },
-  props: {
-    noSinger: Boolean,
-    refName: String,
-    musicList: Array
-  },
-  data(){
-    return {
-      selectSongMode: false,
-      thisMusicList: [],
-    }
-  },
-  beforeMount(){
-    this.thisMusicList = this.musicList || []
-  },
   watch: {
-    musicList(musicList){
+    musicList (musicList) {
       this.thisMusicList = musicList || []
     }
   },
+  beforeMount () {
+    this.thisMusicList = this.musicList || []
+  },
   methods: {
-    deleteSong(music){
+    deleteSong (music) {
       this.$emit('deleteSong', music)
     },
-    async changeMusic(music){
+    async changeMusic (music) {
       this.$emit('changeMusic', music)
     }
   }

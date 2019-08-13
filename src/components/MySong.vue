@@ -1,49 +1,105 @@
 <template>
   <div class="wrapper">
-    <div v-if="!userInfo" class="login-wrapper">
+    <div
+      v-if="!userInfo"
+      class="login-wrapper"
+    >
       <small>** 당신의 개인정보는 1도 보호되지 않습니다 **</small>
       <div class="form_wrap">
         <ValidationObserver ref="validationArea">
           <table class="form_table">
             <colgroup>
-              <col style="width: 30%;" />
-              <col />
+              <col style="width: 30%;">
+              <col>
             </colgroup>
             <tbody>
               <tr>
                 <th>ID</th>
                 <td>
-                  <v-input v-model="userId" name="ID" validate="required" mask="numberAlpha" maxlength=100 @keypress.enter.prevent="login()" autofocus />
+                  <v-input
+                    v-model="userId"
+                    name="ID"
+                    validate="required"
+                    mask="numberAlpha"
+                    maxlength="100"
+                    autofocus
+                    @keypress.enter.prevent="login()"
+                  />
                 </td>
               </tr>
               <tr>
                 <th>Password</th>
                 <td>
-                  <v-input v-model="userPassword" name="Password" validate="required" mask="numberAlpha" maxlength=100 @keypress.enter.prevent="login()" />
+                  <v-input
+                    v-model="userPassword"
+                    name="Password"
+                    validate="required"
+                    mask="numberAlpha"
+                    maxlength="100"
+                    @keypress.enter.prevent="login()"
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
         </ValidationObserver>
       </div>
-      <button type="button" @click="join()" class="btn btn-sm btn-danger">Join</button>
-      <button type="button" @click="login()" class="btn btn-sm btn-success">Login</button>
+      <button
+        type="button"
+        class="btn btn-sm btn-danger"
+        @click="join()"
+      >
+        Join
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-success"
+        @click="login()"
+      >
+        Login
+      </button>
     </div>
-    <div v-else class="mysong-wrapper">
+    <div
+      v-else
+      class="mysong-wrapper"
+    >
       <!-- 노래 검색 팝업 -->
-      <My-Song-Srch-Modal v-if="srchModal" @close="srchModal=false" :userId="(userInfo||{}).userId" @getUserInfo="getUserInfo()" />
+      <My-Song-Srch-Modal
+        v-if="srchModal"
+        :user-id="(userInfo||{}).userId"
+        @close="srchModal=false"
+        @getUserInfo="getUserInfo()"
+      />
       <div class="class-search-song">
         <h5>
           <small>안녕!?</small>
           <b>{{ userInfo.userId }}</b>
         </h5>
         <div>
-          <button type="button" @click="srchModal=true" class="btn btn-sm btn-danger">Search</button>&nbsp;
-          <button type="button" @click="logout()" class="btn btn-sm btn-success">Logout</button>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger"
+            @click="srchModal=true"
+          >
+            Search
+          </button>&nbsp;
+          <button
+            type="button"
+            class="btn btn-sm btn-success"
+            @click="logout()"
+          >
+            Logout
+          </button>
         </div>
       </div>
       <div class="wrapper-musiclist">
-        <Music-List :musicList="((userInfo||{}).music||{}).default||[]" @changeMusic="changeMusic" refName="mysong" :noSinger="true" @deleteSong="deleteSong" />
+        <Music-List
+          :music-list="((userInfo||{}).music||{}).default||[]"
+          ref-name="mysong"
+          :no-singer="true"
+          @changeMusic="changeMusic"
+          @deleteSong="deleteSong"
+        />
       </div>
     </div>
   </div>
@@ -60,28 +116,10 @@ export default {
   components: {
     MusicList, MySongSrchModal, VInput, ValidationObserver
   },
-  computed: {
-    ...mapState([
-      'userInfo'
-    ])
-  },
   props: {
-    tab: String
+    tab: { type: String, default: undefined }
   },
-  watch: {
-    async tab(newValue, oldValue){
-      if(newValue == 'mysong'){
-        if(!this.init){
-          this.init = true
-          if(typeof localStorage !== 'undefined'){
-            const userId = localStorage.getItem('userId')
-            if(userId) await this.getUserInfo(userId)
-          }
-        }
-      }
-    }
-  },
-  data(){
+  data () {
     return {
       init: false,
       userId: '',
@@ -89,10 +127,28 @@ export default {
       srchModal: false
     }
   },
+  computed: {
+    ...mapState([
+      'userInfo'
+    ])
+  },
+  watch: {
+    async tab (newValue, oldValue) {
+      if (newValue === 'mysong') {
+        if (!this.init) {
+          this.init = true
+          if (typeof localStorage !== 'undefined') {
+            const userId = localStorage.getItem('userId')
+            if (userId) await this.getUserInfo(userId)
+          }
+        }
+      }
+    }
+  },
   methods: {
 
-    async login(param={}){
-      if(!await this.validateFocus([this.$refs.validationArea])) return
+    async login (param = {}) {
+      if (!await this.validateFocus([this.$refs.validationArea])) return
       const params = {
         userId: param.userId || this.userId,
         userPassword: param.userPassword || this.userPassword
@@ -103,32 +159,32 @@ export default {
       })
 
       const data = res.data
-      if(!data || data == 'INVALID') alert('정보가 일치하지 않습니다.')
-      else if(data == 'NOTEXISTS') alert('존재하지 않는 ID 입니다.')
-      else{
+      if (!data || data === 'INVALID') alert('정보가 일치하지 않습니다.')
+      else if (data === 'NOTEXISTS') alert('존재하지 않는 ID 입니다.')
+      else {
         this.userId = ''
         this.userPassword = ''
-        this.setMusicListByUserInfo({...data})
-        if(typeof localStorage !== 'undefined') localStorage.setItem('userId', params.userId)
+        this.setMusicListByUserInfo({ ...data })
+        if (typeof localStorage !== 'undefined') localStorage.setItem('userId', params.userId)
       }
     },
 
-    setMusicListByUserInfo(data){
-      let targetData = data || {}
-      if(!targetData.music) targetData.music = {}
-      targetData.music.default = ((targetData.music || {}).default || []).map((obj, index)=>{
+    setMusicListByUserInfo (data) {
+      const targetData = data || {}
+      if (!targetData.music) targetData.music = {}
+      targetData.music.default = ((targetData.music || {}).default || []).map((obj, index) => {
         return {
           ...obj,
           tab: 'mysong',
           song: obj.title,
-          num: index+1
+          num: index + 1
         }
       })
       this.$store.commit('setUserInfo', targetData)
     },
 
-    async join(){
-      if(!await this.validateFocus([this.$refs.validationArea])) return
+    async join () {
+      if (!await this.validateFocus([this.$refs.validationArea])) return
       const param = {
         userId: this.userId,
         userPassword: this.userPassword
@@ -137,13 +193,13 @@ export default {
         url: '/song/passport/join',
         params: param
       })
-      
+
       const data = res.data
-      if(data == 'EXISTS') alert('이미 존재하는 ID 입니다.')
+      if (data === 'EXISTS') alert('이미 존재하는 ID 입니다.')
       else this.login(param)
     },
 
-    async getUserInfo(userId){
+    async getUserInfo (userId) {
       const res = await this.ajax({
         url: '/song/passport/getUserInfo',
         params: {
@@ -151,14 +207,14 @@ export default {
         }
       })
       const data = res.data || {}
-      this.setMusicListByUserInfo({...data})
+      this.setMusicListByUserInfo({ ...data })
     },
 
-    changeMusic(data){
+    changeMusic (data) {
       this.$emit('changeMusic', data)
     },
 
-    async deleteSong(song={}){
+    async deleteSong (song = {}) {
       await this.ajax({
         url: '/song/passport/updateMySongList',
         params: {
@@ -169,7 +225,7 @@ export default {
       this.getUserInfo()
     },
 
-    logout(){
+    logout () {
       this.userId = ''
       this.userPassword = ''
       this.$store.commit('setUserInfo', undefined)

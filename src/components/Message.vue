@@ -3,49 +3,96 @@
     <ValidationObserver ref="messageValidationArea">
       <table class="form_table">
         <colgroup>
-          <col style="width: 30%" />
-          <col style="width: 50%" />
-          <col />
+          <col style="width: 30%">
+          <col style="width: 50%">
+          <col>
         </colgroup>
         <tbody>
           <tr>
             <td>
-              <v-input v-model="writer" name="작성자" placeholder="작성자" validate="required" maxlength=100 @keypress.enter.prevent="insertMessage()" />
+              <v-input
+                v-model="writer"
+                name="작성자"
+                placeholder="작성자"
+                validate="required"
+                maxlength="100"
+                @keypress.enter.prevent="insertMessage()"
+              />
             </td>
             <td>
-              <v-input v-model="contents" name="메세지" placeholder="메세지" validate="required" maxlength=300 @keypress.enter.prevent="insertMessage()" />
+              <v-input
+                v-model="contents"
+                name="메세지"
+                placeholder="메세지"
+                validate="required"
+                maxlength="300"
+                @keypress.enter.prevent="insertMessage()"
+              />
             </td>
             <td>
-              <button type="button" @click="insertMessage()" class="btn btn-sm btn-success">등록</button>
-              <button type="button" @click="initMessage()" class="btn btn-sm btn-default">조회</button>
+              <button
+                type="button"
+                class="btn btn-sm btn-success"
+                @click="insertMessage()"
+              >
+                등록
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-default"
+                @click="initMessage()"
+              >
+                조회
+              </button>
             </td>
           </tr>
           <tr v-if="(userInfo||{}).userId=='admin'">
-            <td colspan=3>
-              <button type="button" @click="backupMessage()" class="btn btn-sm btn-danger">Backup</button>
-              <textarea v-model="backup"/>
-              <button type="button" @click="insertMany()" class="btn btn-sm btn-danger">Insertmany</button>
+            <td colspan="3">
+              <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                @click="backupMessage()"
+              >
+                Backup
+              </button>
+              <textarea v-model="backup" />
+              <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                @click="insertMany()"
+              >
+                Insertmany
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </ValidationObserver>
-    <Scroll-Table :list="messageList" :pageObject="messagePageObject" @search="getMessage">
+    <Scroll-Table
+      :list="messageList"
+      :page-object="messagePageObject"
+      @search="getMessage"
+    >
       <colgroup slot="colgroup">
-        <col width="30%" />
-        <col width="70%" />
+        <col width="30%">
+        <col width="70%">
       </colgroup>
       <template slot="tbody">
-        <tr v-for="message in messageList">
+        <tr
+          v-for="message in messageList"
+          :key="message._id"
+        >
           <td>
-            <div class="write-wrapper">{{ message.writer }}</div>
+            <div class="write-wrapper">
+              {{ message.writer }}
+            </div>
           </td>
           <td>
             <!-- <div class="contents-wrapper"> -->
-              {{ message.contents }}
-              <div class="date-wrapper">
-                {{ String(message.date||'').replace(/(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})/, '$1.$2.$3 $4:$5:$6') }}
-              </div>
+            {{ message.contents }}
+            <div class="date-wrapper">
+              {{ String(message.date||'').replace(/(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})/, '$1.$2.$3 $4:$5:$6') }}
+            </div>
             <!-- </div> -->
           </td>
         </tr>
@@ -64,23 +111,10 @@ export default {
   components: {
     ScrollTable, VInput, ValidationObserver
   },
-  computed: {
-    ...mapState([
-      'userInfo'
-    ])
-  },
   props: {
-    tab: String
+    tab: { type: String, default: undefined }
   },
-  watch: {
-    tab(newValue, oldValue){
-      if(newValue == 'message' && !this.init){
-        this.init = true
-        this.initMessage()
-      }
-    }
-  },
-  data(){
+  data () {
     return {
       init: false,
       writer: '',
@@ -90,25 +124,38 @@ export default {
       messagePageObject: {}
     }
   },
+  computed: {
+    ...mapState([
+      'userInfo'
+    ])
+  },
+  watch: {
+    tab (newValue, oldValue) {
+      if (newValue === 'message' && !this.init) {
+        this.init = true
+        this.initMessage()
+      }
+    }
+  },
   methods: {
-    
-    initMessage(){
-      this.getMessage({pageIndex: 1})
+
+    initMessage () {
+      this.getMessage({ pageIndex: 1 })
     },
 
-    async getMessage(param={}){
+    async getMessage (param = {}) {
       const res = await this.ajax({
         url: '/song/message/list',
         params: { ...param }
       })
       const list = res.data.list || []
       console.log('message call', list)
-      this.messageList = param.pageIndex == 1? list: this.messageList.concat(list)
+      this.messageList = param.pageIndex === 1 ? list : this.messageList.concat(list)
       this.messagePageObject = res.data.pageObject || {}
     },
 
-    async insertMessage(){
-      if(!await this.validateFocus([this.$refs.messageValidationArea])) return
+    async insertMessage () {
+      if (!await this.validateFocus([this.$refs.messageValidationArea])) return
       const res = await this.ajax({
         url: '/song/message/insert',
         params: {
@@ -116,7 +163,7 @@ export default {
           contents: this.contents
         }
       })
-      if(res.data.result != 'SUCCESS'){
+      if (res.data.result !== 'SUCCESS') {
         alert('메세지 작성 에러')
         return
       }
@@ -126,21 +173,21 @@ export default {
       this.initMessage()
     },
 
-    async backupMessage(){
+    async backupMessage () {
       const res = await this.ajax({
         url: '/song/message/listAll'
       })
       this.backup = JSON.stringify(res.data.list || [])
     },
-    
-    async insertMany(){
+
+    async insertMany () {
       const res = await this.ajax({
         url: '/song/message/insertMany',
         params: {
           json: this.backup
         }
       })
-      if(res.data.result != 'SUCCESS'){
+      if (res.data.result !== 'SUCCESS') {
         alert('메세지 작성 에러')
         return
       }
