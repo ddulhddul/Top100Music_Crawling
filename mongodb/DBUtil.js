@@ -6,95 +6,91 @@ const Message = require('./model/Message')
 
 module.exports = {
 
-  listChart(tab, yymmddhh=ServerUtil.getYymmddhh()) {
+  listChart (tab, yymmddhh = ServerUtil.getYymmddhh()) {
     return new Promise(function (resolve, reject) {
-
       try {
-        Chart.find({yymmddhh, tab}, null, {sort: {num: 1}}, (err, result)=>{
-          if(err){
+        Chart.find({ yymmddhh, tab }, null, { sort: { num: 1 } }, (err, result) => {
+          if (err) {
             console.log('chart find error...', err)
-            reject('chart find error...')
-
-          }else if(err || !result || result.length === 0){
+            resolve()
+          } else if (err || !result || result.length === 0) {
             console.log(`${yymmddhh} result not exists ${tab}`)
             resolve([])
-
-          }else{
-
+          } else {
             console.log(`${yymmddhh} result exists ${tab}`)
-            let dupCheck = []
-            const list = (result || []).filter((obj)=>{
+            const dupCheck = []
+            const list = (result || []).filter((obj) => {
               const num = obj.num
-              if(!dupCheck.includes(num)){
+              if (!dupCheck.includes(num)) {
                 dupCheck.push(num)
                 return true
-              }else return false
+              } else return false
             })
             resolve(list)
           }
         })
       } catch (error) {
         console.log('chart find error...', error)
-        reject('chart find catch error...')
+        resolve()
       }
     })
   },
 
-  insertChartList(tab, yymmddhh=ServerUtil.getYymmddhh(), list=[]) {
-    const saveList = list.map((obj)=>{
-      return {...obj, tab, yymmddhh}
+  insertChartList (tab, yymmddhh = ServerUtil.getYymmddhh(), list = []) {
+    const saveList = list.map((obj) => {
+      return { ...obj, tab, yymmddhh }
     })
-    Chart.remove({yymmddhh, tab}).then(()=>{Chart.insertMany(saveList)})
+    Chart.remove({ yymmddhh, tab }).then(() => { Chart.insertMany(saveList) })
   },
 
-  updateChartVideoInfo(tab, yymmddhh, num, videoInfo) {
-    Chart.findOne({yymmddhh, tab, num}, (err,chart)=>{
-      if(err || !chart){
+  updateChartVideoInfo (tab, yymmddhh, num, videoInfo) {
+    Chart.findOne({ yymmddhh, tab, num }, (err, chart) => {
+      if (err || !chart) {
         console.log('updateChartVideoInfo error', err)
-      }else{
+      } else {
         chart.videoId = videoInfo.videoId
         chart.videoTime = videoInfo.videoTime
-        chart.save((err)=>{if(err) console.log('updateChartVideoInfo update error...', err)})
+        chart.save((err) => { if (err) console.log('updateChartVideoInfo update error...', err) })
         // console.log('updateChartVideoInfo success', videoInfo)
       }
     })
   },
 
-  findUserByIdPw(userId, userPassword){
+  findUserByIdPw (userId, userPassword) {
     return new Promise(function (resolve, reject) {
       try {
-        User.find({ userId }, (err, users)=>{
-          if(!users || !users.length) resolve('NOTEXISTS')
-          else if(users[0].userPassword != userPassword) resolve('INVALID')
+        User.find({ userId }, (err, users) => {
+          if (err || !users || !users.length) resolve('NOTEXISTS')
+          else if (users[0].userPassword !== userPassword) resolve('INVALID')
           else resolve(users[0])
         })
       } catch (error) {
         console.log('find user error...', error)
-        reject('find user catch error...')
+        resolve()
       }
     })
   },
 
-  findUserBy_id(userId){
+  findUserBy_id (userId) {
     return new Promise(function (resolve, reject) {
       try {
-        User.find({ userId }, (err, users)=>{
-          if(!users || !users.length) resolve('NOTEXISTS')
+        User.find({ userId }, (err, users) => {
+          if (err || !users || !users.length) resolve('NOTEXISTS')
           else resolve(users[0])
         })
       } catch (error) {
         console.log('find user one error...', error)
-        reject('find user one catch error...')
+        resolve()
       }
     })
   },
 
-  joinUser(userId, userPassword){
+  joinUser (userId, userPassword) {
     return new Promise(function (resolve, reject) {
       try {
-        User.find({ userId }, (err, users)=>{
-          if(users && users.length) resolve('EXISTS')
-          else{
+        User.find({ userId }, (err, users) => {
+          if (err || (users && users.length)) resolve('EXISTS')
+          else {
             User.insertMany([{
               userId, userPassword
             }])
@@ -103,46 +99,46 @@ module.exports = {
         })
       } catch (error) {
         console.log('join user error...', error)
-        reject('join user catch error...')
+        resolve()
       }
     })
   },
 
   // userId, music
-  insertMySong(param){
+  insertMySong (param) {
     return new Promise(function (resolve, reject) {
       try {
         User.update(
-          {userId: param.userId},
-          {music: param.music},
-          (err, raw)=>{
-            if(!err) resolve('SUCCESS')
-            else{
+          { userId: param.userId },
+          { music: param.music },
+          (err, raw) => {
+            if (!err) resolve('SUCCESS')
+            else {
               console.log('update user error', err)
-              reject('update user error')
+              resolve()
             }
           }
         )
       } catch (error) {
         console.log('update user error...', error)
-        reject('update user catch error...')
+        resolve()
       }
     })
   },
 
-  async listMessage(param) {
+  async listMessage (param) {
     let list = []
-    if(!param){
-      list = await Message.find({}, null, {sort: {date: -1}})
-    }else{
+    if (!param) {
+      list = await Message.find({}, null, { sort: { date: -1 } })
+    } else {
       const pageIndex = param.pageIndex || 1
-      list = await Message.find({}, null, {sort: {date: -1}})
-        .skip((pageIndex-1)*param.pageSize).limit(param.pageSize)
+      list = await Message.find({}, null, { sort: { date: -1 } })
+        .skip((pageIndex - 1) * param.pageSize).limit(param.pageSize)
     }
     return list
   },
 
-  insertMessage(param={}){
+  insertMessage (param = {}) {
     return Message.insertMany([{
       writer: param.writer,
       contents: param.contents,
@@ -150,8 +146,8 @@ module.exports = {
     }])
   },
 
-  insertManyMessage(param=[]){
-    return Message.insertMany(param.map((obj)=>{
+  insertManyMessage (param = []) {
+    return Message.insertMany(param.map((obj) => {
       return {
         writer: obj.writer,
         contents: obj.contents,

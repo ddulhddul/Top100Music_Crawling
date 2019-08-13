@@ -31,12 +31,12 @@ module.exports = {
         loader: 'babel-loader'
       },
       {
-        test:/\.css$/,
-        use:[MiniCssExtractPlugin.loader, 'css-loader']
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
-        test:/\.png$/,
-        use:[{loader: 'file-loader'}]
+        test: /\.png$/,
+        use: [{ loader: 'file-loader' }]
       }
     ]
   },

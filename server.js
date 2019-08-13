@@ -6,8 +6,8 @@ mongoose.set('useNewUrlParser', true)
 mongoose.Promise = require('bluebird')
 const db = mongoose.connection
 db.on('error', console.error)
-db.once('open', function(){
-    console.log("Connected to mongod server")
+db.once('open', function () {
+  console.log('Connected to mongod server')
 })
 mongoose.connect('mongodb://127.0.0.1/chartdb')
 const DBUtil = require('./mongodb/DBUtil')
@@ -18,34 +18,34 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(express.static(__dirname +'/dist'))
+app.use(express.static([__dirname, '/dist'].join()))
 
 // webpack
 console.log('process.env.NODE_ENV', process.env.NODE_ENV)
-if(process.env.NODE_ENV !== 'production'){
+if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack')
   const config = require('./webpack.config.development')
   const compiler = webpack(config)
-  app.use(require("webpack-dev-middleware")(compiler, {
+  app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true, publicPath: config.output.publicPath
   }))
-  app.use(require("webpack-hot-middleware")(compiler))
+  app.use(require('webpack-hot-middleware')(compiler))
 }
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!\n')
 })
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
   res.render('index')
 })
 
-app.get('/song/list/:tab', async (req, res)=>{
+app.get('/song/list/:tab', async (req, res) => {
   const tab = req.params.tab
   const yymmddhh = ServerUtil.getYymmddhh()
 
   let list = (await DBUtil.listChart(tab, yymmddhh)) || []
-  if(!list.length){
+  if (!list.length) {
     list = await ServerUtil.getChartByUrlRequest(tab, yymmddhh)
     DBUtil.insertChartList(tab, yymmddhh, list)
   }
@@ -53,61 +53,60 @@ app.get('/song/list/:tab', async (req, res)=>{
   res.send({ list, yymmddhh, tab })
 })
 
-app.get('/song/change', async (req, res)=>{
+app.get('/song/change', async (req, res) => {
   const param = req.query || {}
   const list = (await DBUtil.listChart(param.tab, param.yymmddhh)) || []
-  let result = list.find((obj)=>(obj.song == param.song && obj.singer == param.singer)) || {}
-  if(!result.videoId){
+  let result = list.find((obj) => (obj.song === param.song && obj.singer === param.singer)) || {}
+  if (!result.videoId) {
     result = await ServerUtil.getVideoIdBySongAndSinger(param)
     DBUtil.updateChartVideoInfo(param.tab, param.yymmddhh, param.num, result)
   }
   res.send(result)
 })
 
-app.get('/song/search', async (req, res)=>{
+app.get('/song/search', async (req, res) => {
   const list = await ServerUtil.getSearchSongList(req.query)
   res.send({ list })
 })
 
-
 /*
   My Songs
 */
-app.get('/song/passport/login', async (req, res)=>{
+app.get('/song/passport/login', async (req, res) => {
   const param = req.query || {}
   const result = await DBUtil.findUserByIdPw(param.userId, param.userPassword)
   res.send(result)
 })
 
-app.get('/song/passport/getUserInfo', async (req, res)=>{
+app.get('/song/passport/getUserInfo', async (req, res) => {
   const param = req.query || {}
   const result = await DBUtil.findUserBy_id(param.userId)
   res.send(result)
 })
 
-app.get('/song/passport/join', async (req, res)=>{
+app.get('/song/passport/join', async (req, res) => {
   const param = req.query || {}
   const result = await DBUtil.joinUser(param.userId, param.userPassword)
   res.send(result)
 })
 
-app.get('/song/passport/updateMySongList', async (req, res)=>{
+app.get('/song/passport/updateMySongList', async (req, res) => {
   const param = req.query || {}
   const user = (await DBUtil.findUserBy_id(param.userId))._doc || {}
   let defaultMusicList = (user.music || {}).default || []
-  if(!param.deleteVideoId){
-    const musicDupCheck = defaultMusicList.find((obj)=> obj.videoId == param.videoId)
-    if(musicDupCheck){
+  if (!param.deleteVideoId) {
+    const musicDupCheck = defaultMusicList.find((obj) => obj.videoId === param.videoId)
+    if (musicDupCheck) {
       res.send('DUP')
       return
     }
     defaultMusicList.push({
       videoId: param.videoId,
       videoTime: param.videoTime,
-      title: param.title,
+      title: param.title
     })
-  }else{
-    defaultMusicList = defaultMusicList.filter((obj)=> obj.videoId != param.deleteVideoId)
+  } else {
+    defaultMusicList = defaultMusicList.filter((obj) => obj.videoId !== param.deleteVideoId)
   }
 
   await DBUtil.insertMySong({
@@ -120,35 +119,34 @@ app.get('/song/passport/updateMySongList', async (req, res)=>{
   res.send('SUCCESS')
 })
 
-
 /*
   Message
 */
-app.get('/song/message/list', async (req, res)=>{
+app.get('/song/message/list', async (req, res) => {
   const param = req.query || {}
   const pageSize = 20
-  const list = await DBUtil.listMessage({...param, pageSize}) || []
-  res.send({ 
+  const list = await DBUtil.listMessage({ ...param, pageSize }) || []
+  res.send({
     list,
     pageObject: {
-      maxYn: pageSize != list.length? 'Y': 'N',
+      maxYn: pageSize !== list.length ? 'Y' : 'N',
       currentPage: param.pageIndex
     }
   })
 })
 
-app.get('/song/message/insert', async (req, res)=>{
+app.get('/song/message/insert', async (req, res) => {
   const param = req.query || {}
   await DBUtil.insertMessage(param)
   res.send({ result: 'SUCCESS' })
 })
 
-app.get('/song/message/listAll', async (req, res)=>{
+app.get('/song/message/listAll', async (req, res) => {
   const list = await DBUtil.listMessage() || []
   res.send({ list })
 })
 
-app.get('/song/message/insertMany', async (req, res)=>{
+app.get('/song/message/insertMany', async (req, res) => {
   const param = req.query || {}
   await DBUtil.insertManyMessage(JSON.parse(param.json))
   res.send({ result: 'SUCCESS' })

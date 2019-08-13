@@ -11,7 +11,7 @@ module.exports = {
       '@babel/polyfill',
       'webpack-hot-middleware/client',
       './src/index.js'
-    ],
+    ]
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -25,7 +25,7 @@ module.exports = {
       template: 'src/index.html',
       inject: 'body'
     }),
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
   module: {
     rules: [
@@ -40,12 +40,12 @@ module.exports = {
         loader: 'babel-loader'
       },
       {
-        test:/\.css$/,
-        use:['style-loader','css-loader']
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       },
       {
-        test:/\.png$/,
-        use:[{loader: 'file-loader'}]
+        test: /\.png$/,
+        use: [{ loader: 'file-loader' }]
       }
     ]
   },

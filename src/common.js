@@ -2,48 +2,48 @@ import axios from 'axios'
 export default {
   methods: {
 
-    async ajax(param){
+    async ajax (param) {
       this.showLoading()
       const axiosResult = axios({
         method: 'GET',
         ...param
       })
-      axiosResult.finally((obj)=>{
+      axiosResult.finally((obj) => {
         this.hideLoading()
       })
       return axiosResult
     },
 
-    showLoading(){
+    showLoading () {
       window.document.activeElement && window.document.activeElement.blur()
       this.$store.commit('setLoading', true)
     },
 
-    hideLoading(){
+    hideLoading () {
       this.$store.commit('setLoading', false)
     },
 
-    async validateFocus(args){
-      if(!args) console.error('validateFocus error')
+    async validateFocus (args) {
+      if (!args) console.error('validateFocus error')
       let list = args
-      if(!(args instanceof Array)){
-        list = Object.keys(args).map((arg)=> args[arg])
+      if (!(args instanceof Array)) {
+        list = Object.keys(args).map((arg) => args[arg])
       }
-      let invalidRef = undefined
-      for await(const arg of list){
+      let invalidRef
+      for await (const arg of list) {
         const unitResult = await arg.validate()
-        if(!unitResult && !invalidRef){
+        if (!unitResult && !invalidRef) {
           invalidRef = arg
         }
       }
-  
-      //focus
-      if(invalidRef){
+
+      // focus
+      if (invalidRef) {
         const elm = invalidRef.$vnode && invalidRef.$vnode.elm
-        if(elm) elm.querySelector('.error') && elm.querySelector('.error').focus()
+        if (elm) elm.querySelector('.error') && elm.querySelector('.error').focus()
       }
-  
-      return invalidRef? false: true
+
+      return !invalidRef
     }
 
   }

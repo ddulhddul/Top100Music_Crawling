@@ -6,43 +6,42 @@ const timeZone = 'Asia/Seoul'
 
 module.exports = {
 
-  getCurrentFullDateStr(){
+  getCurrentFullDateStr () {
     return moment().tz(timeZone).format('YYYYMMDDHHmmss')
   },
 
-  getYymmddhh(){
+  getYymmddhh () {
     return moment().tz(timeZone).format('YYYYMMDDHH')
   },
 
-  async getChartByUrlRequest(tab, yymmddhh=this.getYymmddhh()){
-
+  async getChartByUrlRequest (tab, yymmddhh = this.getYymmddhh()) {
     console.log(yymmddhh, 'chart url request.. ')
     let url = ''
     switch (tab) {
-        case 'top100':
-            url = 'http://www.melon.com/chart/'
-            break
+      case 'top100':
+        url = 'http://www.melon.com/chart/'
+        break
 
-        case 'pop':
-            url = 'https://www.melon.com/genre/song_list.htm?gnrCode=GN0900'
-            break
+      case 'pop':
+        url = 'https://www.melon.com/genre/song_list.htm?gnrCode=GN0900'
+        break
 
-        default:
-            url = 'http://www.melon.com/chart/'
-            break
+      default:
+        url = 'http://www.melon.com/chart/'
+        break
     }
-    let list = []
+    const list = []
     try {
       const $ = await this.urlRequest(url)
-      if(!$) return
+      if (!$) return
 
-      let postElements = $('table tr td div[class^="wrap_song_info"]')
+      const postElements = $('table tr td div[class^="wrap_song_info"]')
       let index = 0
-      if(postElements.length > 0){
-        for(let key = 0; key < postElements.length; key++){
-          let $obj = $(postElements[key])
-          let song = $obj.find('.rank01 a').text(), singer = $obj.find('.rank02 a').eq(0).text()
-          if(!song || !singer) continue
+      if (postElements.length > 0) {
+        for (let key = 0; key < postElements.length; key++) {
+          const $obj = $(postElements[key])
+          const song = $obj.find('.rank01 a').text(); const singer = $obj.find('.rank02 a').eq(0).text()
+          if (!song || !singer) continue
 
           list.push({
             num: ++index,
@@ -52,80 +51,73 @@ module.exports = {
           })
         }
       }
-      
     } catch (error) {
       console.log('error', url, error)
     }
-    
-    return list
 
+    return list
   },
 
-  /* 
-    param 
+  /*
+    param
       - song
       - singer
   */
-  async getVideoIdBySongAndSinger(param={}){
-
-    if(!param.song || !param.singer) return
-    const reg = new RegExp('\\(.*?\\)','g')
-    const encodedSrchparam = urlencode(param.song.replace(reg,'') + ' ' + param.singer.replace(reg,''))
+  async getVideoIdBySongAndSinger (param = {}) {
+    if (!param.song || !param.singer) return
+    const reg = new RegExp('\\(.*?\\)', 'g')
+    const encodedSrchparam = urlencode(param.song.replace(reg, '') + ' ' + param.singer.replace(reg, ''))
     const url = 'https://www.youtube.com/results?search_query=' + encodedSrchparam
     console.log('getVideoIdBySongAndSinger', JSON.stringify(param), encodedSrchparam, url)
     try {
       const $ = await this.urlRequest(url)
-      if(!$) return {}
+      if (!$) return {}
 
       const $tag = $('.yt-lockup-video a')
-      let tagLoop = 0, href='', passedId = [], videoTime = ''
-      loop:
-      while(tagLoop < 15){
+      let tagLoop = 0; let href = ''; const passedId = []; let videoTime = ''
+      while (tagLoop < 15) {
         const $targetTag = $tag.eq(tagLoop++)
         href = $targetTag.attr('href')
         videoTime = $targetTag.find('.video-time').html()
-        if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
-          if(!passedId.includes(href)) passedId.push(href)
-          else continue loop
+        if (href && href.length < 30 && href.indexOf('/watch?v=') !== -1) {
+          if (!passedId.includes(href)) passedId.push(href)
+          else continue
 
-          if(videoTime){
+          if (videoTime) {
             const timeArr = videoTime.split(':')
-            if(timeArr.length !== 2) continue loop // over 1hour continue
-            else if(timeArr[0] >= 10) continue loop // over 10 minuites continue
+            if (timeArr.length !== 2) continue // over 1hour continue
+            else if (timeArr[0] >= 10) continue // over 10 minuites continue
           }
-          break loop
+          break
         }
       }
-      return { ...param, videoId: String(href||'').replace('/watch?v=',''), videoTime }
-      
+      return { ...param, videoId: String(href || '').replace('/watch?v=', ''), videoTime }
     } catch (error) {
       console.log('error', url, error)
       return {}
     }
-    
   },
 
   // param - searchInput
-  async getSearchSongList(param={}){
+  async getSearchSongList (param = {}) {
     const searchUrl = 'https://www.youtube.com/results?search_query=' + urlencode(param.searchInput)
-    let resultList = []
+    const resultList = []
     try {
       const $ = await this.urlRequest(searchUrl)
-      if(!$) return
+      if (!$) return
 
-      let $tag = $('.yt-lockup-video a')
-      let tagLoop = 0, href=''
-      let passedHref = []
-      loop:
-      while(tagLoop < 20){
-        let $targetTag = $tag.eq(tagLoop++)
+      const $tag = $('.yt-lockup-video a')
+      let tagLoop = 0; let href = ''
+      const passedHref = []
+      while (tagLoop < 20) {
+        const $targetTag = $tag.eq(tagLoop++)
         href = $targetTag.attr('href')
-        if (href && href.length < 30 && href.indexOf('/watch?v=') != -1){
-          if(!passedHref.includes(href)) passedHref.push(href)
-          else continue loop
-              
+        if (href && href.length < 30 && href.indexOf('/watch?v=') !== -1) {
+          if (!passedHref.includes(href)) passedHref.push(href)
+          else continue
+
           const title = $targetTag.parent().parent().find('.yt-lockup-title a').eq(0).attr('title')
-          if(!title) continue loop
+          if (!title) continue
           resultList.push({
             videoId: href.replace('/watch?v=', ''),
             title: title,
@@ -136,26 +128,27 @@ module.exports = {
     } catch (error) {
       console.log('error', searchUrl, error)
     }
-    
+
     return resultList
   },
 
-  urlRequest(url) {
+  urlRequest (url) {
     return new Promise(function (resolve, reject) {
       request(url, function (error, response, body) {
         try {
-          if (error || !body) reject('Unexpected Error :::')
-          else{
-            let $ = cheerio.load(body)
+          if (error || !body) {
+            console.log('Unexpected Error :::')
+            resolve()
+          } else {
+            const $ = cheerio.load(body)
             resolve($)
           }
-
-        } catch(e) {
+        } catch (e) {
           console.log('request Error :::', e)
-          reject('request Error :::')
+          resolve()
         }
       })
     })
-  },
+  }
 
 }

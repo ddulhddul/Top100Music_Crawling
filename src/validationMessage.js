@@ -1,7 +1,7 @@
 import { Validator } from 'vee-validate'
 
 const messages = {
-  'required': (field) => `${field} 항목은 필수 정보입니다.`.replace(/\$\{field\}/g,field),
+  required: (field) => `${field} 항목은 필수 정보입니다.`.replace(/\$\{field\}/g, field)
 }
 
 const locale = {
