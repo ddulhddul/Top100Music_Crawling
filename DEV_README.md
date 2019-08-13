@@ -93,6 +93,34 @@ service iptables save
 ```bash
 $ export NODE_ENV=production
 ```
+- pm2가 이미 실행된 상황에서 NODE_ENV 바꾸기
+```bash
+$ pm2 stop server.js
+$ pm2 kill
+$ pm2 start server.js --env production
+```
 
 ## Extracting CSS based on entry
 [https://webpack.js.org/plugins/mini-css-extract-plugin/](https://webpack.js.org/plugins/mini-css-extract-plugin/)
+
+## JavaScript Standard Style
+[https://standardjs.com](https://standardjs.com)
+
+## ESLint
+- [https://eslint.org/](https://eslint.org/)
+- [How to setup StandardJS for Visual Studio Code - NodeJS and Type Script](https://minimaldevelop.blog/2017/05/05/how-to-setup-standardjs-for-visual-studio-code-nodejs-and-typescript/)
+
+## Vue ESLint
+- [Vue.js 공식 ESLint 플러그인 적용하기](https://medium.com/@changjoopark/vue-js-공식-eslint-플러그인-적용하기-3457ac648b05)
+- [https://eslint.vuejs.org/](https://eslint.vuejs.org/)
+- [https://vue-loader-v14.vuejs.org/kr/workflow/linting.html](https://vue-loader-v14.vuejs.org/kr/workflow/linting.html)
+- [How to set up ES Lint for Airbnb, Vue JS and VS Code](https://medium.com/@agm1984/how-to-set-up-es-lint-for-airbnb-vue-js-and-vs-code-a5ef5ac671e8)
+
+## eslint-plugin-vue
+```bash
+$ npx eslint "src/**/*.{js,vue}"
+```
+
+## VSCode ESLint
+- ESLint
+- StandardJS

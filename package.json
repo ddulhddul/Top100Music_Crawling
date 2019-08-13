@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "URL : [http://mlchart.ml/](http://mlchart.ml/)",
   "main": "index.js",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
@@ -12,7 +12,7 @@
     "bluebird": "^3.5.5",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.27",
+    "bootstrap-vue": "^2.0.0-rc.28",
     "cheerio": "^1.0.0-rc.3",
     "clean-webpack-plugin": "^2.0.2",
     "css-loader": "^2.1.1",
@@ -27,19 +27,29 @@
     "style-loader": "^0.23.1",
     "text-mask-addons": "^3.8.0",
     "urlencode": "^1.1.0",
-    "vee-validate": "^2.2.14",
+    "vee-validate": "^2.2.15",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
     "vue-template-compiler": "^2.6.10",
     "vue-text-mask": "^6.1.2",
     "vuex": "^3.1.1",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6",
+    "webpack-cli": "^3.3.6"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.1.0",
+    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "standard": "^13.1.0",
     "webpack-dev-middleware": "^3.7.0",
     "webpack-hot-middleware": "^2.25.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "standard": "standard",
+    "standard-fix": "standard --fix",
+    "eslint": "eslint \"src/**/*.{js,vue}\"",
+    "eslint-fix": "eslint \"src/**/*.{js,vue}\" --fix",
     "server": "node server.js",
     "build": "webpack"
   },
