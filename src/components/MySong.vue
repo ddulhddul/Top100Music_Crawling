@@ -137,10 +137,8 @@ export default {
       if (newValue === 'mysong') {
         if (!this.init) {
           this.init = true
-          if (typeof localStorage !== 'undefined') {
-            const userId = localStorage.getItem('userId')
-            if (userId) await this.getUserInfo(userId)
-          }
+          const userId = this.getStorageItem('userId')
+          if (userId) await this.getUserInfo(userId)
         }
       }
     }
@@ -164,23 +162,9 @@ export default {
       else {
         this.userId = ''
         this.userPassword = ''
-        this.setMusicListByUserInfo({ ...data })
-        if (typeof localStorage !== 'undefined') localStorage.setItem('userId', params.userId)
+        this.$store.dispatch('setMusicListByUserInfo', { ...data })
+        this.setStorageItem('userId', params.userId)
       }
-    },
-
-    setMusicListByUserInfo (data) {
-      const targetData = data || {}
-      if (!targetData.music) targetData.music = {}
-      targetData.music.default = ((targetData.music || {}).default || []).map((obj, index) => {
-        return {
-          ...obj,
-          tab: 'mysong',
-          song: obj.title,
-          num: index + 1
-        }
-      })
-      this.$store.commit('setUserInfo', targetData)
     },
 
     async join () {
@@ -206,8 +190,8 @@ export default {
           userId: userId || this.userInfo.userId
         }
       })
-      const data = res.data || {}
-      this.setMusicListByUserInfo({ ...data })
+      const data = res.data
+      data && this.$store.dispatch('setMusicListByUserInfo', { ...data })
     },
 
     changeMusic (data) {
@@ -229,6 +213,7 @@ export default {
       this.userId = ''
       this.userPassword = ''
       this.$store.commit('setUserInfo', undefined)
+      this.setStorageItem('userId', '')
     }
 
   }

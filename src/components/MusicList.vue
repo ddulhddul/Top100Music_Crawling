@@ -4,7 +4,7 @@
     :name="refName"
   >
     <Scroll-Table
-      :list="thisMusicList"
+      :list="musicList"
       page-object="N"
     >
       <colgroup slot="colgroup">
@@ -27,27 +27,34 @@
           </th>
           <th class="button-wrapper-th">
             <template v-if="!noSinger">
-              <button
-                type="button"
-                class="btn btn-sm btn-danger small-button button-th"
-                @click="$emit('remove')"
-              >
-                -
-              </button>
-              <button
-                type="button"
-                class="btn btn-sm btn-success small-button button-th"
-                @click="$emit('add')"
-              >
-                +
-              </button>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger small-button button-th"
+                  @click="$emit('remove')"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success small-button button-th"
+                  @click="$emit('add')"
+                >
+                  +
+                </button>
+              </div>
+              <div style="font-size: 7px; padding-top: 13px;">
+                {{ musicList.filter((obj) => obj.removed).length }}
+                &nbsp;&nbsp;&nbsp;
+                {{ musicList.filter((obj) => !obj.removed).length }}
+              </div>
             </template>
           </th>
         </tr>
       </template>
       <template slot="tbody">
         <tr
-          v-for="(music,index) in thisMusicList"
+          v-for="(music,index) in musicList"
           :key="index"
           :name="`${refName}${music.num}`"
           :class="{
@@ -115,26 +122,17 @@ export default {
   props: {
     noSinger: Boolean,
     refName: { type: String, default: undefined },
-    musicList: { type: Array, default: undefined }
+    musicList: { type: Array, default: () => [] }
   },
   data () {
     return {
-      selectSongMode: false,
-      thisMusicList: []
+      selectSongMode: false
     }
   },
   computed: {
     ...mapState([
       'currentMusic'
     ])
-  },
-  watch: {
-    musicList (musicList) {
-      this.thisMusicList = musicList || []
-    }
-  },
-  beforeMount () {
-    this.thisMusicList = this.musicList || []
   },
   methods: {
     deleteSong (music) {

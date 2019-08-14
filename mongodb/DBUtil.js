@@ -40,7 +40,7 @@ module.exports = {
     const saveList = list.map((obj) => {
       return { ...obj, tab, yymmddhh }
     })
-    Chart.remove({ yymmddhh, tab }).then(() => { Chart.insertMany(saveList) })
+    Chart.deleteMany({ yymmddhh, tab }).then(() => { Chart.insertMany(saveList) })
   },
 
   updateChartVideoInfo (tab, yymmddhh, num, videoInfo) {
@@ -71,18 +71,10 @@ module.exports = {
     })
   },
 
-  findUserBy_id (userId) {
-    return new Promise(function (resolve, reject) {
-      try {
-        User.find({ userId }, (err, users) => {
-          if (err || !users || !users.length) resolve('NOTEXISTS')
-          else resolve(users[0])
-        })
-      } catch (error) {
-        console.log('find user one error...', error)
-        resolve()
-      }
-    })
+  async findUserBy_id (userId) {
+    const user = await User.findOne({ userId })
+    if (!user) return undefined
+    else return user._doc
   },
 
   joinUser (userId, userPassword) {
@@ -108,7 +100,7 @@ module.exports = {
   insertMySong (param) {
     return new Promise(function (resolve, reject) {
       try {
-        User.update(
+        User.updateOne(
           { userId: param.userId },
           { music: param.music },
           (err, raw) => {

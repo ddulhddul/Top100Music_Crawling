@@ -10,7 +10,12 @@
         <tbody>
           <tr>
             <td>
+              <template v-if="(userInfo||{}).userId">
+                <small>작성자</small>&nbsp;
+                {{ (userInfo||{}).userId }}
+              </template>
               <v-input
+                v-else
                 v-model="writer"
                 name="작성자"
                 placeholder="작성자"
@@ -159,7 +164,7 @@ export default {
       const res = await this.ajax({
         url: '/song/message/insert',
         params: {
-          writer: this.writer,
+          writer: (this.userInfo || {}).userId || this.writer,
           contents: this.contents
         }
       })

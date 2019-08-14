@@ -2,6 +2,15 @@ import axios from 'axios'
 export default {
   methods: {
 
+    getStorageItem (key) {
+      if (!window.localStorage || !key) return undefined
+      return window.localStorage.getItem(key)
+    },
+
+    setStorageItem (key, value) {
+      if (window.localStorage && key) window.localStorage.setItem(key, value)
+    },
+
     async ajax (param) {
       this.showLoading()
       const axiosResult = axios({

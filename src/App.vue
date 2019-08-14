@@ -320,7 +320,7 @@ export default {
     // videoId : 공유URL(http://youtu.be/UaY9xbHmVAc)에서 'http://youtu.be'만 제거한 아이디
     // playerVars : autoplay-자동시작, controls-하단컨트롤 사용여부, html5-html5 사용여부
     onYouTubePlayerAPIReady () {
-      if (typeof YT === 'undefined' || !YT.Player) {
+      if (typeof YT === 'undefined' || !window.YT.Player) {
         setTimeout(() => {
           this.onYouTubePlayerAPIReady()
         }, 500)
@@ -329,7 +329,7 @@ export default {
       try {
         const curThis = this
         if (!this.player) {
-          this.player = new YT.Player('player', {
+          this.player = new window.YT.Player('player', {
             height: '100%',
             width: '100%',
             videoId: '',

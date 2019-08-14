@@ -42,6 +42,20 @@ const store = new Vuex.Store({
     setUserInfo (state, payload) {
       state.userInfo = payload
     }
+  },
+  actions: {
+    setMusicListByUserInfo (context, userDBInfo = {}) {
+      if (!userDBInfo.music) userDBInfo.music = {}
+      userDBInfo.music.default = ((userDBInfo.music || {}).default || []).map((obj, index) => {
+        return {
+          ...obj,
+          tab: 'mysong',
+          song: obj.title,
+          num: index + 1
+        }
+      })
+      context.commit('setUserInfo', userDBInfo)
+    }
   }
 })
 

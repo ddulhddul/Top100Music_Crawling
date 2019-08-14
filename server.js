@@ -18,7 +18,7 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(express.static([__dirname, '/dist'].join()))
+app.use(express.static([__dirname, '/dist'].join('')))
 
 // webpack
 console.log('process.env.NODE_ENV', process.env.NODE_ENV)
@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
 
 app.get('/song/list/:tab', async (req, res) => {
   const tab = req.params.tab
+  const params = req.query || {}
   const yymmddhh = ServerUtil.getYymmddhh()
 
   let list = (await DBUtil.listChart(tab, yymmddhh)) || []
@@ -49,8 +50,13 @@ app.get('/song/list/:tab', async (req, res) => {
     list = await ServerUtil.getChartByUrlRequest(tab, yymmddhh)
     DBUtil.insertChartList(tab, yymmddhh, list)
   }
+  const sendObj = { list, yymmddhh, tab }
+  // init 일 경우, userInfo도 함께 조회
+  if (params.initYn === 'Y' && params.userId) {
+    sendObj.userInfo = await DBUtil.findUserBy_id(params.userId)
+  }
 
-  res.send({ list, yymmddhh, tab })
+  res.send(sendObj)
 })
 
 app.get('/song/change', async (req, res) => {
@@ -92,7 +98,7 @@ app.get('/song/passport/join', async (req, res) => {
 
 app.get('/song/passport/updateMySongList', async (req, res) => {
   const param = req.query || {}
-  const user = (await DBUtil.findUserBy_id(param.userId))._doc || {}
+  const user = (await DBUtil.findUserBy_id(param.userId)) || {}
   let defaultMusicList = (user.music || {}).default || []
   if (!param.deleteVideoId) {
     const musicDupCheck = defaultMusicList.find((obj) => obj.videoId === param.videoId)

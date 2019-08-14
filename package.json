@@ -51,6 +51,8 @@
     "webpack-hot-middleware": "^2.25.0"
   },
   "scripts": {
+    "test": "standard & eslint \"src/**/*.{js,vue}\"",
+    "test-fix": "standard --fix & eslint \"src/**/*.{js,vue}\" --fix",
     "standard": "standard",
     "standard-fix": "standard --fix",
     "eslint": "eslint \"src/**/*.{js,vue}\"",

@@ -35,8 +35,8 @@ export default {
     async tab (newValue, oldValue) {
       if (newValue === 'top100') {
         if (!this.init) {
-          this.init = true
           await this.initMusicList()
+          this.init = true
         }
       }
     }
@@ -44,27 +44,63 @@ export default {
   methods: {
 
     async initMusicList () {
-      const res = await this.ajax({ url: '/song/list/top100' })
+      const res = await this.ajax({
+        url: '/song/list/top100',
+        params: {
+          initYn: !this.init ? 'Y' : 'N',
+          userId: this.getStorageItem('userId')
+        }
+      })
       const data = res.data || {}
-      this.$store.commit('setTop100List', (data.list || []).map((obj) => { return { ...obj, tab: 'top100' } }))
+      const removedTop100List = this.getRemovedTop100List()
+      this.$store.commit('setTop100List', (data.list || []).map((obj) => {
+        return {
+          ...obj,
+          tab: 'top100',
+          removed: !!removedTop100List.find((removed) => removed.song === obj.song && removed.singer === obj.singer)
+        }
+      }))
+      data.userInfo && this.$store.dispatch('setMusicListByUserInfo', { ...data.userInfo })
     },
 
     remove (music) {
-      this.$store.commit('setTop100List', (this.top100List || []).map((obj) => {
+      const musicList = (this.top100List || []).map((obj) => {
         return {
           ...obj,
           removed: !music ? true : (music.song === obj.song && music.singer === obj.singer) ? true : obj.removed
         }
-      }))
+      })
+      this.$store.commit('setTop100List', musicList)
+      this.setRemovedTop100List(musicList)
     },
 
     add (music) {
-      this.$store.commit('setTop100List', (this.top100List || []).map((obj) => {
+      const musicList = (this.top100List || []).map((obj) => {
         return {
           ...obj,
           removed: !music ? false : (music.song === obj.song && music.singer === obj.singer) ? false : obj.removed
         }
-      }))
+      })
+      this.$store.commit('setTop100List', musicList)
+      this.setRemovedTop100List(musicList)
+    },
+
+    getRemovedTop100List () {
+      let returnValue
+      try {
+        const removedTop100ListJson = this.getStorageItem('removedTop100List')
+        if (removedTop100ListJson) returnValue = JSON.parse(removedTop100ListJson)
+      } catch (error) {
+        console.log('get removedTop100List error', error)
+      }
+      return returnValue || []
+    },
+
+    setRemovedTop100List (musicList = []) {
+      this.setStorageItem('removedTop100List', JSON.stringify(musicList.reduce((entry, obj) => {
+        if (obj.removed) entry.push({ singer: obj.singer, song: obj.song })
+        return entry
+      }, [])))
     },
 
     changeMusic (music) {
