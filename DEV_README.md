@@ -5,6 +5,31 @@
 # [Music Top 100](http://mlchart.ml/)
 URL : [http://mlchart.ml/](http://mlchart.ml/)
 
+---
+
+- [CentOS, RHEL 또는 Amazon Linux를 실행 중인 Amazon EC2 인스턴스에 대한 EPEL 리포지토리를 활성화하려면 어떻게 해야 합니까?](https://aws.amazon.com/ko/premiumsupport/knowledge-center/ec2-enable-epel/)
+
+
+- [mongodb 설치실패시](https://unix.stackexchange.com/questions/369620/centos-7-yum-wont-install-mongodb)
+```
+sudo rm -rf /etc/yum.repos.d/mongod*
+sudo yum clean all
+again create repo file
+
+sudo vi /etc/yum.repos.d/mongodb-org-3.4.repo
+paste the following (notice, I'm replacing '$releasever' with 7, for my system):
+
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+then I ran this, and it was successful:
+
+sudo yum install -y mongodb-org
+```
+
 ## Command
 ```linux
 npm init
@@ -23,10 +48,16 @@ npm install body-parser --save
 
 ## centos install
 ```linux
-sudo yum install epel-release
-sudo yum install nodejs
-sudo yum install npm
+sudo yum install -y epel-release
+sudo yum install nodejs -y
+sudo yum install npm -y
+sudo yum install git -y
+sudo yum install iptables -y
 
+## 최신
+sudo yum remove -y nodejs npm
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo -E bash -
+sudo yum install nodejs -y
 
 
 git clone https://github.com/ddulhddul/Top100Music_Crawling.git youtube
@@ -55,6 +86,15 @@ $ service mongod stop
  
 # auto excute on boot
 $ chkconfig mongod on
+
+$ systemctl stop firewalld
+$ systemctl mask firewalld
+그런 다음 iptables-services 패키지를 설치하십시오.
+
+$ yum install iptables-services
+부팅시 서비스 활성화 :
+
+$ systemctl enable iptables
 
 # open firewall
 $ iptables -I INPUT 1 -p tcp --dport 27017 -j ACCEPT
