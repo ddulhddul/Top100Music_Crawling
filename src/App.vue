@@ -238,7 +238,7 @@ export default {
       console.log('changeMusic', currentMusic)
       const changedList = this.getMusicListByTab(currentMusic.tab).map((obj) => {
         return { ...obj,
-          videoId: obj.num === data.num ? currentMusic.videoId : obj.videoId
+          videoId: String(obj.num) === String(data.num) ? currentMusic.videoId : obj.videoId
         }
       })
       if (currentMusic.tab === 'top100') this.$store.commit('setTop100List', changedList)
@@ -305,7 +305,7 @@ export default {
         nextSong = randomList[Math.floor(Math.random() * randomList.length)]
       } else if (this.playType === 's') {
         const index = list.reduce((entry, obj, index) => {
-          if (entry === 1000 && (obj.num === this.currentMusic.num)) return index
+          if (entry === 1000 && (String(obj.num) === String(this.currentMusic.num))) return index
           else return entry
         }, 1000)
         nextSong = list[index + 1] || list[0]
