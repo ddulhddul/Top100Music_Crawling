@@ -70,28 +70,29 @@ module.exports = {
     const url = 'https://www.youtube.com/results?search_query=' + encodedSrchparam
     console.log('getVideoIdBySongAndSinger', JSON.stringify(param), encodedSrchparam, url)
     try {
-      const $ = await this.urlRequest(url)
+      const $ = await this.urlRequestNew(url)
       if (!$) return {}
+      const videoId = String($ || '').replace(/\n/g, '').replace(/.*"\/watch\?v=(.*?)".*/, '$1')
+      return { ...param, videoId }
+      // const $tag = $('.yt-lockup-video a')
+      // let tagLoop = 0; let href = ''; const passedId = []; let videoTime = ''
+      // while (tagLoop < 15) {
+      //   const $targetTag = $tag.eq(tagLoop++)
+      //   href = $targetTag.attr('href')
+      //   videoTime = $targetTag.find('.video-time').html()
+      //   if (href && href.length < 30 && href.indexOf('/watch?v=') !== -1) {
+      //     if (!passedId.includes(href)) passedId.push(href)
+      //     else continue
 
-      const $tag = $('.yt-lockup-video a')
-      let tagLoop = 0; let href = ''; const passedId = []; let videoTime = ''
-      while (tagLoop < 15) {
-        const $targetTag = $tag.eq(tagLoop++)
-        href = $targetTag.attr('href')
-        videoTime = $targetTag.find('.video-time').html()
-        if (href && href.length < 30 && href.indexOf('/watch?v=') !== -1) {
-          if (!passedId.includes(href)) passedId.push(href)
-          else continue
-
-          if (videoTime) {
-            const timeArr = videoTime.split(':')
-            if (timeArr.length !== 2) continue // over 1hour continue
-            else if (timeArr[0] >= 10) continue // over 10 minuites continue
-          }
-          break
-        }
-      }
-      return { ...param, videoId: String(href || '').replace('/watch?v=', ''), videoTime }
+      //     if (videoTime) {
+      //       const timeArr = videoTime.split(':')
+      //       if (timeArr.length !== 2) continue // over 1hour continue
+      //       else if (timeArr[0] >= 10) continue // over 10 minuites continue
+      //     }
+      //     break
+      //   }
+      // }
+      // return { ...param, videoId: String(href || '').replace('/watch?v=', ''), videoTime }
     } catch (error) {
       console.log('error', url, error)
       return {}
@@ -105,7 +106,6 @@ module.exports = {
     try {
       const $ = await this.urlRequest(searchUrl)
       if (!$) return
-
       const $tag = $('.yt-lockup-video a')
       let tagLoop = 0; let href = ''
       const passedHref = []
@@ -142,6 +142,24 @@ module.exports = {
           } else {
             const $ = cheerio.load(body)
             resolve($)
+          }
+        } catch (e) {
+          console.log('request Error :::', e)
+          resolve()
+        }
+      })
+    })
+  },
+
+  urlRequestNew (url) {
+    return new Promise(function (resolve, reject) {
+      request(url, function (error, response, body) {
+        try {
+          if (error || !body) {
+            console.log('Unexpected Error :::')
+            resolve()
+          } else {
+            resolve(body)
           }
         } catch (e) {
           console.log('request Error :::', e)

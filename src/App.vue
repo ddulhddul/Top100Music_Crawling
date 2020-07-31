@@ -159,7 +159,7 @@
           >
             <Message :tab="tab" />
           </b-tab>
-          <b-tab
+          <!-- <b-tab
             title="My Songs"
             :class="{active: tab=='mysong'}"
             @click="tab='mysong'"
@@ -168,7 +168,7 @@
               :tab="tab"
               @changeMusic="changeMusic"
             />
-          </b-tab>
+          </b-tab> -->
         </b-tabs>
       </div>
 
