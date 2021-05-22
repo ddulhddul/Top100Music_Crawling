@@ -5,6 +5,10 @@
     - centos@ + dns주소 로 연결
     - ssh -i "****.pem" centos@dns주소
     - sudo su
+2-1. env setting
+    export NODE_ENV=production
+    export MAIL_EMAIL=
+    export MAIL_PASSWORD=
 3. 아래의 centos install 실행
 4. 아래의 mongodb 설치실패시 실행
 5. 아래의 centos mongodb setup 실행

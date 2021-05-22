@@ -19,6 +19,8 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(express.static([__dirname, '/dist'].join('')))
+app.engine('html', require('ejs').renderFile)
+app.set('view engine', 'ejs')
 
 // webpack
 console.log('process.env.NODE_ENV', process.env.NODE_ENV)
