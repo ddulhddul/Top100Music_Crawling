@@ -1,3 +1,17 @@
+## aws 시작 guide
+1. CentOS 7 (x86_64) - with Updates HVM
+    - default 값으로 instance 생성 (freetier)
+2. 퍼블릭 IPv4 DNS 주소 + centos
+    - centos@ + dns주소 로 연결
+    - ssh -i "****.pem" centos@dns주소
+    - sudo su
+3. 아래의 centos install 실행
+4. 아래의 mongodb 설치실패시 실행
+5. 아래의 centos mongodb setup 실행
+6. aws 탄력적 ip 할당 및 보안그룹 생성
+    - 3000 0.0.0.0/0
+    - 3000 ::/0
+
 # New Update for Webpack + Vue (190526~)
 
 

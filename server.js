@@ -37,7 +37,7 @@ app.listen(3000, function () {
 })
 
 app.get('/', (req, res) => {
-  res.render('index')
+  res.render('index.html')
 })
 
 app.get('/song/list/:tab', async (req, res) => {
