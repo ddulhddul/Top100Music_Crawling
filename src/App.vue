@@ -235,7 +235,7 @@ export default {
         }
       })
       const currentMusic = { ...data, ...res.data, tab: data.tab }
-      console.log('changeMusic', currentMusic)
+      // console.log('changeMusic', currentMusic)
       const changedList = this.getMusicListByTab(currentMusic.tab).map((obj) => {
         return { ...obj,
           videoId: String(obj.num) === String(data.num) ? currentMusic.videoId : obj.videoId

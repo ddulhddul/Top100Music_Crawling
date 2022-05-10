@@ -14,10 +14,10 @@ module.exports = {
             console.log('chart find error...', err)
             resolve()
           } else if (err || !result || result.length === 0) {
-            console.log(`${yymmddhh} result not exists ${tab}`)
+            // console.log(`${yymmddhh} result not exists ${tab}`)
             resolve([])
           } else {
-            console.log(`${yymmddhh} result exists ${tab}`)
+            // console.log(`${yymmddhh} result exists ${tab}`)
             const dupCheck = []
             const list = (result || []).filter((obj) => {
               const num = obj.num

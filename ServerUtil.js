@@ -15,7 +15,7 @@ module.exports = {
   },
 
   async getChartByUrlRequest (tab, yymmddhh = this.getYymmddhh()) {
-    console.log(yymmddhh, 'chart url request.. ')
+    // console.log(yymmddhh, 'chart url request.. ')
     let url = ''
     switch (tab) {
       case 'top100':
@@ -68,7 +68,7 @@ module.exports = {
     const reg = new RegExp('\\(.*?\\)', 'g')
     const encodedSrchparam = urlencode(param.song.replace(reg, '') + ' ' + param.singer.replace(reg, ''))
     const url = 'https://www.youtube.com/results?search_query=' + encodedSrchparam
-    console.log('getVideoIdBySongAndSinger', JSON.stringify(param), encodedSrchparam, url)
+    // console.log('getVideoIdBySongAndSinger', JSON.stringify(param), encodedSrchparam, url)
     try {
       const $ = await this.urlRequestNew(url)
       if (!$) return {}

@@ -154,7 +154,7 @@ export default {
         params: { ...param }
       })
       const list = res.data.list || []
-      console.log('message call', list)
+      // console.log('message call', list)
       this.messageList = param.pageIndex === 1 ? list : this.messageList.concat(list)
       this.messagePageObject = res.data.pageObject || {}
     },
